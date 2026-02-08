@@ -1,0 +1,45 @@
+{
+  "name": "storybook-latest",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "node esbuild.js",
+    "start": "npm run storybook",
+    "test": "web-test-runner --config wtr.config.mjs --coverage",
+    "test:watch": "web-test-runner --config wtr.config.mjs --watch --chromium",
+    "preview": "vite preview",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "lit": "^3.3.1"
+  },
+  "devDependencies": {
+    "@chromatic-com/storybook": "^5.0.0",
+    "@esm-bundle/chai": "^4.3.4-fix.0",
+    "@storybook/addon-a11y": "^10.2.6",
+    "@storybook/addon-docs": "^10.2.6",
+    "@storybook/addon-vitest": "^10.2.6",
+    "@storybook/web-components-vite": "^10.2.6",
+    "@types/mocha": "^10.0.10",
+    "@vitest/browser-playwright": "^4.0.18",
+    "@vitest/coverage-v8": "^4.0.18",
+    "@web/dev-server-esbuild": "^1.0.4",
+    "@web/test-runner": "^0.20.2",
+    "@web/test-runner-junit-reporter": "^0.8.0",
+    "@web/test-runner-playwright": "^0.11.1",
+    "axe-core": "^4.11.1",
+    "camelcase": "^9.0.0",
+    "esbuild": "^0.27.2",
+    "esbuild-plugin-lit": "^0.1.1",
+    "glob": "^13.0.1",
+    "playwright": "^1.58.1",
+    "rollup-plugin-typescript-paths": "^1.5.0",
+    "storybook": "^10.2.6",
+    "typescript": "~5.9.3",
+    "vite": "^7.2.4",
+    "vitest": "^4.0.18"
+  }
+}

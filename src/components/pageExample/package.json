@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "name": "page-example",
+  "version": "0.0.1",
+  "description": "An example of a page web component",
+  "author": "Angel Hita",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tx2z/wc-base-typescript.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tx2z/wc-base-typescript/issues"
+  },
+  "homepage": "https://github.com/tx2z/wc-base-typescript"
+}
