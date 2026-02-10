@@ -23,7 +23,7 @@ export interface ComponentData {
   class?: any;
   name: string;
   properties?: {
-    [key: string]: string ;
+    [key: string]: string;
   };
   listeners?: {
     [key: string]: (...args: any) => unknown;
@@ -81,6 +81,20 @@ export const defer = (callback: Function): void => {
   setTimeout(() => callback(), navigator.userAgent.includes('AppleWebKit') ? 600 : 350);
 };
 
+export const waitForElement = (selector: () => HTMLElement | null, timeout: number = 3000) => {
+  return new Promise((resolve, reject) => {
+    const interval = setInterval(() => {
+      if (selector()) {
+        clearInterval(interval);
+        resolve(selector());
+      }
+    }, 100);
+    setTimeout(() => {
+      clearInterval(interval);
+      reject(new Error('Element not found'));
+    }, timeout);
+  });
+}
 /**
  * Function to create a web-component in the browser to test the behaviour
  * @param {CreateComponentType} component component to test
@@ -96,7 +110,7 @@ export const defer = (callback: Function): void => {
 export const createComponent: CreateComponentType = async component => {
   const uid = generateNewId();
   if (component.api) {
-    if(!component.class.prototype.api) {
+    if (!component.class.prototype.api) {
       component.class.prototype.api = {};
     }
     Object.keys(component.api).forEach(key => {
@@ -113,7 +127,7 @@ export const createComponent: CreateComponentType = async component => {
   }
   if (component.class) {
     component.class.prototype.testingUid = uid;
-    window.customElements.define(uid, class NewElem extends component.class {});
+    window.customElements.define(uid, class NewElem extends component.class { });
   }
   const element = document.createElement(component.class ? uid : component.name);
   if (component.properties) {
@@ -125,7 +139,7 @@ export const createComponent: CreateComponentType = async component => {
     Object.keys(component.listeners).forEach(listener => {
       element.addEventListener(
         listener,
-        component.listeners ? component.listeners[listener] : (): void => {}
+        component.listeners ? component.listeners[listener] : (): void => { }
       );
     });
   }

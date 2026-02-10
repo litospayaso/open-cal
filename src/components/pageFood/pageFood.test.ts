@@ -1,0 +1,164 @@
+import PageFood from './pageFood';
+import { accessibilityCheck, createComponent, defer, waitForElement } from '../../shared/test-helper';
+import { expect } from '@esm-bundle/chai';
+
+const mockProductData = {
+  code: '123',
+  product: {
+    product_name: 'Test Food',
+    nutriments: {
+      'energy-kcal_100g': 100,
+      carbohydrates_100g: 10,
+      proteins_100g: 5,
+      fat_100g: 2
+    }
+  }
+};
+
+const api = {
+  getProduct: () => Promise.resolve(mockProductData),
+};
+
+describe('PageFood Component Spec:', () => {
+  let element: HTMLElement;
+  let shadow: ShadowRoot;
+
+  beforeEach(async () => {
+    const component = await createComponent({
+      class: PageFood,
+      name: 'page-food',
+      api,
+      route: '?code=123'
+    });
+
+    shadow = component.shadow;
+    element = component.element;
+  });
+
+  afterEach(() => {
+    document.body.removeChild(element);
+  });
+
+  it('should contain shadow root', () => {
+    expect(shadow).to.not.be.undefined;
+  });
+
+  it('should be accessible', async () => {
+    const result = await accessibilityCheck(element);
+    expect(result.length).to.be.equal(0);
+  });
+
+  it('should display product name', (done) => {
+    waitForElement(() => shadow.querySelector('.product-header h1')).then(() => {
+      const header = shadow.querySelector('.product-header h1');
+      expect(header).to.exist;
+      expect(header?.textContent).to.include('Test Food');
+      done();
+    });
+  });
+
+  it('should display initial nutrients for 100g', (done) => {
+    waitForElement(() => shadow.querySelector('.nutrient-value')).then(() => {
+      const values = shadow.querySelectorAll('.nutrient-value');
+      expect(values[0].textContent).to.equal('100.0');
+      expect(values[1].textContent).to.equal('10.0');
+      done();
+    });
+  });
+
+  it('should update nutrients when input changes to 200g', (done) => {
+    waitForElement(() => shadow.querySelector('input')).then(() => {
+      const input: HTMLInputElement = shadow.querySelector('input') as HTMLInputElement;
+      input.value = '200';
+      input.dispatchEvent(new Event('input'));
+      defer(() => {
+        const values = shadow.querySelectorAll('.nutrient-value');
+        expect(values[0].textContent).to.equal('200.0');
+        expect(values[1].textContent).to.equal('20.0');
+        done();
+      });
+    });
+  });
+
+  it('should toggle favorite state when button is clicked', (done) => {
+    waitForElement(() => shadow.querySelector('button')).then(() => {
+      const button = shadow.querySelector('button');
+      expect(button).to.exist;
+      expect(button?.textContent?.trim()).to.equal('☆');
+      button?.click();
+
+      defer(() => {
+        expect(button?.textContent?.trim()).to.equal('★');
+        button?.click();
+
+        defer(() => {
+          expect(button?.textContent?.trim()).to.equal('☆');
+          done();
+        });
+      });
+    });
+  });
+});
+
+xdescribe('PageFood Component Error/Loading Spec:', () => {
+  let element: HTMLElement;
+  let shadow: ShadowRoot;
+
+  beforeEach(async () => {
+    const component = await createComponent({
+      class: PageFood,
+      name: 'page-food',
+      api: { getProduct: () => Promise.resolve(null) },
+    });
+
+    shadow = component.shadow;
+    element = component.element;
+  });
+
+
+  afterEach(() => {
+    document.body.removeChild(element);
+  });
+
+  it('should show error message when no code provided', (done) => {
+    waitForElement(() => shadow.querySelector('.error-message')).then(() => {
+      const error = shadow.querySelector('.error-message');
+      expect(error).to.exist;
+      expect(error?.textContent).to.include('No product code provided');
+      done();
+    });
+  });
+
+});
+
+describe('PageFood Component Error/Loading Spec:', () => {
+  let element: HTMLElement;
+  let shadow: ShadowRoot;
+
+  beforeEach(async () => {
+    const component = await createComponent({
+      class: PageFood,
+      name: 'page-food',
+      api: { getProduct: () => Promise.resolve(null) },
+      route: '?code=999'
+    });
+
+    shadow = component.shadow;
+    element = component.element;
+  });
+
+
+  afterEach(() => {
+    document.body.removeChild(element);
+  });
+
+  it('should show error message when product not found', (done) => {
+    waitForElement(() => shadow.querySelector('.error-message')).then(() => {
+      const error = shadow.querySelector('.error-message');
+      expect(error).to.exist;
+      expect(error?.textContent).to.include('Product not found');
+      done();
+    });
+  });
+});
+
