@@ -42,8 +42,9 @@ export class ComponentSearchInput extends LitElement {
           @input="${this._handleInput}" 
           @blur="${this._handleSearch}" 
           placeholder="${this.placeholder}"
+          aria-label="Search"
         />
-        <button @click="${this._handleSearch}">🔎</button>
+        <button @click="${this._handleSearch}" aria-label="Search button">🔎</button>
       </div>
     `;
   }

@@ -10,6 +10,8 @@
     "test": "web-test-runner --config wtr.config.mjs --coverage",
     "test:watch": "web-test-runner --config wtr.config.mjs --watch --chromium",
     "preview": "vite preview",
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
@@ -20,6 +22,7 @@
     "src/components/*"
   ],
   "devDependencies": {
+    "@changesets/cli": "^2.29.8",
     "@chromatic-com/storybook": "^5.0.0",
     "@esm-bundle/chai": "^4.3.4-fix.0",
     "@storybook/addon-a11y": "^10.2.6",
@@ -38,6 +41,7 @@
     "esbuild": "^0.27.2",
     "esbuild-plugin-lit": "^0.1.1",
     "glob": "^13.0.1",
+    "husky": "^4.0.0",
     "playwright": "^1.58.1",
     "rollup-plugin-typescript-paths": "^1.5.0",
     "storybook": "^10.2.6",
@@ -47,12 +51,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged && node scripts/commit.js && git add .changeset"
+      "pre-commit": "node scripts/commit.js && git add .changeset"
     }
-  },
-  "lint-staged": {
-    "./src/**/*.ts": [
-      "eslint --fix"
-    ]
   }
 }
