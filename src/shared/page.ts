@@ -50,6 +50,21 @@ export default class Page<api = {}> extends LitElement {
     this.requestUpdate();
   }
 
+  setTheme(theme: 'light' | 'dark'): void {
+    localStorage.setItem('theme', theme);
+    this.applyTheme(theme);
+  }
+
+  applyTheme(theme: 'light' | 'dark') {
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.style.background = '#191c25';
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.documentElement.style.background = 'white';
+    }
+  }
+
   /**
    * Function to open a url in a new tab.
    * @param {string} url to open in a new tab

@@ -32,7 +32,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         margin-bottom: 2rem;
       }
       .calculator {
-        background: #f5f5f5;
+        background: var(--section-background);
         padding: 1.5rem;
         border-radius: 8px;
         margin-top: 1rem;
@@ -45,7 +45,9 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
       }
       input {
         padding: 8px;
-        border: 1px solid #ccc;
+        background: var(--input-background);
+        color: var(--input-text);
+        border: 1px solid var(--input-border, #ccc);
         border-radius: 4px;
         width: 100px;
       }
@@ -55,19 +57,20 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         gap: 1rem;
       }
       .nutrient-item {
-        background: white;
+        background: var(--card-background);
         padding: 1rem;
         border-radius: 4px;
         text-align: center;
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        border: 1px solid var(--card-border);
       }
       .nutrient-value {
         font-size: 1.25rem;
         font-weight: bold;
-        color: #333;
+        color: var(--card-text, #333);
       }
       .nutrient-label {
-        color: #666;
+        color: var(--input-placeholder, #666);
         font-size: 0.875rem;
       }
       .error-message {

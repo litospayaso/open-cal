@@ -4,7 +4,7 @@ import { property, state } from 'lit/decorators.js';
 export interface SearchResultComponentInterface {
   name?: string;
   code?: string;
-  isFavorite?: boolean;
+  favorite?: boolean;
   calories?: string;
   'favorite-click'?: (event: CustomEvent<{ code: string, value: string }>) => void;
   'element-click'?: (event: CustomEvent<{ code: string }>) => void;
@@ -14,8 +14,9 @@ export class ComponentSearchResult extends LitElement {
   @property({ type: String }) name = '';
   @property({ type: String }) code = '';
   @property({ type: String }) calories = '';
-  @property({ type: String }) set isFavorite(favorite: string) {
+  @property({ type: String }) set favorite(favorite: string) {
     this.favoriteState = favorite === 'true';
+    this.requestUpdate()
   };
 
   @state() favoriteState: boolean = false;
@@ -31,15 +32,19 @@ export class ComponentSearchResult extends LitElement {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border: 1px solid #ccc;
+      border: 1px solid var(--card-border);
+      background: var(--card-background, #fff);
       border-radius: 8px;
       padding: 10px;
-      background-color: #fff;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       margin-bottom: 8px;
     }
 
     .icon-section {
+      border: 1px solid var(--card-border);
+      background: var(--card-background, #fff);
+      padding: 14px 10px;
+      border-radius: 8px;
       flex: 0 0 auto;
       margin-right: 16px;
       display: flex;
@@ -52,14 +57,14 @@ export class ComponentSearchResult extends LitElement {
       flex: 1 1 auto;
       font-size: 1.1rem;
       font-weight: 500;
-      color: #333;
+      color: var(--card-text);
       cursor: pointer;
     }
 
     .calories-section {
       font-size: .87rem;
       font-weight: 500;
-      color: #666;
+      color: var(--input-placeholder);
     }
 
     .favorite-section {
@@ -89,7 +94,7 @@ export class ComponentSearchResult extends LitElement {
     return html`
       <div class="result-card">
         <div class="icon-section" @click="${this._handleElementClick}">
-          🍎
+          <component-emoji text="${this.name}" size="s"></component-emoji>
         </div>
         <div class="name-section" @click="${this._handleElementClick}">
           ${this.name}
@@ -128,7 +133,7 @@ export class ComponentSearchResult extends LitElement {
 
   private _handleFavoriteClick() {
     this.dispatchEvent(new CustomEvent('favorite-click', {
-      detail: { code: this.code, value: this.isFavorite === 'true' ? 'false' : 'true' },
+      detail: { code: this.code, value: this.favoriteState ? 'false' : 'true' },
       bubbles: true,
       composed: true
     }));

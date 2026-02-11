@@ -1,6 +1,7 @@
 import type { Result } from 'axe-core';
 import { loadScript } from './functions';
 import type { AxePlugin, AxeResults } from 'axe-core';
+import type Page from './page';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/await-thenable */
 /* eslint-disable @typescript-eslint/no-empty-function */
@@ -51,16 +52,15 @@ const generateNewId = (): string => {
  * Function to mock a route in storybook or web-test-runner
  * @param {string} route Last part of the URL to mock in location.href
  */
-export const mockRoute = (route: string): string => {
-  const previousRoute = window.location.href;
-  if (!window.location.href.includes(route)) {
-    window.history.replaceState(
-      window.location.href,
-      `Updated the URL to set ${route}`,
-      window.location.href.concat(route)
-    );
-  }
-  return previousRoute;
+export const mockQueryParams = (element: any, queryParams: { [key: string]: string }): void => {
+  element.getQueryParamsURL = () => {
+    let url = 'http://example-url.com?'
+    Object.entries(queryParams).forEach(([key, value]) => {
+      url = url.concat(`${key}=${value}&`)
+    });
+    const href = new URL(url.slice(0, -1));
+    return href.searchParams;
+  };
 };
 
 /**

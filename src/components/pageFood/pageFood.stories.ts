@@ -1,11 +1,11 @@
 import './index';
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 
-import { mockRoute } from '../../shared/test-helper';
+import { mockQueryParams } from '../../shared/test-helper';
 
 const render = (_args: any) => {
-  mockRoute('/?page=product&code=8480000221940');
   const element = document.createElement('page-food');
+  mockQueryParams(element, { page: 'food', code: '8480000221940' });
   return element;
 }
 

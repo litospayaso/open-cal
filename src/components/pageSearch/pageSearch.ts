@@ -15,6 +15,7 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
         display: block;
         padding: 20px;
         font-family: sans-serif;
+        color: var(--text-color);
       }
       .page-container {
         max-width: 600px;

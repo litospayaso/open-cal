@@ -12,17 +12,17 @@ export default {
   argTypes: {
     name: { control: 'text' },
     calories: { control: 'text' },
-    isFavorite: { control: 'boolean' },
+    favorite: { control: 'boolean' },
   },
-  render: (args) => html`<component-search-result name="${args.name}" calories="${args.calories}" isFavorite="${args.isFavorite}"></component-search-result>`
+  render: (args) => html`<component-search-result name="${args.name}" calories="${args.calories}" favorite="${args.favorite}"></component-search-result>`
 } satisfies Meta<SearchResultComponentInterface>;
 
 export const Default: Story = {
   args: {
     name: 'Apple',
     calories: '64',
-    isFavorite: false,
+    favorite: false,
   },
-  render: (args) => html`<component-search-result name="${args.name}" calories="${args.calories}" isFavorite="${args.isFavorite}"></component-search-result>`
+  render: (args) => html`<component-search-result name="${args.name}" calories="${args.calories}" favorite="${args.favorite}"></component-search-result>`
 };
 

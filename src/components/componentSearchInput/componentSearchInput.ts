@@ -19,17 +19,51 @@ export class ComponentSearchInput extends LitElement {
     }
     .input-container {
       display: flex;
-      gap: 10px;
+      align-items: center;
+      border: 2px solid var(--input-border, var(--palette-grey));
+      border-radius: 25px;
+      padding: 5px 5px 5px 20px;
+      background: var(--card-background, white);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .input-container:focus-within {
+      border-color: var(--palette-purple);
+      box-shadow: 0 0 5px rgba(162, 133, 187, 0.3);
     }
     input {
-      padding: 0.5rem;
       font-size: 1rem;
       flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--input-text, var(--palette-black));
+      padding: 5px 0;
+    }
+    input::placeholder {
+      color: var(--input-placeholder, #757575);
     }
     button {
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
+      padding: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
       cursor: pointer;
+      background-color: var(--palette-purple);
+      color: var(--button-icon-color, white);
+      border: none;
+      border-radius: 50%;
+      transition: transform 0.2s ease, background-color 0.3s ease;
+      margin-left: 10px;
+    }
+    button:hover {
+      transform: scale(1.05);
+      background-color: var(--palette-blue);
+    }
+    button:active {
+      transform: scale(0.95);
     }
   `;
 

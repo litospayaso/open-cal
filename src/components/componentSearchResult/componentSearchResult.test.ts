@@ -45,7 +45,7 @@ describe('SearchResult Component Spec:', () => {
   });
 
   it('should show favorite icon active when isFavorite is true', (done) => {
-    element.setAttribute('isFavorite', 'true');
+    element.setAttribute('favorite', 'true');
     defer(() => {
       const favoriteIcon = shadow.querySelector('.favorite-icon');
       expect(favoriteIcon?.classList.contains('is-favorite')).to.be.true;

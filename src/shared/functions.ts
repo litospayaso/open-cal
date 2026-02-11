@@ -51,3 +51,11 @@ export const register = (tag: string, component: CustomElementConstructor) => {
     window.customElements.define(tag, (classVersion() as unknown) as CustomElementConstructor);
   }
 };
+
+export const palette = {
+  '--palette-grey': '#a19fa2',
+  '--palette-green': '#4fb9ad',
+  '--palette-purple': '#a285bb',
+  '--palette-blue': '#a9afe9',
+  '--palette-black': '#191c25',
+};

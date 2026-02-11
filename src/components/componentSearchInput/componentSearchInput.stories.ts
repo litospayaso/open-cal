@@ -8,6 +8,8 @@ const meta: Meta = {
   component: 'component-search-input',
   argTypes: {
     'search-init': { action: 'search-init' },
+    value: { control: 'text' },
+    placeholder: { control: 'text' },
   },
 } satisfies Meta<SearchInputComponentInterface>;
 
@@ -16,5 +18,8 @@ export default meta;
 type Story = StoryObj<SearchInputComponentInterface>;
 
 export const Default: Story = {
-  render: () => html`<component-search-input></component-search-input>`,
+  args: {
+    placeholder: 'Search',
+  },
+  render: (args) => html`<component-search-input placeholder="${args.placeholder}"></component-search-input>`,
 };
