@@ -15,7 +15,60 @@ export default class Page<api = {}> extends LitElement {
     this.translations = translations[this.getLanguage() as keyof typeof translations] || translations.en;
   }
 
-  static styles = [css`` as CSSResultGroup];
+  static styles = [css`
+    .card {
+      background: var(--card-background);
+      color: var(--card-text);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 1rem;
+    }
+    h2 {
+      margin-top: 0;
+      border-bottom: 2px solid var(--palette-green, #4fb9ad);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      background-color: var(--input-background);
+      color: var(--input-text);
+      border: 1px solid var(--input-border, #a19fa2);
+      border-radius: 4px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    .theme-toggles {
+      display: flex;
+      gap: 1rem;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background: var(--palette-green, #a19fa2);
+      color: white;
+      transition: background 0.3s;
+    }
+    button.active {
+      background: var(--palette-purple, #a285bb);
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    ` as CSSResultGroup];
 
   /**
    * Function to navigate to another url.

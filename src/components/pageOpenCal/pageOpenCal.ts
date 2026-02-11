@@ -1,6 +1,6 @@
 import { html, css } from 'lit';
 import Page from '../../shared/page';
-import { palette } from '../../shared/functions';
+import { variableStyles } from '../../shared/functions';
 import '../pageUser/index';
 
 export default class PageOpenCal extends Page {
@@ -14,9 +14,9 @@ export default class PageOpenCal extends Page {
   ];
 
   onPageInit(): void {
-    Object.entries(palette).forEach(([key, value]) => {
-      document.documentElement.style.setProperty(key, value);
-    });
+    const style = document.createElement('style');
+    style.textContent = variableStyles.cssText;
+    document.head.appendChild(style);
   }
 
   render() {
