@@ -5,8 +5,7 @@ import { getProduct } from '../../shared/httpEndpoints';
 import { api } from '../../shared/api.decorator';
 
 import type { ProductInterface } from '../../shared/http.interfaces';
-
-import '../componentSpinner/index';
+import { dbService, type MealCategory } from '../../shared/db';
 
 @api({ getProduct })
 export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
@@ -27,9 +26,51 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         justify-content: center;
         padding: 2rem;
       }
+      .emoji-container {
+        border: 1px solid var(--card-border);
+        background: var(--card-background, #fff);
+        padding: 20px 10px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
       .product-header {
         text-align: center;
         margin-bottom: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .product-name {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+      }
+      .favorite-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .favorite-icon {
+        width: 32px;
+        height: 32px;
+        fill: none;
+        stroke: var(--palette-grey, #666);
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: fill 0.3s ease, stroke 0.3s ease;
+      }
+      .favorite-icon.is-favorite {
+        fill: #ffd700;
+        stroke: #ffd700;
       }
       .calculator {
         background: var(--section-background);
@@ -85,6 +126,8 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
   @state() error: string = '';
   @state() grams: number = 100;
   @state() isFavoriteState: boolean = false;
+  @state() selectedDate: string = new Date().toISOString().split('T')[0];
+  @state() selectedCategory: MealCategory = 'breakfast';
 
   async onPageInit(): Promise<void> {
     const params = this.getQueryParamsURL();
@@ -145,6 +188,40 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
     return ((value100g * this.grams) / 100).toFixed(1);
   }
 
+  private async _addToDiary() {
+    if (!this.product) return;
+
+    try {
+      const foodItem = {
+        product: {
+          code: this.product.code,
+          nutriments: {
+            "energy-kcal": this.product.product.nutriments["energy-kcal_100g"] || 0,
+            carbohydrates: this.product.product.nutriments.carbohydrates_100g || 0,
+            fat: this.product.product.nutriments.fat_100g || 0,
+            proteins: this.product.product.nutriments.proteins_100g || 0,
+            // Add other required fields if necessary, or cast.
+            // For now mapping what we use in PageHome/ComponentSearchResult
+          } as any,
+          product_name: (this.product.product as any).product_name,
+          nutrition_data: 'per_100g', // assumption
+          nutrition_data_per: '100g',
+          nutrition_data_prepared_per: '100g'
+        },
+        quantity: this.grams,
+        unit: 'g'
+      };
+
+      await dbService.addFoodItem(this.selectedDate, this.selectedCategory, foodItem);
+
+      // Navigate to home page to see result
+      this.navigate(`home`);
+    } catch (e) {
+      console.error("Error adding to diary", e);
+      this.error = "Failed to add to diary";
+    }
+  }
+
   render() {
     if (this.loading) {
       return html`
@@ -173,15 +250,28 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
     return html`
       <div class="page-container">
         <div class="product-header">
-          <h1>${(this.product.product as any).product_name || 'Unknown Product'}</h1>
-          <button 
-            @click="${this._toggleFavorite}" 
-            style="background: none; border: none; cursor: pointer; font-size: 2rem;"
-            aria-label="${this.isFavoriteState ? 'Remove from favorites' : 'Add to favorites'}"
-          >
-            ${this.isFavoriteState ? '★' : '☆'}
-          </button>
+          <div class="emoji-container">
+            <component-emoji text="${(this.product.product as any).product_name || 'Unknown Product'}" size="l"></component-emoji>
+          </div>
+          <div class="product-name">
+            <h1>${(this.product.product as any).product_name || 'Unknown Product'}</h1>
+            <button 
+              @click="${this._toggleFavorite}" 
+              class="favorite-btn"
+              aria-label="${this.isFavoriteState ? 'Remove from favorites' : 'Add to favorites'}"
+            >
+              <svg
+                class="favorite-icon ${this.isFavoriteState ? 'is-favorite' : ''}"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
+            </button>
+          </div>
         </div>
+
+
 
         <div class="calculator">
             <div class="input-group">
@@ -193,6 +283,33 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
                     @input="${this._handleGramsChange}"
                     min="0"
                 />
+            </div>
+            
+            <div class="input-group">
+              <label for="date">Date:</label>
+              <input 
+                id="date" 
+                type="date" 
+                .value="${this.selectedDate}" 
+                @change="${(e: Event) => this.selectedDate = (e.target as HTMLInputElement).value}"
+              />
+            </div>
+
+            <div class="input-group">
+              <label for="category">Category:</label>
+              <select 
+                id="category" 
+                .value="${this.selectedCategory}" 
+                @change="${(e: Event) => this.selectedCategory = (e.target as HTMLInputElement).value as MealCategory}"
+                style="padding: 8px; background: var(--input-background); color: var(--input-text); border: 1px solid var(--input-border, #ccc); border-radius: 4px; width: 100%; box-sizing: border-box;"
+              >
+                <option value="breakfast">Breakfast</option>
+                <option value="snack1">Snack (Morning)</option>
+                <option value="lunch">Lunch</option>
+                <option value="snack2">Snack (Afternoon)</option>
+                <option value="dinner">Dinner</option>
+                <option value="snack3">Snack (Evening)</option>
+              </select>
             </div>
 
             <div class="nutrients-grid">
@@ -213,6 +330,13 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
                     <div class="nutrient-label">Fat (g)</div>
                 </div>
             </div>
+
+             <button 
+              @click="${this._addToDiary}"
+              style="margin-top: 20px; width: 100%; padding: 12px; background: var(--palette-green); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1rem;"
+            >
+              Add to Diary
+            </button>
         </div>
       </div>
     `;

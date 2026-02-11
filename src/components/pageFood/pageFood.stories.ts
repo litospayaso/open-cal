@@ -3,9 +3,9 @@ import type { Meta, StoryObj } from '@storybook/web-components-vite';
 
 import { mockQueryParams } from '../../shared/test-helper';
 
-const render = (_args: any) => {
+const render = (args: any) => {
   const element = document.createElement('page-food');
-  mockQueryParams(element, { page: 'food', code: '8480000221940' });
+  mockQueryParams(element, { page: 'food', code: args.code });
   return element;
 }
 
@@ -13,11 +13,9 @@ const meta = {
   title: 'Pages/PageFood',
   tags: ['autodocs'],
   render,
-  parameters: {
-    // Mocking URL parameters for Storybook? 
-    // Usually requires an addon or specific setup. 
-    // For now, simple render.
-  }
+  args: {
+    code: '8480000221940',
+  },
 } satisfies Meta<any>;
 
 export default meta;

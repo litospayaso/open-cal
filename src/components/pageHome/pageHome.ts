@@ -1,0 +1,290 @@
+import { html, css, type PropertyValueMap } from 'lit';
+import { state } from 'lit/decorators.js';
+import Page from '../../shared/page';
+import { dbService, type DailyLog, type MealCategory } from '../../shared/db';
+
+export default class PageHome extends Page {
+  static styles = [
+    Page.styles,
+    css`
+      :host {
+        display: block;
+        padding: 20px;
+      }
+      .header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+        position: relative;
+      }
+      .date-selector {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: bold;
+      }
+      .date-selector button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: var(--text-color);
+        z-index: 2;
+      }
+      .date-display {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .date-display span {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--text-color);
+      }
+      .date-display input[type="date"] {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 1;
+      }
+
+      .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 30px;
+      }
+      .summary-card {
+        background: var(--card-background);
+        border: 1px solid var(--card-border);
+        border-radius: 8px;
+        padding: 10px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .summary-card .value {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--card-text);
+      }
+      .summary-card .label {
+        font-size: 0.8rem;
+        color: var(--input-placeholder);
+      }
+      .category-section {
+        margin-bottom: 20px;
+      }
+      .category-header {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: var(--palette-purple);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-transform: capitalize;
+      }
+      .empty-message {
+        color: var(--input-placeholder);
+        font-style: italic;
+        font-size: 0.9rem;
+      }
+      .grid-header {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+      }
+
+      @media (max-width: 600px) {
+        .summary-cards {
+            grid-template-columns: 1fr 1fr;
+        }
+      }
+    `
+  ];
+
+  @state() currentDate: string = new Date().toISOString().split('T')[0];
+  @state() dailyLog: DailyLog | null = null;
+  @state() loading: boolean = true;
+  @state() totals = { calories: 0, carbs: 0, fat: 0, protein: 0 };
+
+  protected async firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): Promise<void> {
+    super.firstUpdated(_changedProperties);
+    await this.loadData();
+  }
+
+  async loadData() {
+    this.loading = true;
+    try {
+      this.dailyLog = await dbService.getDailyLog(this.currentDate);
+      this.calculateTotals();
+    } catch (e) {
+      console.error("Failed to load daily log", e);
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  calculateTotals() {
+    if (!this.dailyLog) {
+      this.totals = { calories: 0, carbs: 0, fat: 0, protein: 0 };
+      return;
+    }
+
+    let calories = 0, carbs = 0, fat = 0, protein = 0;
+
+    const categories: MealCategory[] = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3'];
+
+    categories.forEach(cat => {
+      this.dailyLog![cat].forEach(item => {
+        // Calculate based on quantity (assuming 100g base for nutrients)
+        // Check if quantity is in grams or portion. For simplified MVP, assuming input is grams if not specified
+        // But SearchProductItemInterface has nutriments per 100g usually.
+
+        const ratio = item.quantity / 100;
+
+        calories += (item.product.nutriments['energy-kcal'] || 0) * ratio;
+        carbs += (item.product.nutriments.carbohydrates || 0) * ratio;
+        fat += (item.product.nutriments.fat || 0) * ratio;
+        protein += (item.product.nutriments.proteins || 0) * ratio;
+      });
+    });
+
+    this.totals = {
+      calories: Math.round(calories),
+      carbs: Math.round(carbs),
+      fat: Math.round(fat),
+      protein: Math.round(protein)
+    };
+  }
+
+  changeDate(days: number) {
+    const date = new Date(this.currentDate);
+    date.setDate(date.getDate() + days);
+    this.currentDate = date.toISOString().split('T')[0];
+    this.loadData();
+  }
+
+  _handleDateChange(e: Event) {
+    const input = e.target as HTMLInputElement;
+    if (input.value) {
+      this.currentDate = input.value;
+      this.loadData();
+    }
+  }
+
+  _handleDateDisplayClick() {
+    const input = this.shadowRoot?.querySelector('.date-display input[type="date"]') as HTMLInputElement;
+    if (input && 'showPicker' in input) {
+      try {
+        (input as any).showPicker();
+      } catch (err) {
+        console.warn('showPicker not supported or failed', err);
+      }
+    }
+  }
+
+  getFormattedDate(): string {
+    const today = new Date();
+    const date = new Date(this.currentDate);
+
+    // Reset time parts for accurate comparison
+    const resetTime = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+    const dToday = resetTime(today);
+    const dDate = resetTime(date);
+
+    const diffTime = dDate.getTime() - dToday.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return this.translations.today;
+    if (diffDays === 1) return this.translations.tomorrow;
+    if (diffDays === -1) return this.translations.yesterday;
+
+    return this.currentDate.split('-').reverse().join('/');
+  }
+
+  render() {
+    return html`
+      <div class="header">
+        <div class="date-selector">
+           <button @click="${() => this.changeDate(-1)}">‹</button>
+           <div class="date-display" @click="${this._handleDateDisplayClick}">
+             <span>${this.getFormattedDate()}</span>
+             <input type="date" .value="${this.currentDate}" @change="${this._handleDateChange}" />
+           </div>
+           <button @click="${() => this.changeDate(1)}">›</button>
+        </div>
+      </div>
+
+      <div class="summary-cards">
+        <div class="summary-card">
+          <span class="value">${this.totals.calories}</span>
+          <span class="label">${this.translations.calories}</span>
+        </div>
+        <div class="summary-card">
+          <span class="value">${this.totals.carbs}g</span>
+          <span class="label">${this.translations.carbs}</span>
+        </div>
+        <div class="summary-card">
+          <span class="value">${this.totals.fat}g</span>
+          <span class="label">${this.translations.fat}</span>
+        </div>
+        <div class="summary-card">
+          <span class="value">${this.totals.protein}g</span>
+          <span class="label">${this.translations.protein}</span>
+        </div>
+      </div>
+
+      ${this.renderCategory(this.translations.breakfast, 'breakfast')}
+      ${this.renderCategory(this.translations.snackMorning, 'snack1')}
+      ${this.renderCategory(this.translations.lunch, 'lunch')}
+      ${this.renderCategory(this.translations.snackAfternoon, 'snack2')}
+      ${this.renderCategory(this.translations.dinner, 'dinner')}
+      ${this.renderCategory(this.translations.snackEvening, 'snack3')}
+    `;
+  }
+
+  async _handleRemoveItem(category: MealCategory, index: number) {
+    if (!this.dailyLog) return;
+    try {
+      await dbService.removeFoodItem(this.currentDate, category, index);
+      this.loadData();
+    } catch (e) {
+      console.error("Failed to remove item", e);
+    }
+  }
+
+  renderCategory(title: string, category: MealCategory) {
+    const items = this.dailyLog ? this.dailyLog[category] : [];
+
+    if (items.length === 0) return html``;
+
+    return html`
+      <div class="category-section">
+        <div class="category-header">
+           ${title}
+        </div>
+        ${items.map((item, index) => html`
+            <component-search-result
+            name="${item.product.product_name}"
+            code="${item.product.code}"
+            calories="${(item.product.nutriments['energy-kcal'] || 0) * (item.quantity / 100)}"
+            quantity="${item.quantity}${item.unit}"
+            removable="true"
+            @remove-click="${() => this._handleRemoveItem(category, index)}"
+            ></component-search-result>
+        `)}
+      </div>
+    `;
+  }
+}

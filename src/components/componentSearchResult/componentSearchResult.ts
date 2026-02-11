@@ -8,12 +8,15 @@ export interface SearchResultComponentInterface {
   calories?: string;
   'favorite-click'?: (event: CustomEvent<{ code: string, value: string }>) => void;
   'element-click'?: (event: CustomEvent<{ code: string }>) => void;
+  'remove-click'?: (event: CustomEvent<{ code: string }>) => void;
 }
 
 export class ComponentSearchResult extends LitElement {
   @property({ type: String }) name = '';
   @property({ type: String }) code = '';
   @property({ type: String }) calories = '';
+  @property({ type: String }) quantity = '';
+  @property({ type: Boolean }) removable = false;
   @property({ type: String }) set favorite(favorite: string) {
     this.favoriteState = favorite === 'true';
     this.requestUpdate()
@@ -61,6 +64,12 @@ export class ComponentSearchResult extends LitElement {
       cursor: pointer;
     }
 
+    .quantity-section {
+      font-size: 0.8rem;
+      color: var(--input-placeholder);
+      margin-top: 4px;
+    }
+
     .calories-section {
       font-size: .87rem;
       font-weight: 500;
@@ -97,17 +106,37 @@ export class ComponentSearchResult extends LitElement {
           <component-emoji text="${this.name}" size="s"></component-emoji>
         </div>
         <div class="name-section" @click="${this._handleElementClick}">
-          ${this.name}
+          <div>${this.name}</div>
+          ${this.quantity ? html`<div class="quantity-section">${this.quantity}</div>` : ''}
         </div>
         ${this.calories && Number(this.calories) > 0 ? html`
           <div class="calories-section">
             ${Math.trunc(Number(this.calories))} Kcal
           </div>
         ` : ''}
-        <div class="favorite-section" @click="${this._handleFavoriteClick}">
-          ${this._renderFavoriteIcon()}
-        </div>
+        ${this.removable ? html`
+           <div class="favorite-section" @click="${this._handleRemoveClick}">
+              ${this._renderTrashIcon()}
+           </div>
+        ` : html`
+           <div class="favorite-section" @click="${this._handleFavoriteClick}">
+              ${this._renderFavoriteIcon()}
+           </div>
+        `}
       </div>
+    `;
+  }
+
+  private _renderTrashIcon() {
+    return html`
+      <svg
+        class="favorite-icon"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+        style="stroke: var(--palette-grey);"
+      >
+        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+      </svg>
     `;
   }
 
@@ -134,6 +163,15 @@ export class ComponentSearchResult extends LitElement {
   private _handleFavoriteClick() {
     this.dispatchEvent(new CustomEvent('favorite-click', {
       detail: { code: this.code, value: this.favoriteState ? 'false' : 'true' },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  private _handleRemoveClick(e: Event) {
+    e.stopPropagation();
+    this.dispatchEvent(new CustomEvent('remove-click', {
+      detail: { code: this.code },
       bubbles: true,
       composed: true
     }));
