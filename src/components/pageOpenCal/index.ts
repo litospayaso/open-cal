@@ -5,6 +5,8 @@ import '../pageSearch/index';
 import '../pageFood/index';
 import '../pageUser/index';
 import '../pageHome/index';
+import '../pageHome/index';
 import '../componentGroupButton/index';
+import '../pageCodeScanner/index';
 
 register('page-opencal', PageOpenCal);

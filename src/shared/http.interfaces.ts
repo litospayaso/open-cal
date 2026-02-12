@@ -27,7 +27,7 @@ export interface QueryParams {
 export interface ProductInterface {
   code: string,
   product: {
-    nutriments: NutrimentInterface;
+    nutriments?: NutrimentInterface;
   }
 }
 

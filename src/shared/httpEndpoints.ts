@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { SearchProductInterface } from './http.interfaces';
+import type { ProductInterface, SearchProductInterface } from './http.interfaces';
 import { request } from './httpRequest';
 
 
@@ -8,7 +8,7 @@ export const getData = async (): Promise<any> => {
   return request(`/whatever`);
 };
 
-export const getProduct = async (barcode: string): Promise<any> => {
+export const getProduct = async (barcode: string): Promise<ProductInterface> => {
   return request(`v3/product/${barcode}?product_type=food&cc=es&lc=en&fields=nutriments,product_name&knowledge_panel_client=web&activate_knowledge_panels_simplified=true&activate_knowledge_panel_physical_activities=false&knowledge_panels_included=nutriments&knowledge_panels_excluded=+allergens_hierarchy&blame=0`);
 };
 

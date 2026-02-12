@@ -1,0 +1,232 @@
+import { html, css } from 'lit';
+import { state } from 'lit/decorators.js';
+import Page from '../../shared/page';
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
+import { loadCss } from '../../shared/functions';
+
+export class PageCodeScanner extends Page {
+  @state() hasPermission: boolean | null = null;
+  @state() error: string | null = null;
+  @state() scanning: boolean = false;
+
+  private html5QrCode: Html5Qrcode | null = null;
+
+  static styles = [
+    Page.styles,
+    css`
+      :host {
+        display: block;
+        height: 100vh;
+        width: 100vw;
+        background: black;
+        position: relative;
+        overflow: hidden;
+      }
+
+      #reader {
+        width: 100%;
+        height: 100%;
+        background: black;
+      }
+
+      /* Hide html5-qrcode built-in UI elements we don't want */
+      #reader video {
+        object-fit: cover;
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        pointer-events: none;
+      }
+
+      .scan-area {
+        width: 80%;
+        max-width: 300px;
+        aspect-ratio: 1/1;
+        border: 2px solid white;
+        border-radius: 12px;
+        box-shadow: 0 0 0 100vh rgba(0, 0, 0, 0.5);
+        position: relative;
+        z-index: 10;
+      }
+
+      .scan-area::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 10%;
+        right: 10%;
+        height: 2px;
+        background: red;
+        animation: scan 2s linear infinite;
+        opacity: 0.7;
+      }
+
+      @keyframes scan {
+        0% { transform: translateY(-100px); opacity: 0; }
+        50% { opacity: 1; }
+        100% { transform: translateY(100px); opacity: 0; }
+      }
+
+      .controls {
+        position: absolute;
+        bottom: 85px;
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        pointer-events: auto;
+        z-index: 20;
+      }
+
+      .back-btn {
+        border: none;
+        background-color: var(--group-button-active-bg, var(--palette-green));
+        color: var(--group-button-active-text, #fff);
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .error-msg {
+        color: white;
+        background: rgba(255, 0, 0, 0.8);
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        text-align: center;
+        pointer-events: auto;
+      }
+
+      .permission-request {
+        color: white;
+        text-align: center;
+        padding: 20px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: black;
+        z-index: 30;
+      }
+    `
+  ];
+
+  async firstUpdated() {
+    PageCodeScanner.styles.forEach((style, i) => {
+      loadCss(String(style), `page-code-scanner-styles-${i}`);
+    });
+    // Give a moment for the DOM to be ready for html5-qrcode
+    setTimeout(() => this.startScanning(), 100);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.stopScanning();
+  }
+
+  async startScanning() {
+    this.error = null;
+    try {
+      this.html5QrCode = new Html5Qrcode("reader");
+
+      const config = {
+        fps: 10,
+        qrbox: { width: 250, height: 250 },
+        aspectRatio: window.innerWidth / window.innerHeight,
+        formatsToSupport: [
+          Html5QrcodeSupportedFormats.EAN_13,
+          Html5QrcodeSupportedFormats.EAN_8,
+          Html5QrcodeSupportedFormats.UPC_A,
+          Html5QrcodeSupportedFormats.UPC_E,
+          Html5QrcodeSupportedFormats.QR_CODE
+        ]
+      };
+
+      await this.html5QrCode.start(
+        { facingMode: "environment" },
+        config,
+        (decodedText) => {
+          console.log(`Scan result: ${decodedText}`);
+          this.stopScanning();
+          this.triggerPageNavigation({ page: 'food', code: decodedText });
+        },
+        (errorMessage) => {
+          // parse error, ignore it.
+          // console.log(errorMessage);
+        }
+      );
+
+      this.hasPermission = true;
+      this.scanning = true;
+
+    } catch (err) {
+      console.error("Error starting scanner:", err);
+      this.hasPermission = false;
+      this.error = "Camera access denied or error starting scanner. Please check permissions.";
+    }
+  }
+
+  async stopScanning() {
+    if (this.html5QrCode && this.html5QrCode.isScanning) {
+      try {
+        await this.html5QrCode.stop();
+        this.html5QrCode.clear();
+      } catch (err) {
+        console.error("Failed to stop scanner", err);
+      }
+    }
+    this.scanning = false;
+  }
+
+  handleBack() {
+    this.stopScanning();
+    this.triggerPageNavigation({ page: 'search' });
+  }
+
+  createRenderRoot() {
+    return this;
+  }
+
+  render() {
+    return html`
+      <div id="reader"></div>
+      
+      ${this.hasPermission === false ? html`
+        <div class="permission-request">
+          <h2>Camera Permission Required</h2>
+          <p>${this.error || "Please allow camera access to scan barcodes."}</p>
+          <button class="back-btn" @click="${() => this.startScanning()}">Retry</button>
+          <br><br>
+          <button class="back-btn" @click="${this.handleBack}">Go Back</button>
+        </div>
+      ` : ''}
+
+      <div class="overlay">
+        ${this.error && this.hasPermission !== false ? html`<div class="error-msg">${this.error}</div>` : ''}
+        <!-- Visual guide only, logic handled by qrbox -->
+        ${this.scanning ? html`<div class="scan-area"></div>` : ''}
+      </div>
+
+      <div class="controls">
+        <button class="back-btn" @click="${this.handleBack}">Cancel</button>
+      </div>
+    `;
+  }
+}

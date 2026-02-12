@@ -1,7 +1,7 @@
 import { html, css } from 'lit';
 import Page from '../../shared/page';
 import { state } from 'lit/decorators.js';
-import { variableStyles } from '../../shared/functions';
+import { loadCss, variableStyles } from '../../shared/functions';
 import type { GroupButtonOption } from '../componentGroupButton/componentGroupButton';
 
 export default class PageOpenCal extends Page {
@@ -31,6 +31,12 @@ export default class PageOpenCal extends Page {
     { text: '👤', id: 'user', active: false },
   ];
 
+  createRenderRoot() {
+    return this;
+  }
+
+
+
   navigateToPage(params: { [key: string]: string }): void {
     delete (params.isTrusted);
     const currentParams = Object.fromEntries(this.getQueryParamsURL());
@@ -46,6 +52,10 @@ export default class PageOpenCal extends Page {
     style.textContent = variableStyles.cssText;
     this.applyTheme();
     document.head.appendChild(style);
+
+    PageOpenCal.styles.forEach((style, i) => {
+      loadCss(String(style), `page-open-cal-styles-${i}`);
+    });
   }
 
   pageRender() {
@@ -66,6 +76,10 @@ export default class PageOpenCal extends Page {
         ></page-food>`;
       case 'user':
         return html`<page-user></page-user>`;
+      case 'scanner':
+        return html`<page-code-scanner 
+          @page-navigation="${({ detail }: CustomEvent<{ [key: string]: string }>) => this.navigateToPage(detail)}"
+        ></page-code-scanner>`;
       default:
         return html`<page-home></page-home>`;
     }

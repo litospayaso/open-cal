@@ -118,6 +118,19 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         color: red;
         text-align: center;
       }
+      .add-to-diary-button {
+        margin-top: 20px;
+        width: 100%;
+        padding: 12px;
+        border: none;
+        background-color: var(--group-button-active-bg, var(--palette-green));
+        color: var(--group-button-active-text, #fff);
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 1rem;
+      }
     `,
   ];
 
@@ -196,10 +209,10 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         product: {
           code: this.product.code,
           nutriments: {
-            "energy-kcal": this.product.product.nutriments["energy-kcal_100g"] || 0,
-            carbohydrates: this.product.product.nutriments.carbohydrates_100g || 0,
-            fat: this.product.product.nutriments.fat_100g || 0,
-            proteins: this.product.product.nutriments.proteins_100g || 0,
+            "energy-kcal": this.product.product?.nutriments?.["energy-kcal_100g"] || 0,
+            carbohydrates: this.product.product?.nutriments?.carbohydrates_100g || 0,
+            fat: this.product.product?.nutriments?.fat_100g || 0,
+            proteins: this.product.product?.nutriments?.proteins_100g || 0,
             // Add other required fields if necessary, or cast.
             // For now mapping what we use in PageHome/ComponentSearchResult
           } as any,
@@ -314,26 +327,26 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
 
             <div class="nutrients-grid">
                 <div class="nutrient-item">
-                    <div class="nutrient-value">${this._calculateNutrient(nutriments['energy-kcal_100g'])}</div>
+                    <div class="nutrient-value">${this._calculateNutrient(this.product.product?.nutriments?.['energy-kcal_100g'])}</div>
                     <div class="nutrient-label">Calories (kcal)</div>
                 </div>
                 <div class="nutrient-item">
-                    <div class="nutrient-value">${this._calculateNutrient(nutriments.carbohydrates_100g)}</div>
+                    <div class="nutrient-value">${this._calculateNutrient(this.product.product?.nutriments?.carbohydrates_100g)}</div>
                     <div class="nutrient-label">Carbs (g)</div>
                 </div>
                 <div class="nutrient-item">
-                    <div class="nutrient-value">${this._calculateNutrient(nutriments.proteins_100g)}</div>
+                    <div class="nutrient-value">${this._calculateNutrient(this.product.product?.nutriments?.proteins_100g)}</div>
                     <div class="nutrient-label">Protein (g)</div>
                 </div>
                 <div class="nutrient-item">
-                    <div class="nutrient-value">${this._calculateNutrient(nutriments.fat_100g)}</div>
+                    <div class="nutrient-value">${this._calculateNutrient(this.product.product?.nutriments?.fat_100g)}</div>
                     <div class="nutrient-label">Fat (g)</div>
                 </div>
             </div>
 
              <button 
               @click="${this._addToDiary}"
-              style="margin-top: 20px; width: 100%; padding: 12px; background: var(--palette-green); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1rem;"
+              class="add-to-diary-button"
             >
               Add to Diary
             </button>
