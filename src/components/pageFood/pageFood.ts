@@ -214,8 +214,8 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
 
       await dbService.addFoodItem(this.selectedDate, this.selectedCategory, foodItem);
 
-      // Navigate to home page to see result
-      this.navigate(`home`);
+      this.triggerPageNavigation({ page: 'home' });
+
     } catch (e) {
       console.error("Error adding to diary", e);
       this.error = "Failed to add to diary";

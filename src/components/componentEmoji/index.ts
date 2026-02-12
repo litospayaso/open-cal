@@ -1,3 +1,4 @@
+import { register } from '../../shared/functions';
 import { ComponentEmoji } from './componentEmoji';
 
-customElements.define('component-emoji', ComponentEmoji);
+register('component-emoji', ComponentEmoji);

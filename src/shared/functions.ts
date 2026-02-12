@@ -81,6 +81,10 @@ export const variableStyles = css`
 
       --spinner-track-color: rgba(0, 0, 0, 0.1);
       --spinner-active-color: #a285bb;
+
+      --group-button-active-bg: var(--palette-green);
+      --group-button-active-text: #fff;
+      --group-button-hover-bg: rgba(0, 0, 0, 0.05);
     }
 
     [data-theme="dark"] {
@@ -104,6 +108,10 @@ export const variableStyles = css`
       --spinner-track-color: rgba(255, 255, 255, 0.1);
       --spinner-active-color: #a9afe9;
       /* using palette-blue for better visibility in dark mode */
+
+      --group-button-active-bg: var(--palette-purple);
+      --group-button-active-text: #000;
+      --group-button-hover-bg: rgba(255, 255, 255, 0.1);
     }
 
     body {

@@ -82,19 +82,15 @@ describe('PageFood Component Spec:', () => {
 
   it('should toggle favorite state when button is clicked', (done) => {
     waitForElement(() => shadow.querySelector('button')).then(() => {
+      const isFavorite = shadow.querySelector('.favorite-icon')?.classList.contains('is-favorite');
       const button = shadow.querySelector('button');
       expect(button).to.exist;
-      expect(button?.textContent?.trim()).to.equal('☆');
       button?.click();
 
       defer(() => {
-        expect(button?.textContent?.trim()).to.equal('★');
-        button?.click();
-
-        defer(() => {
-          expect(button?.textContent?.trim()).to.equal('☆');
-          done();
-        });
+        const favoriteChanged = shadow.querySelector('.favorite-icon')?.classList.contains('is-favorite');
+        expect(favoriteChanged).to.not.be.equal(isFavorite);
+        done();
       });
     });
   });

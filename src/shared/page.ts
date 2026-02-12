@@ -87,6 +87,10 @@ export default class Page<api = {}> extends LitElement {
     }
   }
 
+  /**
+   * Function to get language from local storage.
+   * @returns language
+   */
   getLanguage(): string {
     const language = localStorage.getItem('language');
     if (language) {
@@ -97,18 +101,30 @@ export default class Page<api = {}> extends LitElement {
     }
   }
 
+  /**
+   * Function to set language in local storage.
+   * @param {string} language language to set
+   */
   setLanguage(language: string): void {
     localStorage.setItem('language', language);
     this.translations = translations[language as keyof typeof translations] || translations.en;
     this.requestUpdate();
   }
 
+  /**
+   * Function to set theme in local storage.
+   * @param {string} theme theme to set
+   */
   setTheme(theme: 'light' | 'dark'): void {
     localStorage.setItem('theme', theme);
-    this.applyTheme(theme);
+    this.applyTheme();
   }
 
-  applyTheme(theme: 'light' | 'dark') {
+  /**
+   * Function to apply theme.
+   */
+  applyTheme() {
+    const theme = localStorage.getItem('theme') || 'light';
     if (theme === 'dark') {
       document.documentElement.setAttribute('data-theme', 'dark');
       document.documentElement.style.background = '#191c25';
@@ -149,6 +165,25 @@ export default class Page<api = {}> extends LitElement {
   getQueryParamsURL(): URLSearchParams {
     const url: URL = new URL(this.getHref());
     return url.searchParams;
+  }
+
+  /**
+   * Function to set queryparams in current url
+   * @param queryParams object with key value pairs
+   */
+  setQueryParamsURL(queryParams: { [key: string]: string }): void {
+    const queryParamsString = Object.entries(queryParams)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+    window.history.replaceState(null, null as unknown as string, `?${queryParamsString}`);
+  }
+
+  triggerPageNavigation(queryParams: { [key: string]: string }) {
+    this.dispatchEvent(new CustomEvent('page-navigation', {
+      detail: { ...queryParams },
+      bubbles: true,
+      composed: true
+    }));
   }
 
   connectedCallback() {

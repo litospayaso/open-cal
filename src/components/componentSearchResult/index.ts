@@ -1,5 +1,6 @@
+import { register } from '../../shared/functions';
 import { ComponentSearchResult } from './componentSearchResult';
 
 import '../componentEmoji/index';
 
-customElements.define('component-search-result', ComponentSearchResult);
+register('component-search-result', ComponentSearchResult);

@@ -83,7 +83,7 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
 
   private _handleElementClick(e: CustomEvent) {
     if (e.detail?.code) {
-      this.navigate(`product/${e.detail.code}`);
+      this.triggerPageNavigation({ page: 'food', code: e.detail.code });
     }
   }
 

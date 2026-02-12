@@ -6,9 +6,10 @@ import litPlugin from 'esbuild-plugin-lit';
 import { exec } from 'node:child_process';
 
 const outDir = 'dist';
+let finalVersion = '0.0.0';
 
 if (fs.existsSync('./dist')) {
-  fs.rm('./dist', { recursive: true }, () => {});
+  fs.rm('./dist', { recursive: true }, () => { });
 }
 
 const gzip = async folder => {
@@ -25,14 +26,14 @@ const gzip = async folder => {
 };
 
 const asyncForEach = async (array, callback) => {
-  for (let index = 0; index < array.length; index++) {
+  for (let index = 0;index < array.length;index++) {
     await callback(array[index], index, array);
   }
 };
 
 
-asyncForEach(glob.sync('./src/components/**/index.ts'), async file => {
-  file = file.replace(/\\/g,'/')
+await asyncForEach(glob.sync('./src/components/**/index.ts'), async file => {
+  file = file.replace(/\\/g, '/')
   const componentPath = file.replace('/index.ts', '');
   let packageJson = fs.readFileSync(`${componentPath}/package.json`);
   packageJson = JSON.parse(packageJson);
@@ -43,9 +44,12 @@ asyncForEach(glob.sync('./src/components/**/index.ts'), async file => {
     .replace('src', outDir)
     .replace('index.ts', '')
     .concat(version ? version : '');
-  const componentClass = file.replace('/index', `/${componentName}`);
   console.log('\x1b[32m%s', '\n-----------------------------');
   console.log('\x1b[32m%s\x1b[36m%s\x1b[0m', '[component]: ', componentName);
+
+  if (componentName === 'pageOpenCal') {
+    finalVersion = version;
+  }
 
   await build({
     entryPoints: [`${componentPath}/index.ts`],
@@ -86,3 +90,30 @@ asyncForEach(glob.sync('./src/components/**/index.ts'), async file => {
   console.log('\x1b[32m%s\x1b[36m%s\x1b[0m', '[gzip]:      ', zip);
   console.log('\x1b[32m%s\x1b[0m', '-----------------------------');
 });
+
+const content = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>open-cal</title>
+</head>
+<script src="./components/pageOpenCal/${finalVersion}/pageOpenCal.js"></script>
+<body>
+  <page-opencal></page-opencal>
+</body>
+</html>
+`
+
+console.log('\x1b[32m%s\x1b[0m', '-----------------------------');
+fs.writeFile('./dist/index.html', content, err => {
+  if (err) {
+    console.log('\x1b[32m%s\x1b[36m%s\x1b[0m', '[ERROR]:      ', err);
+    console.log('\x1b[32m%s\x1b[0m', '-----------------------------');
+  } else {
+    console.log('\x1b[32m%s\x1b[36m%s\x1b[0m', '[index.html]:      ', ' Test page written correctly!');
+    console.log('\x1b[32m%s\x1b[0m', '-----------------------------');
+  }
+});
+

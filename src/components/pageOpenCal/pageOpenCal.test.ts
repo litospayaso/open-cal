@@ -26,7 +26,7 @@ describe('PageOpenCal Component Spec:', () => {
   });
 
   it('should display default page without root', () => {
-    const page = shadow.querySelector('page-search');
+    const page = shadow.querySelector('page-home');
     expect(page).to.exist;
   });
 

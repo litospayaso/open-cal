@@ -1,3 +1,4 @@
+import { register } from '../../shared/functions';
 import { ComponentSpinner } from './componentSpinner';
 
-customElements.define('component-spinner', ComponentSpinner);
+register('component-spinner', ComponentSpinner);

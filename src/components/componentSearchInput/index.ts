@@ -1,3 +1,4 @@
+import { register } from '../../shared/functions';
 import { ComponentSearchInput } from './componentSearchInput';
 
-customElements.define('component-search-input', ComponentSearchInput);
+register('component-search-input', ComponentSearchInput);
