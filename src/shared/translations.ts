@@ -48,6 +48,9 @@ export const translations = {
     macroRatio: 'Proporción de macronutrientes',
     personalDetails: 'Datos personales',
     cached: 'En caché',
+    saveEdit: 'Guardar edición',
+    cancelEdit: 'Cancelar edición',
+    editProduct: 'Editar producto',
   },
   en: {
     search: 'Search',
@@ -98,6 +101,9 @@ export const translations = {
     macroRatio: 'Macronutrient Ratio',
     personalDetails: 'Personal Details',
     cached: 'Cached',
+    saveEdit: 'Save edit',
+    cancelEdit: 'Cancel edit',
+    editProduct: 'Edit product',
   },
   fr: {
     search: 'Rechercher',
@@ -148,6 +154,9 @@ export const translations = {
     macroRatio: 'Ratio de macronutriments',
     personalDetails: 'Détails personnels',
     cached: 'En cache',
+    saveEdit: 'Enregistrer',
+    cancelEdit: 'Annuler',
+    editProduct: 'Modifier le produit',
   },
   de: {
     search: 'Suche',
@@ -198,6 +207,9 @@ export const translations = {
     macroRatio: 'Makronährstoffverhältnis',
     personalDetails: 'Persönliche Daten',
     cached: 'Im Cache',
+    saveEdit: 'Änderungen speichern',
+    cancelEdit: 'Bearbeiten abbrechen',
+    editProduct: 'Produkt bearbeiten',
   },
   it: {
     search: 'Cerca',
@@ -248,5 +260,8 @@ export const translations = {
     macroRatio: 'Rapporto macronutrienti',
     personalDetails: 'Dettagli personali',
     cached: 'In cache',
+    saveEdit: 'Salva modifiche',
+    cancelEdit: 'Annulla modifica',
+    editProduct: 'Modifica prodotto',
   },
 }

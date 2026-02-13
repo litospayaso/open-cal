@@ -60,8 +60,8 @@ describe('PageFood Component Spec:', () => {
   it('should display initial nutrients for 100g', (done) => {
     waitForElement(() => shadow.querySelector('.nutrient-value')).then(() => {
       const values = shadow.querySelectorAll('.nutrient-value');
-      expect(values[0].textContent).to.equal('100.0');
-      expect(values[1].textContent).to.equal('10.0');
+      expect(values[0].textContent.trim()).to.equal('100.0');
+      expect(values[1].textContent.trim()).to.equal('10.0');
       done();
     });
   });
@@ -73,8 +73,8 @@ describe('PageFood Component Spec:', () => {
       input.dispatchEvent(new Event('input'));
       defer(() => {
         const values = shadow.querySelectorAll('.nutrient-value');
-        expect(values[0].textContent).to.equal('200.0');
-        expect(values[1].textContent).to.equal('20.0');
+        expect(values[0].textContent.trim()).to.equal('200.0');
+        expect(values[1].textContent.trim()).to.equal('20.0');
         done();
       });
     });

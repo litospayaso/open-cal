@@ -77,6 +77,8 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         padding: 1.5rem;
         border-radius: 8px;
         margin-top: 1rem;
+        margin-top: 1rem;
+        position: relative;
       }
       .input-group {
         margin-bottom: 1rem;
@@ -147,6 +149,20 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         cursor: pointer;
         font-size: 1rem;
       }
+      .save-edit-button {
+        background-color: var(--palette-purple, #a285bb);
+      }
+      .edit-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.5rem;
+        padding: 0 10px;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+      }
       .calculator-top {
         display: flex;
         flex-direction: column;
@@ -165,6 +181,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         flex-direction: column;
         gap: 1rem;
         flex: 1;
+        margin-top: 30px;
       }
 
       @media (min-width: 600px) {
@@ -178,12 +195,15 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         }
         .inputs-section {
           order: 1;
+          margin-top: 0;
         }
       }
     `,
   ];
 
   @state() product: ProductInterface | null = null;
+  @state() editedProduct: ProductInterface | null = null;
+  @state() isEditing: boolean = false;
   @state() loading: boolean = false;
   @state() error: string = '';
   @state() grams: number = 100;
@@ -248,6 +268,42 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
   private _calculateNutrient(value100g: number | undefined): string {
     if (value100g === undefined || value100g === null) return '-';
     return ((value100g * this.grams) / 100).toFixed(1);
+  }
+
+  private _toggleEditMode() {
+    if (this.isEditing) {
+      this.isEditing = false;
+      this.editedProduct = null;
+    } else {
+      if (this.product) {
+        this.editedProduct = JSON.parse(JSON.stringify(this.product));
+        this.isEditing = true;
+      }
+    }
+  }
+
+  private _handleNutrientChange(e: Event, key: string) {
+    if (!this.editedProduct || !this.editedProduct.product) return;
+    const input = e.target as HTMLInputElement;
+    const val = Number(input.value);
+
+    if (!this.editedProduct.product.nutriments) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      this.editedProduct.product.nutriments = {} as any;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (this.editedProduct.product.nutriments as any)[key] = val;
+    this.requestUpdate();
+  }
+
+  private async _saveEdit() {
+    if (this.editedProduct) {
+      this.product = this.editedProduct;
+      await this.db.cacheProduct(this.product);
+      this.isEditing = false;
+      this.editedProduct = null;
+    }
   }
 
   private async _addToDiary() {
@@ -331,6 +387,9 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
           </div>
         </div>
         <div class="calculator">
+          <button class="edit-btn" @click="${this._toggleEditMode}">
+            ${this.isEditing ? '❌' : '✏️'}
+          </button>
             <div class="calculator-top">
               <div class="inputs-section">
                 <div class="input-group">
@@ -374,13 +433,13 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
 
               <div class="chart-section">
                 <component-pie-chart
-                  .protein="${this.product.product?.nutriments?.proteins_100g || 0}"
-                  .carbs="${this.product.product?.nutriments?.carbohydrates_100g || 0}"
-                  .fat="${this.product.product?.nutriments?.fat_100g || 0}"
+                  .protein="${(this.isEditing ? this.editedProduct : this.product)?.product?.nutriments?.proteins_100g || 0}"
+                  .carbs="${(this.isEditing ? this.editedProduct : this.product)?.product?.nutriments?.carbohydrates_100g || 0}"
+                  .fat="${(this.isEditing ? this.editedProduct : this.product)?.product?.nutriments?.fat_100g || 0}"
                 >
                   <div style="display: flex; flex-direction: column; align-items: center;">
                       <span style="font-weight: bold; font-size: 1.2rem;">
-                          ${Math.round(this.product.product?.nutriments?.['energy-kcal_100g'] || 0)}
+                          ${Math.round((this.isEditing ? this.editedProduct : this.product)?.product?.nutriments?.['energy-kcal_100g'] || 0)}
                       </span>
                       <span style="font-size: 0.8rem; color: var(--input-placeholder, #666);">kcal</span>
                   </div>
@@ -390,29 +449,54 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
 
             <div class="nutrients-grid">
                 <div class="nutrient-item calories">
-                    <div class="nutrient-value">${this._calculateNutrient(this.product.product?.nutriments?.['energy-kcal_100g'])}</div>
+                    <div class="nutrient-value">
+                      ${this.isEditing
+        ? html`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.['energy-kcal_100g'] || 0).toString()}" @input="${(e: Event) => this._handleNutrientChange(e, 'energy-kcal_100g')}">`
+        : this._calculateNutrient(this.product.product?.nutriments?.['energy-kcal_100g'])}
+                    </div>
                     <div class="nutrient-label">Calories (kcal)</div>
                 </div>
                 <div class="nutrient-item carbs">
-                    <div class="nutrient-value">${this._calculateNutrient(this.product.product?.nutriments?.carbohydrates_100g)}</div>
+                    <div class="nutrient-value">
+                      ${this.isEditing
+        ? html`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.carbohydrates_100g || 0).toString()}" @input="${(e: Event) => this._handleNutrientChange(e, 'carbohydrates_100g')}">`
+        : this._calculateNutrient(this.product.product?.nutriments?.carbohydrates_100g)}
+                    </div>
                     <div class="nutrient-label">Carbs (g)</div>
                 </div>
                 <div class="nutrient-item protein">
-                    <div class="nutrient-value">${this._calculateNutrient(this.product.product?.nutriments?.proteins_100g)}</div>
+                    <div class="nutrient-value">
+                      ${this.isEditing
+        ? html`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.proteins_100g || 0).toString()}" @input="${(e: Event) => this._handleNutrientChange(e, 'proteins_100g')}">`
+        : this._calculateNutrient(this.product.product?.nutriments?.proteins_100g)}
+                    </div>
                     <div class="nutrient-label">Protein (g)</div>
                 </div>
                 <div class="nutrient-item fat">
-                    <div class="nutrient-value">${this._calculateNutrient(this.product.product?.nutriments?.fat_100g)}</div>
+                    <div class="nutrient-value">
+                      ${this.isEditing
+        ? html`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.fat_100g || 0).toString()}" @input="${(e: Event) => this._handleNutrientChange(e, 'fat_100g')}">`
+        : this._calculateNutrient(this.product.product?.nutriments?.fat_100g)}
+                    </div>
                     <div class="nutrient-label">Fat (g)</div>
                 </div>
             </div>
 
-             <button 
-              @click="${this._addToDiary}"
-              class="add-to-diary-button"
-            >
-              Add to Diary
-            </button>
+             ${this.isEditing ? html`
+              <button 
+                @click="${this._saveEdit}"
+                class="add-to-diary-button save-edit-button"
+              >
+                ${this.translations.saveEdit}
+              </button>
+             ` : html`
+              <button 
+                @click="${this._addToDiary}"
+                class="add-to-diary-button"
+              >
+                Add to Diary
+              </button>
+             `}
         </div>
       </div>
     `;
