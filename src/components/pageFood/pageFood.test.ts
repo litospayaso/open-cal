@@ -94,6 +94,14 @@ describe('PageFood Component Spec:', () => {
       });
     });
   });
+
+  it('should display pie chart', (done) => {
+    waitForElement(() => shadow.querySelector('component-pie-chart')).then(() => {
+      const pieChart = shadow.querySelector('component-pie-chart');
+      expect(pieChart).to.exist;
+      done();
+    });
+  });
 });
 
 xdescribe('PageFood Component Error/Loading Spec:', () => {

@@ -147,6 +147,39 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         cursor: pointer;
         font-size: 1rem;
       }
+      .calculator-top {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .chart-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .inputs-section {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        flex: 1;
+      }
+
+      @media (min-width: 600px) {
+        .calculator-top {
+          flex-direction: row;
+          align-items: center;
+        }
+        .chart-section {
+          order: 2;
+          flex: 1;
+        }
+        .inputs-section {
+          order: 1;
+        }
+      }
     `,
   ];
 
@@ -297,46 +330,62 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
             </button>
           </div>
         </div>
-
-
-
         <div class="calculator">
-            <div class="input-group">
-                <label for="grams">Quantity (grams):</label>
-                <input 
-                    id="grams" 
-                    type="number" 
-                    .value="${this.grams.toString()}" 
-                    @input="${this._handleGramsChange}"
-                    min="0"
-                />
-            </div>
-            
-            <div class="input-group">
-              <label for="date">Date:</label>
-              <input 
-                id="date" 
-                type="date" 
-                .value="${this.selectedDate}" 
-                @change="${(e: Event) => this.selectedDate = (e.target as HTMLInputElement).value}"
-              />
-            </div>
+            <div class="calculator-top">
+              <div class="inputs-section">
+                <div class="input-group">
+                    <label for="grams">Quantity (grams):</label>
+                    <input 
+                        id="grams" 
+                        type="number" 
+                        .value="${this.grams.toString()}" 
+                        @input="${this._handleGramsChange}"
+                        min="0"
+                    />
+                </div>
+                
+                <div class="input-group">
+                  <label for="date">Date:</label>
+                  <input 
+                    id="date" 
+                    type="date" 
+                    .value="${this.selectedDate}" 
+                    @change="${(e: Event) => this.selectedDate = (e.target as HTMLInputElement).value}"
+                  />
+                </div>
 
-            <div class="input-group">
-              <label for="category">Category:</label>
-              <select 
-                id="category" 
-                .value="${this.selectedCategory}" 
-                @change="${(e: Event) => this.selectedCategory = (e.target as HTMLInputElement).value as MealCategory}"
-                style="padding: 8px; background: var(--input-background); color: var(--input-text); border: 1px solid var(--input-border, #ccc); border-radius: 4px; width: 100%; box-sizing: border-box;"
-              >
-                <option value="breakfast">Breakfast</option>
-                <option value="snack1">Snack (Morning)</option>
-                <option value="lunch">Lunch</option>
-                <option value="snack2">Snack (Afternoon)</option>
-                <option value="dinner">Dinner</option>
-                <option value="snack3">Snack (Evening)</option>
-              </select>
+                <div class="input-group">
+                  <label for="category">Category:</label>
+                  <select 
+                    id="category" 
+                    .value="${this.selectedCategory}" 
+                    @change="${(e: Event) => this.selectedCategory = (e.target as HTMLInputElement).value as MealCategory}"
+                    style="padding: 8px; background: var(--input-background); color: var(--input-text); border: 1px solid var(--input-border, #ccc); border-radius: 4px; width: 100%; box-sizing: border-box;"
+                  >
+                    <option value="breakfast">Breakfast</option>
+                    <option value="snack1">Snack (Morning)</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="snack2">Snack (Afternoon)</option>
+                    <option value="dinner">Dinner</option>
+                    <option value="snack3">Snack (Evening)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="chart-section">
+                <component-pie-chart
+                  .protein="${this.product.product?.nutriments?.proteins_100g || 0}"
+                  .carbs="${this.product.product?.nutriments?.carbohydrates_100g || 0}"
+                  .fat="${this.product.product?.nutriments?.fat_100g || 0}"
+                >
+                  <div style="display: flex; flex-direction: column; align-items: center;">
+                      <span style="font-weight: bold; font-size: 1.2rem;">
+                          ${Math.round(this.product.product?.nutriments?.['energy-kcal_100g'] || 0)}
+                      </span>
+                      <span style="font-size: 0.8rem; color: var(--input-placeholder, #666);">kcal</span>
+                  </div>
+                </component-pie-chart>
+              </div>
             </div>
 
             <div class="nutrients-grid">
