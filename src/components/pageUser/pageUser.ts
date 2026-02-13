@@ -61,6 +61,23 @@ export default class PageUser extends Page {
         color: white;
         border-color: var(--palette-green, #4caf50);
       }
+
+      .input-calories {
+        border-color: var(--calories-color) !important;
+        border-width: var(--counter-border-width) !important;
+      }
+      .input-protein {
+        border-color: var(--protein-color) !important;
+        border-width: var(--counter-border-width) !important;
+      }
+      .input-carbs {
+        border-color: var(--carbs-color) !important;
+        border-width: var(--counter-border-width) !important;
+      }
+      .input-fat {
+        border-color: var(--fat-color) !important;
+        border-width: var(--counter-border-width) !important;
+      }
     `
   ];
 
@@ -181,22 +198,22 @@ export default class PageUser extends Page {
         
         <div class="form-group">
           <label>${this.translations.dailyCalories || 'Daily Calories'}</label>
-          <input type="number" .value="${this.dailyCalories}" @input="${(e: Event) => this._handleNumberInput('dailyCalories', e)}" placeholder="e.g. 2000" />
+          <input class="input-calories" type="number" .value="${this.dailyCalories}" @input="${(e: Event) => this._handleNumberInput('dailyCalories', e)}" placeholder="e.g. 2000" />
         </div>
 
         <label>${this.translations.macroRatio || 'Macronutrient Ratio'} (%)</label>
         <div class="macro-inputs">
           <div class="form-group">
             <label>${this.translations.protein || 'Protein'}</label>
-            <input type="number" .value="${this.proteinRatio}" @input="${(e: Event) => this._handleNumberInput('proteinRatio', e)}" />
+            <input class="input-protein" type="number" .value="${this.proteinRatio}" @input="${(e: Event) => this._handleNumberInput('proteinRatio', e)}" />
           </div>
           <div class="form-group">
             <label>${this.translations.carbs || 'Carbs'}</label>
-            <input type="number" .value="${this.carbsRatio}" @input="${(e: Event) => this._handleNumberInput('carbsRatio', e)}" />
+            <input class="input-carbs" type="number" .value="${this.carbsRatio}" @input="${(e: Event) => this._handleNumberInput('carbsRatio', e)}" />
           </div>
           <div class="form-group">
             <label>${this.translations.fat || 'Fat'}</label>
-            <input type="number" .value="${this.fatRatio}" @input="${(e: Event) => this._handleNumberInput('fatRatio', e)}" />
+            <input class="input-fat" type="number" .value="${this.fatRatio}" @input="${(e: Event) => this._handleNumberInput('fatRatio', e)}" />
           </div>
         </div>
         <div style="font-size: 0.8rem; color: #666; margin-top: 5px; text-align: right;">

@@ -71,6 +71,22 @@ export default class PageHome extends Page {
         flex-direction: column;
         justify-content: center;
       }
+      .summary-card.calories {
+        border-color: var(--calories-color);
+        border-width: var(--counter-border-width);
+      }
+      .summary-card.carbs {
+        border-color: var(--carbs-color);
+        border-width: var(--counter-border-width);
+      }
+      .summary-card.fat {
+        border-color: var(--fat-color);
+        border-width: var(--counter-border-width);
+      }
+      .summary-card.protein {
+        border-color: var(--protein-color);
+        border-width: var(--counter-border-width);
+      }
       .summary-card .value {
         font-size: 1.2rem;
         font-weight: bold;
@@ -227,19 +243,19 @@ export default class PageHome extends Page {
       </div>
 
       <div class="summary-cards">
-        <div class="summary-card">
+        <div class="summary-card calories">
           <span class="value">${this.totals.calories}</span>
           <span class="label">${this.translations.calories}</span>
         </div>
-        <div class="summary-card">
+        <div class="summary-card carbs">
           <span class="value">${this.totals.carbs}g</span>
           <span class="label">${this.translations.carbs}</span>
         </div>
-        <div class="summary-card">
+        <div class="summary-card fat">
           <span class="value">${this.totals.fat}g</span>
           <span class="label">${this.translations.fat}</span>
         </div>
-        <div class="summary-card">
+        <div class="summary-card protein">
           <span class="value">${this.totals.protein}g</span>
           <span class="label">${this.translations.protein}</span>
         </div>

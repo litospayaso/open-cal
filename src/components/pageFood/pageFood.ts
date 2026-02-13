@@ -105,6 +105,22 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         border: 1px solid var(--card-border);
       }
+      .nutrient-item.calories {
+        border-color: var(--calories-color);
+        border-width: var(--counter-border-width);
+      }
+      .nutrient-item.carbs {
+        border-color: var(--carbs-color);
+        border-width: var(--counter-border-width);
+      }
+      .nutrient-item.fat {
+        border-color: var(--fat-color);
+        border-width: var(--counter-border-width);
+      }
+      .nutrient-item.protein {
+        border-color: var(--protein-color);
+        border-width: var(--counter-border-width);
+      }
       .nutrient-value {
         font-size: 1.25rem;
         font-weight: bold;
@@ -324,19 +340,19 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
             </div>
 
             <div class="nutrients-grid">
-                <div class="nutrient-item">
+                <div class="nutrient-item calories">
                     <div class="nutrient-value">${this._calculateNutrient(this.product.product?.nutriments?.['energy-kcal_100g'])}</div>
                     <div class="nutrient-label">Calories (kcal)</div>
                 </div>
-                <div class="nutrient-item">
+                <div class="nutrient-item carbs">
                     <div class="nutrient-value">${this._calculateNutrient(this.product.product?.nutriments?.carbohydrates_100g)}</div>
                     <div class="nutrient-label">Carbs (g)</div>
                 </div>
-                <div class="nutrient-item">
+                <div class="nutrient-item protein">
                     <div class="nutrient-value">${this._calculateNutrient(this.product.product?.nutriments?.proteins_100g)}</div>
                     <div class="nutrient-label">Protein (g)</div>
                 </div>
-                <div class="nutrient-item">
+                <div class="nutrient-item fat">
                     <div class="nutrient-value">${this._calculateNutrient(this.product.product?.nutriments?.fat_100g)}</div>
                     <div class="nutrient-label">Fat (g)</div>
                 </div>
