@@ -167,9 +167,7 @@ export class PageCodeScanner extends Page {
           this.stopScanning();
           this.triggerPageNavigation({ page: 'food', code: decodedText });
         },
-        (errorMessage) => {
-          // parse error, ignore it.
-          // console.log(errorMessage);
+        () => {
         }
       );
 

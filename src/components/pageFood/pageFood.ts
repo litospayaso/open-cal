@@ -258,8 +258,6 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
       return html``;
     }
 
-    const nutriments = this.product.product.nutriments;
-
     return html`
       <div class="page-container">
         <div class="product-header">
