@@ -142,6 +142,18 @@ export class DBService {
     });
   }
 
+  async getAllCachedProducts(): Promise<any[]> {
+    await this.ensureInit();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([STORE_PRODUCTS], 'readonly');
+      const store = transaction.objectStore(STORE_PRODUCTS);
+      const request = store.getAll();
+
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
   async addFavorite(code: string): Promise<void> {
     await this.ensureInit();
     return new Promise((resolve, reject) => {

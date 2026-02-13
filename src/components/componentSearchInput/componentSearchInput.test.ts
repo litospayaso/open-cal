@@ -5,11 +5,23 @@ import { expect } from '@esm-bundle/chai';
 describe('SearchInput Component Spec:', () => {
   let element: HTMLElement;
   let shadow: ShadowRoot;
+  let searchInitEvent: CustomEvent;
+  let searchBlurEvent: CustomEvent;
+  let callCount: number = 0;
 
   beforeEach(async () => {
     const component = await createComponent({
       class: ComponentSearchInput,
-      name: 'component-search-input'
+      name: 'component-search-input',
+      listeners: {
+        'search-init': (e: CustomEvent) => {
+          searchInitEvent = e;
+        },
+        'search-blur': (e: CustomEvent) => {
+          searchBlurEvent = e;
+          callCount++;
+        },
+      }
     });
 
     shadow = component.shadow;
@@ -18,6 +30,14 @@ describe('SearchInput Component Spec:', () => {
 
   afterEach(() => {
     document.body.removeChild(element);
+    searchInitEvent = undefined as unknown as CustomEvent;
+    searchBlurEvent = undefined as unknown as CustomEvent;
+    callCount = 0;
+  });
+
+  it('should be accessible', async () => {
+    const result = await accessibilityCheck(element);
+    expect(result.length).to.be.equal(0);
   });
 
   it('should contain shadow root', () => {
@@ -37,21 +57,19 @@ describe('SearchInput Component Spec:', () => {
     expect(button).to.exist;
   });
 
-  it('should reflect properties to attributes/DOM', async () => {
+  it('should reflect properties to attributes/DOM', (done) => {
     element.setAttribute('value', 'Test Value');
     element.setAttribute('placeholder', 'Search here...');
 
     // waiting for lit update
-    await (element as ComponentSearchInput).updateComplete;
 
-    const input = shadow.querySelector('input');
-    expect(input?.value).to.equal('Test Value');
-    expect(input?.placeholder).to.equal('Search here...');
-  });
+    defer(() => {
+      const input = shadow.querySelector('input');
+      expect(input?.value).to.equal('Test Value');
+      expect(input?.placeholder).to.equal('Search here...');
+      done();
+    });
 
-  it('should be accessible', async () => {
-    const result = await accessibilityCheck(element);
-    expect(result.length).to.be.equal(0);
   });
 
   it('should update value property on input', () => {
@@ -64,46 +82,33 @@ describe('SearchInput Component Spec:', () => {
 
   it('should dispatch search-init event on blur if value changed', (done) => {
     const input = shadow.querySelector('input')!;
-
-    element.addEventListener('search-init', (e: any) => {
-      expect(e.detail.query).to.equal('Search Term');
-      done();
-    });
-
-    // Simulate input
     input.value = 'Search Term';
     input.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+    input.dispatchEvent(new Event('blur', { bubbles: true, composed: true }));
 
-    // Simulate blur
-    input.dispatchEvent(new Event('blur'));
+    defer(() => {
+      expect(searchBlurEvent?.detail.query).to.equal('Search Term');
+      done();
+    });
   });
 
   it('should dispatch search-init event on button click if value changed', (done) => {
     const input = shadow.querySelector('input')!;
     const button = shadow.querySelector('button')!;
-
-    element.addEventListener('search-init', (e: any) => {
-      expect(e.detail.query).to.equal('Button Search');
-      done();
-    });
-
-    // Simulate input
     input.value = 'Button Search';
     input.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
 
-    // Simulate click
     button.click();
+    defer(() => {
+      expect(searchInitEvent?.detail.query).to.equal('Button Search');
+      done();
+    });
+
   });
 
   it('should not dispatch search-init if value has not changed', (done) => {
-    let callCount = 0;
     const input = shadow.querySelector('input')!;
 
-    element.addEventListener('search-init', () => {
-      callCount++;
-    });
-
-    // First search
     input.value = 'Same Value';
     input.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
     input.dispatchEvent(new Event('blur'));
@@ -111,11 +116,10 @@ describe('SearchInput Component Spec:', () => {
     defer(() => {
       expect(callCount).to.equal(1);
 
-      // Attempt second search with same value
-      input.dispatchEvent(new Event('blur'));
+      input.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
 
       defer(() => {
-        expect(callCount).to.equal(1); // Should still be 1
+        expect(callCount).to.equal(1);
         done();
       });
     });

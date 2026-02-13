@@ -47,6 +47,7 @@ export const translations = {
     dailyCalories: 'Calorías diarias',
     macroRatio: 'Proporción de macronutrientes',
     personalDetails: 'Datos personales',
+    cached: 'En caché',
   },
   en: {
     search: 'Search',
@@ -96,6 +97,7 @@ export const translations = {
     dailyCalories: 'Daily Calories',
     macroRatio: 'Macronutrient Ratio',
     personalDetails: 'Personal Details',
+    cached: 'Cached',
   },
   fr: {
     search: 'Rechercher',
@@ -145,6 +147,7 @@ export const translations = {
     dailyCalories: 'Calories journalières',
     macroRatio: 'Ratio de macronutriments',
     personalDetails: 'Détails personnels',
+    cached: 'En cache',
   },
   de: {
     search: 'Suche',
@@ -194,6 +197,7 @@ export const translations = {
     dailyCalories: 'Tägliche Kalorien',
     macroRatio: 'Makronährstoffverhältnis',
     personalDetails: 'Persönliche Daten',
+    cached: 'Im Cache',
   },
   it: {
     search: 'Cerca',
@@ -243,5 +247,6 @@ export const translations = {
     dailyCalories: 'Calorie giornaliere',
     macroRatio: 'Rapporto macronutrienti',
     personalDetails: 'Dettagli personali',
+    cached: 'In cache',
   },
 }

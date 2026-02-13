@@ -1,13 +1,13 @@
 import { css, html } from 'lit';
 import { state } from 'lit/decorators.js';
 import Page from '../../shared/page';
-import { searchProduct } from '../../shared/httpEndpoints';
+import { searchProduct, getProduct } from '../../shared/httpEndpoints';
 import { api } from '../../shared/api.decorator';
 
 import type { SearchProductItemInterface } from '../../shared/http.interfaces';
 
-@api({ searchProduct })
-export default class PageSearch extends Page<{ searchProduct: typeof searchProduct }> {
+@api({ searchProduct, getProduct })
+export default class PageSearch extends Page<{ searchProduct: typeof searchProduct, getProduct: typeof getProduct }> {
   static styles = [
     Page.styles,
     css`
@@ -26,6 +26,11 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
         flex-direction: row;
         align-items: center;
         gap: 6px;
+        margin-bottom: 20px;
+      }
+      .group-button-wrapper {
+        display: flex;
+        justify-content: center;
         margin-bottom: 20px;
       }
       .search-container component-search-input{
@@ -71,47 +76,129 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
   @state() loading: boolean = false;
 
   @state() query: string = '';
+  @state() viewMode: 'cached' | 'favorites' | 'search' = 'cached';
+  @state() groupButtonOptions = [
+    { text: this.translations.cached, id: 'cached', active: true },
+    { text: this.translations.favorites, id: 'favorites', active: false },
+    { text: this.translations.search, id: 'search', active: false }
+  ];
 
-  private async _handleSearchInit(e: CustomEvent) {
-    const query = e.detail.query;
-    this.query = '';
+  async onPageInit(): Promise<void> {
+    await this.db.init();
+    this._loadData();
+  }
+
+  private async _loadData() {
     this.loading = true;
-
     try {
-      const searchResponse = await this.api.searchProduct(query);
-      if (searchResponse.products && searchResponse.products.length > 0) {
-        this.searchResult = await Promise.all(searchResponse.products.map(async product => {
-          return {
-            ...product,
-            isFavorite: await this.db.isFavorite(product.code)
-          };
-        }));
-        this.query = query;
-        this.loading = false;
-      } else {
-        this.searchResult = [];
-        this.query = query;
-        this.loading = false;
+      let products: any[] = [];
+
+      if (this.viewMode === 'cached') {
+        products = await this.db.getAllCachedProducts();
+        if (products && products.length > 0 && this.query) {
+          products = products.filter(p => {
+            const name = p.product_name || p.product?.product_name || '';
+            return name.toLowerCase().includes(this.query.toLowerCase());
+          });
+        }
+      } else if (this.viewMode === 'favorites') {
+        const favorites = await this.db.getFavorites();
+        const promises = favorites.map(async (fav) => {
+          return await this.db.getCachedProduct(fav.code);
+        });
+        const results = await Promise.all(promises);
+        products = results.filter(p => !!p);
+
+        if (products && products.length > 0 && this.query) {
+          products = products.filter(p => {
+            const name = p.product_name || p.product?.product_name || '';
+            return name.toLowerCase().includes(this.query.toLowerCase());
+          });
+        }
+      } else if (this.viewMode === 'search') {
+        if (this.query) {
+          const searchResponse = await this.api.searchProduct(this.query);
+          products = searchResponse.products || [];
+        } else {
+          products = [];
+        }
       }
-    } catch (error) {
-      console.error('Error during search:', error);
+
+      this.searchResult = await Promise.all(products.map(async product => {
+        const isFavorite = await this.db.isFavorite(product.code);
+        // Normalize structure if it comes from cache (nested product object)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const normalized: any = { ...product, isFavorite };
+        if (product.product) {
+          normalized.product_name = product.product.product_name || normalized.product_name;
+          normalized.nutriments = product.product.nutriments || normalized.nutriments;
+        }
+        return normalized;
+      }));
+
+    } catch (e) {
+      console.error('Error loading data', e);
       this.searchResult = [];
-      this.query = query;
+    } finally {
       this.loading = false;
     }
   }
 
-  private _handleFavoriteClick(e: CustomEvent) {
+
+  private async _handleSearchInit(e: CustomEvent) {
+    const { query, isButtonClick } = e.detail;
+    this.query = query;
+
+    if (isButtonClick) {
+      this._switchMode('search');
+    } else {
+      // Enter key or similar
+      this._loadData();
+    }
+  }
+
+  private _handleSearchBlur(e: CustomEvent) {
+    this.query = e.detail.query;
+    // "If the user is in search food it will be the same behavior it will fetch to the api"
+    // "after the blur it will filter the selected list... by the input text"
+    this._loadData();
+  }
+
+  private _handleModeSwitch(e: CustomEvent) {
+    this._switchMode(e.detail.id);
+  }
+
+  private _switchMode(mode: 'cached' | 'favorites' | 'search') {
+    this.viewMode = mode;
+    this.groupButtonOptions = this.groupButtonOptions.map(opt => ({
+      ...opt,
+      active: opt.id === mode
+    }));
+    this._loadData();
+  }
+
+  private async _handleFavoriteClick(e: CustomEvent) {
     if (e.detail?.code) {
       const product = this.searchResult.find(product => product.code === e.detail.code);
       if (product) {
         product.isFavorite = e.detail.value === 'true';
+        this.requestUpdate(); // specific update to show UI change immediately
+
         if (product.isFavorite) {
-          this.db.addFavorite(e.detail.code);
+          try {
+            // Fetch full product to cache it correctly
+            const fullProduct = await this.api.getProduct(e.detail.code);
+            if (fullProduct) {
+              await this.db.cacheProduct(fullProduct);
+              await this.db.addFavorite(e.detail.code);
+            }
+          } catch (err) {
+            console.error('Error adding favorite', err);
+            // Revert UI if failed? For now keep it simple
+          }
         } else {
-          this.db.removeFavorite(e.detail.code);
+          await this.db.removeFavorite(e.detail.code);
         }
-        this.requestUpdate();
       }
     }
   }
@@ -131,6 +218,7 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
             placeholder="${this.translations.searchProduct}" 
             search-button-text="${this.translations.search}" 
             @search-init="${this._handleSearchInit}"
+            @search-blur="${this._handleSearchBlur}"
           ></component-search-input>
           <button class="scan-btn" @click="${() => this.triggerPageNavigation({ page: 'scanner' })}">
             <svg width="800px" height="35px" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
@@ -145,6 +233,14 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
             </svg>
           </button>
         </div>
+        
+        <div class="group-button-wrapper">
+             <component-group-button
+                .options="${this.groupButtonOptions}"
+                @group-button-click="${this._handleModeSwitch}"
+             ></component-group-button>
+        </div>
+
         ${this.loading ? html`
           <component-spinner class="loading-spinner"></component-spinner>
         ` : html`

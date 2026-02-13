@@ -74,11 +74,12 @@ export class ComponentSearchInput extends LitElement {
           type="text" 
           .value="${this.value}" 
           @input="${this._handleInput}" 
-          @blur="${this._handleSearch}" 
+          @blur="${this._handleBlur}" 
+          @keydown="${this._handleKeyDown}"
           placeholder="${this.placeholder}"
           aria-label="Search"
         />
-        <button @click="${this._handleSearch}" aria-label="Search button">🔎</button>
+        <button @click="${this._handleSearchClick}" aria-label="Search button">🔎</button>
       </div>
     `;
   }
@@ -88,11 +89,26 @@ export class ComponentSearchInput extends LitElement {
     this.value = target.value;
   }
 
-  private _handleSearch() {
-    if (this.previousValue !== this.value) {
-      this.previousValue = this.value;
+  private _handleBlur() {
+    this.dispatchEvent(new CustomEvent('search-blur', {
+      detail: { query: this.value },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  private _handleSearchClick() {
+    this.dispatchEvent(new CustomEvent('search-init', {
+      detail: { query: this.value, isButtonClick: true },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  private _handleKeyDown(e: KeyboardEvent) {
+    if (e.key === 'Enter') {
       this.dispatchEvent(new CustomEvent('search-init', {
-        detail: { query: this.value },
+        detail: { query: this.value, isButtonClick: false },
         bubbles: true,
         composed: true
       }));

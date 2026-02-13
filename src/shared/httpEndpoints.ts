@@ -13,6 +13,7 @@ export const getProduct = async (barcode: string): Promise<ProductInterface> => 
 };
 
 export const searchProduct = async (query: string): Promise<SearchProductInterface> => {
-  return request(`/v2/search?categories_tags=${query}&fields=code,product_name,nutriments&lc=en&page_size=20&sort_by=popularity`);
+  const lang = localStorage.getItem('language') || 'en';
+  return request(`/v2/search?categories_tags_${lang}=${query}&fields=code,brands,product_name,nutriments&lc=${lang}&page_size=30&sort_by=popularity`);
   // return request(`v2/search?categories_tags=${query}&lc=en&fields=code,product_name&sort_by=popularity`);
 };
