@@ -141,7 +141,7 @@ export default class PageHome extends Page {
   async loadData() {
     this.loading = true;
     try {
-      this.dailyLog = await dbService.getDailyLog(this.currentDate);
+      this.dailyLog = await this.db.getDailyLog(this.currentDate);
       this.calculateTotals();
     } catch (e) {
       console.error("Failed to load daily log", e);
@@ -273,7 +273,7 @@ export default class PageHome extends Page {
   async _handleRemoveItem(category: MealCategory, index: number) {
     if (!this.dailyLog) return;
     try {
-      await dbService.removeFoodItem(this.currentDate, category, index);
+      await this.db.removeFoodItem(this.currentDate, category, index);
       this.loadData();
     } catch (e) {
       console.error("Failed to remove item", e);

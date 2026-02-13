@@ -19,8 +19,10 @@ export interface DailyLog {
 }
 
 const DB_NAME = 'OpenCalDB';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE_NAME = 'daily_consumption';
+const STORE_PRODUCTS = 'products';
+const STORE_FAVORITES = 'favorites';
 
 export class DBService {
   private db: IDBDatabase | null = null;
@@ -43,6 +45,12 @@ export class DBService {
         const db = (event.target as IDBOpenDBRequest).result;
         if (!db.objectStoreNames.contains(STORE_NAME)) {
           db.createObjectStore(STORE_NAME, { keyPath: 'date' });
+        }
+        if (!db.objectStoreNames.contains(STORE_PRODUCTS)) {
+          db.createObjectStore(STORE_PRODUCTS, { keyPath: 'code' });
+        }
+        if (!db.objectStoreNames.contains(STORE_FAVORITES)) {
+          db.createObjectStore(STORE_FAVORITES, { keyPath: 'code' });
         }
       };
     });
@@ -108,6 +116,78 @@ export class DBService {
       log[category].splice(index, 1);
       await this.saveDailyLog(log);
     }
+  }
+
+  async cacheProduct(product: any): Promise<void> {
+    await this.ensureInit();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([STORE_PRODUCTS], 'readwrite');
+      const store = transaction.objectStore(STORE_PRODUCTS);
+      const request = store.put(product);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async getCachedProduct(code: string): Promise<any | undefined> {
+    await this.ensureInit();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([STORE_PRODUCTS], 'readonly');
+      const store = transaction.objectStore(STORE_PRODUCTS);
+      const request = store.get(code);
+
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async addFavorite(code: string): Promise<void> {
+    await this.ensureInit();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([STORE_FAVORITES], 'readwrite');
+      const store = transaction.objectStore(STORE_FAVORITES);
+      const request = store.put({ code });
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async removeFavorite(code: string): Promise<void> {
+    await this.ensureInit();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([STORE_FAVORITES], 'readwrite');
+      const store = transaction.objectStore(STORE_FAVORITES);
+      const request = store.delete(code);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async isFavorite(code: string): Promise<boolean> {
+    await this.ensureInit();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([STORE_FAVORITES], 'readonly');
+      const store = transaction.objectStore(STORE_FAVORITES);
+      const request = store.get(code);
+
+      request.onsuccess = () => resolve(!!request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async getFavorites(): Promise<any[]> {
+    await this.ensureInit();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([STORE_FAVORITES], 'readonly');
+      const store = transaction.objectStore(STORE_FAVORITES);
+      const request = store.getAll();
+
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
   }
 
   private async ensureInit(): Promise<void> {

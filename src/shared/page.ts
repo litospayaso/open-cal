@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { type CSSResultGroup, css, LitElement } from 'lit';
 import { translations } from './translations';
+import { dbService, DBService } from './db';
 
 export default class Page<api = {}> extends LitElement {
   /**
@@ -9,6 +10,8 @@ export default class Page<api = {}> extends LitElement {
   api!: api;
 
   translations: { [key: string]: string } = translations.en;
+
+  protected db: DBService = dbService;
 
   constructor() {
     super();
@@ -191,109 +194,10 @@ export default class Page<api = {}> extends LitElement {
     this.onPageInit();
   }
 
-  protected db: IDBDatabase | null = null;
-
-  async initDB(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open('FoodDB', 1);
-
-      request.onerror = () => {
-        console.error('Database error:', request.error);
-        reject(request.error);
-      };
-
-      request.onsuccess = (event) => {
-        this.db = (event.target as IDBOpenDBRequest).result;
-        resolve();
-      };
-
-      request.onupgradeneeded = (event) => {
-        const db = (event.target as IDBOpenDBRequest).result;
-        if (!db.objectStoreNames.contains('products')) {
-          db.createObjectStore('products', { keyPath: 'code' });
-        }
-        if (!db.objectStoreNames.contains('favorites')) {
-          db.createObjectStore('favorites', { keyPath: 'code' });
-        }
-      };
-    });
-  }
-
-  async cacheProduct(product: any): Promise<void> {
-    if (!this.db) await this.initDB();
-    return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(['products'], 'readwrite');
-      const store = transaction.objectStore('products');
-      const request = store.put(product);
-
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  }
-
-  async getCachedProduct(code: string): Promise<any | undefined> {
-    if (!this.db) await this.initDB();
-    return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(['products'], 'readonly');
-      const store = transaction.objectStore('products');
-      const request = store.get(code);
-
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
-  }
-
-  async addFavorite(code: string): Promise<void> {
-    if (!this.db) await this.initDB();
-    return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(['favorites'], 'readwrite');
-      const store = transaction.objectStore('favorites');
-      const request = store.put({ code });
-
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  }
-
-  async removeFavorite(code: string): Promise<void> {
-    if (!this.db) await this.initDB();
-    return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(['favorites'], 'readwrite');
-      const store = transaction.objectStore('favorites');
-      const request = store.delete(code);
-
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-    });
-  }
-
-  async isFavorite(code: string): Promise<boolean> {
-    if (!this.db) await this.initDB();
-    return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(['favorites'], 'readonly');
-      const store = transaction.objectStore('favorites');
-      const request = store.get(code);
-
-      request.onsuccess = () => resolve(!!request.result);
-      request.onerror = () => reject(request.error);
-    });
-  }
-
-  async getFavorites(): Promise<any[]> {
-    if (!this.db) await this.initDB();
-    return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(['favorites'], 'readonly');
-      const store = transaction.objectStore('favorites');
-      const request = store.getAll();
-
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
-  }
-
   /**
    * It will be called after the Page component is loaded.
    */
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   onPageInit(): void { }
 }
+

@@ -5,7 +5,7 @@ import { getProduct } from '../../shared/httpEndpoints';
 import { api } from '../../shared/api.decorator';
 
 import type { ProductInterface } from '../../shared/http.interfaces';
-import { dbService, type MealCategory } from '../../shared/db';
+import type { MealCategory } from '../../shared/db';
 
 @api({ getProduct })
 export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
@@ -198,10 +198,10 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
     if (code) {
       this.loading = true;
       try {
-        await this.initDB();
-        this.isFavoriteState = await super.isFavorite(code);
+        await this.db.init();
+        this.isFavoriteState = await this.db.isFavorite(code);
 
-        const cached = await this.getCachedProduct(code);
+        const cached = await this.db.getCachedProduct(code);
         if (cached) {
           this.product = cached;
           this.loading = false;
@@ -209,7 +209,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
           const response = await this.api.getProduct(code);
           if (response && response.product) {
             this.product = response;
-            await this.cacheProduct(response);
+            await this.db.cacheProduct(response);
           } else {
             this.error = 'Product not found';
           }
@@ -229,10 +229,10 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
     if (!this.product) return;
     const code = this.product.code;
     if (this.isFavoriteState) {
-      await this.removeFavorite(code);
+      await this.db.removeFavorite(code);
       this.isFavoriteState = false;
     } else {
-      await this.addFavorite(code);
+      await this.db.addFavorite(code);
       this.isFavoriteState = true;
     }
   }
@@ -274,7 +274,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         unit: 'g'
       };
 
-      await dbService.addFoodItem(this.selectedDate, this.selectedCategory, foodItem);
+      await this.db.addFoodItem(this.selectedDate, this.selectedCategory, foodItem);
 
       this.triggerPageNavigation({ page: 'home' });
 
