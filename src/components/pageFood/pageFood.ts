@@ -210,10 +210,12 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
   @state() isFavoriteState: boolean = false;
   @state() selectedDate: string = new Date().toISOString().split('T')[0];
   @state() selectedCategory: MealCategory = 'breakfast';
+  @state() mealId: string | null = null;
 
   async onPageInit(): Promise<void> {
     const params = this.getQueryParamsURL();
     const code = params.get('code');
+    this.mealId = params.get('mealId');
 
     if (code) {
       this.loading = true;
@@ -337,6 +339,47 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
     } catch (e) {
       console.error("Error adding to diary", e);
       this.error = "Failed to add to diary";
+    }
+  }
+
+  private async _addToMeal() {
+    if (!this.product || !this.mealId) return;
+
+    try {
+      const draft = localStorage.getItem('current_draft_meal');
+      if (draft) {
+        const meal = JSON.parse(draft);
+        // Verify ID matches? 
+        if (meal.id !== this.mealId) {
+          console.warn("Meal ID mismatch", meal.id, this.mealId);
+          // Fallback: Use the storage one if it looks like what we expect, or just error?
+          // Ideally we trust the user flow. If they navigated here from a meal, localstorage should match.
+        }
+
+        const foodItem = {
+          product: {
+            code: this.product.code,
+            nutriments: {
+              "energy-kcal": this.product.product?.nutriments?.["energy-kcal_100g"] || 0,
+              carbohydrates: this.product.product?.nutriments?.carbohydrates_100g || 0,
+              fat: this.product.product?.nutriments?.fat_100g || 0,
+              proteins: this.product.product?.nutriments?.proteins_100g || 0,
+            } as any,
+            product_name: (this.product.product as any).product_name,
+          },
+          quantity: this.grams,
+          unit: 'g'
+        };
+
+        meal.foods.push(foodItem);
+        localStorage.setItem('current_draft_meal', JSON.stringify(meal));
+        this.triggerPageNavigation({ page: 'meal', id: this.mealId });
+      } else {
+        this.error = "Draft meal not found";
+      }
+    } catch (e) {
+      console.error("Error adding to meal", e);
+      this.error = "Failed to add to meal";
     }
   }
 
@@ -489,6 +532,13 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
               >
                 ${this.translations.saveEdit}
               </button>
+             ` : (this.mealId ? html`
+              <button 
+                @click="${this._addToMeal}"
+                class="add-to-diary-button"
+              >
+                ${this.translations.addToMeal}
+              </button>
              ` : html`
               <button 
                 @click="${this._addToDiary}"
@@ -496,7 +546,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
               >
                 Add to Diary
               </button>
-             `}
+             `)}
         </div>
       </div>
     `;

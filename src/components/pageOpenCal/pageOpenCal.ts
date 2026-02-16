@@ -3,6 +3,7 @@ import Page from '../../shared/page';
 import { state } from 'lit/decorators.js';
 import { loadCss, variableStyles } from '../../shared/functions';
 import type { GroupButtonOption } from '../componentGroupButton/componentGroupButton';
+import '../pageMeal/pageMeal';
 
 export default class PageOpenCal extends Page {
   static styles = [
@@ -37,13 +38,16 @@ export default class PageOpenCal extends Page {
 
 
 
-  navigateToPage(params: { [key: string]: string }): void {
+  navigateToPage(params: { [key: string]: string }, maintainParams: boolean = true): void {
     delete (params.isTrusted);
     const currentParams = Object.fromEntries(this.getQueryParamsURL());
     if (params.page) {
       this.page = params.page || 'home';
     }
-    this.setQueryParamsURL({ ...currentParams, ...params });
+    if (maintainParams) {
+      params = { ...currentParams, ...params };
+    }
+    this.setQueryParamsURL(params);
     this.requestUpdate();
   }
 
@@ -60,7 +64,9 @@ export default class PageOpenCal extends Page {
 
   pageRender() {
     const params = this.getQueryParamsURL();
+    console.log('%c params', 'background: #df03fc; color: #f8fc03', params);
     this.page = params.get('page') || 'home';
+    console.log('%c this.page', 'background: #df03fc; color: #f8fc03', this.page);
     this.updateGroupButtonOptions();
 
     switch (this.page) {
@@ -80,6 +86,10 @@ export default class PageOpenCal extends Page {
         return html`<page-code-scanner 
           @page-navigation="${({ detail }: CustomEvent<{ [key: string]: string }>) => this.navigateToPage(detail)}"
         ></page-code-scanner>`;
+      case 'meal':
+        return html`<page-meal 
+          @page-navigation="${({ detail }: CustomEvent<{ [key: string]: string }>) => this.navigateToPage(detail)}"
+        ></page-meal>`;
       default:
         return html`<page-home></page-home>`;
     }
@@ -87,7 +97,7 @@ export default class PageOpenCal extends Page {
 
   handleGroupButtonClick(event: CustomEvent) {
     this.updateGroupButtonOptions();
-    this.navigateToPage({ page: event.detail.id });
+    this.navigateToPage({ page: event.detail.id }, false);
     this.requestUpdate();
   }
 

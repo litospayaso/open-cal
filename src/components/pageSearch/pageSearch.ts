@@ -76,16 +76,40 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
   @state() loading: boolean = false;
 
   @state() query: string = '';
-  @state() viewMode: 'cached' | 'favorites' | 'search' = 'cached';
+  @state() viewMode: 'cached' | 'favorites' | 'search' | 'meals' = 'cached';
   @state() groupButtonOptions = [
     { text: this.translations.cached, id: 'cached', active: true },
     { text: this.translations.favorites, id: 'favorites', active: false },
-    { text: this.translations.search, id: 'search', active: false }
+    { text: this.translations.search, id: 'search', active: false },
+    { text: this.translations.meals, id: 'meals', active: false }
   ];
 
   async onPageInit(): Promise<void> {
     await this.db.init();
-    this._loadData();
+    const params = this.getQueryParamsURL();
+    const viewMode = params.get('viewMode');
+    const mealId = params.get('mealId');
+
+    if (mealId) {
+      this.groupButtonOptions = [
+        { text: this.translations.cached, id: 'cached', active: true },
+        { text: this.translations.favorites, id: 'favorites', active: false },
+        { text: this.translations.search, id: 'search', active: false }
+      ]
+    } else {
+      this.groupButtonOptions = [
+        { text: this.translations.cached, id: 'cached', active: true },
+        { text: this.translations.favorites, id: 'favorites', active: false },
+        { text: this.translations.search, id: 'search', active: false },
+        { text: this.translations.meals, id: 'meals', active: false }
+      ]
+    }
+
+    if (viewMode && ['cached', 'favorites', 'search', 'meals'].includes(viewMode)) {
+      this._switchMode(viewMode as any);
+    } else {
+      this._loadData();
+    }
   }
 
   private async _loadData() {
@@ -122,9 +146,39 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
         } else {
           products = [];
         }
+      } else if (this.viewMode === 'meals') {
+        const meals = await this.db.getAllMeals();
+        // Transform meals to match searchResult structure roughly or just use a flag?
+        // searchResult expects SearchProductItemInterface.
+        // We can map meals to a similar structure or use a separate list. 
+        // But to keep it simple with existing render, let's cast.
+        // We need special handling in render for meals if we use the same list.
+        // OR we add a specific "createNew" item.
+
+        const mealItems = meals.map(m => ({
+          code: m.id,
+          url: '', // unused?
+          product_name: m.name,
+          nutriments: {
+            'energy-kcal': m.foods.reduce((acc, f) => acc + (f.product.nutriments?.['energy-kcal'] || 0), 0)
+          } as any,
+          // ... other props
+        } as any));
+
+        // Prepend create new
+        products = [
+          {
+            code: this._generateId(),
+            product_name: this.translations.createNewMeal,
+            nutriments: {} as any,
+          },
+          ...mealItems
+        ];
       }
 
       this.searchResult = await Promise.all(products.map(async product => {
+        if (this.viewMode === 'meals') return product; // Skip product lookups for meals
+
         const isFavorite = await this.db.isFavorite(product.code);
         // Normalize structure if it comes from cache (nested product object)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -144,6 +198,9 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
     }
   }
 
+  private _generateId(): string {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  }
 
   private async _handleSearchInit(e: CustomEvent) {
     const { query, isButtonClick } = e.detail;
@@ -168,7 +225,7 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
     this._switchMode(e.detail.id);
   }
 
-  private _switchMode(mode: 'cached' | 'favorites' | 'search') {
+  private _switchMode(mode: 'cached' | 'favorites' | 'search' | 'meals') {
     this.viewMode = mode;
     this.groupButtonOptions = this.groupButtonOptions.map(opt => ({
       ...opt,
@@ -205,7 +262,18 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
 
   private _handleElementClick(e: CustomEvent) {
     if (e.detail?.code) {
-      this.triggerPageNavigation({ page: 'food', code: e.detail.code });
+      if (this.viewMode === 'meals') {
+        this.triggerPageNavigation({ page: 'meal', mealId: e.detail.code });
+      } else {
+        // If we are in search (non-meal) but we have a mealId param, pass it
+        const params = this.getQueryParamsURL();
+        const mealId = params.get('mealId');
+        const navParams: any = { page: 'food', code: e.detail.code };
+        if (mealId) {
+          navParams.mealId = mealId;
+        }
+        this.triggerPageNavigation(navParams);
+      }
     }
   }
 

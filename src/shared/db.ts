@@ -18,11 +18,19 @@ export interface DailyLog {
   snack3: FoodEntry[];
 }
 
+export interface Meal {
+  id: string;
+  name: string;
+  description?: string;
+  foods: FoodEntry[];
+}
+
 const DB_NAME = 'OpenCalDB';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const STORE_NAME = 'daily_consumption';
 const STORE_PRODUCTS = 'products';
 const STORE_FAVORITES = 'favorites';
+const STORE_MEALS = 'meals';
 
 export class DBService {
   private db: IDBDatabase | null = null;
@@ -51,6 +59,9 @@ export class DBService {
         }
         if (!db.objectStoreNames.contains(STORE_FAVORITES)) {
           db.createObjectStore(STORE_FAVORITES, { keyPath: 'code' });
+        }
+        if (!db.objectStoreNames.contains(STORE_MEALS)) {
+          db.createObjectStore(STORE_MEALS, { keyPath: 'id' });
         }
       };
     });
@@ -198,6 +209,54 @@ export class DBService {
       const request = store.getAll();
 
       request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async saveMeal(meal: Meal): Promise<void> {
+    await this.ensureInit();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([STORE_MEALS], 'readwrite');
+      const store = transaction.objectStore(STORE_MEALS);
+      const request = store.put(meal);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async getMeal(id: string): Promise<Meal | undefined> {
+    await this.ensureInit();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([STORE_MEALS], 'readonly');
+      const store = transaction.objectStore(STORE_MEALS);
+      const request = store.get(id);
+
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async getAllMeals(): Promise<Meal[]> {
+    await this.ensureInit();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([STORE_MEALS], 'readonly');
+      const store = transaction.objectStore(STORE_MEALS);
+      const request = store.getAll();
+
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async deleteMeal(id: string): Promise<void> {
+    await this.ensureInit();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([STORE_MEALS], 'readwrite');
+      const store = transaction.objectStore(STORE_MEALS);
+      const request = store.delete(id);
+
+      request.onsuccess = () => resolve();
       request.onerror = () => reject(request.error);
     });
   }
