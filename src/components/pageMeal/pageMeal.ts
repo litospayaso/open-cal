@@ -39,11 +39,7 @@ export default class PageMeal extends Page {
       .food-item-container {
         display: flex;
         align-items: center;
-        border-bottom: 1px solid var(--card-border);
         padding-right: 10px;
-      }
-      .food-item-container:last-child {
-        border-bottom: none;
       }
       .food-item-content {
         flex: 1;
@@ -96,6 +92,54 @@ export default class PageMeal extends Page {
         margin-top: 0.5rem;
         text-align: center;
       }
+      .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-top: 1rem;
+        border-top: 1px solid var(--card-border);
+        padding-top: 1rem;
+      }
+      .summary-card {
+        background: var(--card-background);
+        border: 1px solid var(--card-border);
+        border-radius: 8px;
+        padding: 5px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .summary-card.calories {
+        border-color: var(--calories-color);
+        border-width: var(--counter-border-width);
+      }
+      .summary-card.carbs {
+        border-color: var(--carbs-color);
+        border-width: var(--counter-border-width);
+      }
+      .summary-card.fat {
+        border-color: var(--fat-color);
+        border-width: var(--counter-border-width);
+      }
+      .summary-card.protein {
+        border-color: var(--protein-color);
+        border-width: var(--counter-border-width);
+      }
+      .summary-card .value {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: var(--card-text);
+      }
+      .summary-card .label {
+        font-size: 0.7rem;
+        color: var(--input-placeholder);
+      }
+      @media (max-width: 600px) {
+        .summary-cards {
+            grid-template-columns: 1fr 1fr;
+        }
+      }
     `
   ];
 
@@ -107,129 +151,71 @@ export default class PageMeal extends Page {
   };
   @state() isNew: boolean = true;
   @state() error: string = '';
-  @state() loading: boolean = false;
+  @state() selectedCategory: 'breakfast' | 'snack1' | 'lunch' | 'snack2' | 'dinner' | 'snack3' = 'lunch';
+  @state() selectedDate: string = new Date().toISOString().split('T')[0];
+
+  private _handleDateChange(e: Event) {
+    this.selectedDate = (e.target as HTMLInputElement).value;
+  }
 
   async onPageInit(): Promise<void> {
     await this.db.init();
     const params = this.getQueryParamsURL();
-    const id = params.get('id');
+    const id = params.get('mealId');
 
-    if (id && id !== 'new') {
-      const meal = await this.db.getMeal(id);
-      if (meal) {
-        this.meal = meal;
-        this.isNew = false;
-        // Also update draft to match current db state for editing
-        localStorage.setItem('current_draft_meal', JSON.stringify(meal));
+    if (id) {
+      if (id === 'new') {
+        const newId = this._generateId();
+        await this._createNewMeal(newId);
       } else {
-        // Fallback or error? Check draft if ID matches
-        this._loadDraft(id);
+        const meal = await this.db.getMeal(id);
+        if (meal) {
+          this.meal = meal;
+          this.isNew = false;
+        } else {
+          await this._createNewMeal(id);
+        }
       }
     } else {
-      this.isNew = true;
-      // Check for existing draft or create new
-      const draft = localStorage.getItem('current_draft_meal');
-      if (draft) {
-        try {
-          const parsed = JSON.parse(draft);
-          // If we want to support multiple drafts we might need logic here, but for now single draft
-          this.meal = parsed;
-        } catch (e) {
-          this._initNewDraft();
-        }
-      } else {
-        this._initNewDraft();
-      }
-    }
-  }
-
-  private _generateId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-  }
-
-  private _initNewDraft() {
-    this.meal = {
-      id: this._generateId(),
-      name: '',
-      description: '',
-      foods: []
-    };
-    this._saveDraft();
-  }
-
-  private _loadDraft(id: string) {
-    const draft = localStorage.getItem('current_draft_meal');
-    if (draft) {
-      try {
-        const parsed = JSON.parse(draft);
-        if (parsed.id === id) {
-          this.meal = parsed;
-          return;
-        }
-      } catch (e) {
-        console.error("Error parsing draft", e);
-      }
-    }
-    // If no draft matches, init new one or show error
-    this.error = "Meal not found";
-  }
-
-  private _saveDraft() {
-    localStorage.setItem('current_draft_meal', JSON.stringify(this.meal));
-  }
-
-  private _handleNameChange(e: Event) {
-    this.meal = { ...this.meal, name: (e.target as HTMLInputElement).value };
-    this._saveDraft();
-  }
-
-  private _handleDescriptionChange(e: Event) {
-    this.meal = { ...this.meal, description: (e.target as HTMLInputElement).value };
-    this._saveDraft();
-  }
-
-  private _handleAddFood() {
-    this._saveDraft(); // ensure latest state saved
-    this.triggerPageNavigation({ page: 'search', mealId: this.meal.id });
-  }
-
-  private async _handleSave() {
-    this.error = '';
-    if (!this.meal.name.trim()) {
-      this.error = this.translations.errorName;
-      return;
-    }
-    if (this.meal.foods.length < 2) {
-      this.error = this.translations.errorMinFoods;
-      return;
-    }
-
-    try {
-      await this.db.saveMeal(this.meal);
-      localStorage.removeItem('current_draft_meal'); // Clear draft on save
-
-      // Navigate to meals list? or stay? For now navigate to meals list
-      // We don't have a direct "meals list" page separate from search yet
-      this.triggerPageNavigation({ page: 'search', viewMode: 'meals' }); // Default to meals tab
-    } catch (e) {
-      console.error("Error saving meal", e);
-      this.error = "Failed to save meal";
+      const newId = this._generateId();
+      await this._createNewMeal(newId);
     }
   }
 
   private async _addToDiary() {
-    // Add all items to today's diary? Or selected date? 
-    // Usually "Add to Diary" implies adding to today/selected date context.
-    // For now let's assume valid today's date or similar default
-    const date = new Date().toISOString().split('T')[0];
-    const category = 'lunch'; // default or ask? 
-    // Requirement says: "The meal can be added to the dairy" using db methods.
+    const date = this.selectedDate;
 
-    // We iterate
+    // Calculate totals
+    const totals = this.meal.foods.reduce((acc, f) => {
+      const ratio = f.quantity / 100;
+      return {
+        calories: acc.calories + (f.product.nutriments?.['energy-kcal'] || 0) * ratio,
+        carbs: acc.carbs + (f.product.nutriments?.carbohydrates || 0) * ratio,
+        fat: acc.fat + (f.product.nutriments?.fat || 0) * ratio,
+        protein: acc.protein + (f.product.nutriments?.proteins || 0) * ratio
+      };
+    }, { calories: 0, carbs: 0, fat: 0, protein: 0 });
+
+    const mealItem = {
+      product: {
+        code: this.meal.id,
+        product_name: this.meal.name,
+        nutriments: {
+          'energy-kcal': totals.calories,
+          carbohydrates: totals.carbs,
+          fat: totals.fat,
+          proteins: totals.protein
+        } as any,
+        nutrition_data: 'per_serving',
+        nutrition_data_per: 'serving',
+        nutrition_data_prepared_per: 'serving'
+      },
+      quantity: 1, // 1 serv of the meal
+      unit: 'meal'
+    };
+
     try {
-      for (const food of this.meal.foods) {
-        await this.db.addFoodItem(date, category, food);
-      }
+      await this.db.addFoodItem(date, this.selectedCategory, mealItem);
       this.triggerPageNavigation({ page: 'home' });
     } catch (e) {
       console.error("Error adding meal to diary", e);
@@ -237,12 +223,11 @@ export default class PageMeal extends Page {
     }
   }
 
-  // Handling removal of food item from the list
-  private _removeFood(index: number) {
+  private async _removeFood(index: number) {
     const newFoods = [...this.meal.foods];
     newFoods.splice(index, 1);
     this.meal = { ...this.meal, foods: newFoods };
-    this._saveDraft();
+    await this.db.saveMeal(this.meal); // Auto-save removal
   }
 
   render() {
@@ -274,20 +259,57 @@ export default class PageMeal extends Page {
         <div class="foods-list">
           ${this.meal.foods.length === 0 ? html`
             <div class="empty-foods">${this.translations.noFoodsAdded}</div> 
-          ` : this.meal.foods.map((food, index) => html`
+          ` : this.meal.foods.map((food, index) => {
+      const ratio = food.quantity / 100;
+      const calories = (food.product.nutriments?.['energy-kcal'] || 0) * ratio;
+      return html`
             <div class="food-item-container">
                 <div class="food-item-content">
                     <component-search-result 
                     name="${food.product.product_name}" 
                     code="${food.product.code}" 
-                    calories="${food.product.nutriments?.['energy-kcal'] || 0}" 
+                    calories="${calories.toFixed(1)}" 
+                    quantity="${food.quantity}g"
                     removable="true"
                     @remove-click="${() => this._removeFood(index)}"
                     >
                   </component-search-result>
                 </div>
             </div>
-          `)}
+          `})}
+        </div>
+
+        <div class="summary-cards">
+             ${(() => {
+        const totals = this.meal.foods.reduce((acc, f) => {
+          const ratio = f.quantity / 100;
+          return {
+            calories: acc.calories + (f.product.nutriments?.['energy-kcal'] || 0) * ratio,
+            carbs: acc.carbs + (f.product.nutriments?.carbohydrates || 0) * ratio,
+            fat: acc.fat + (f.product.nutriments?.fat || 0) * ratio,
+            protein: acc.protein + (f.product.nutriments?.proteins || 0) * ratio
+          };
+        }, { calories: 0, carbs: 0, fat: 0, protein: 0 });
+
+        return html`
+                    <div class="summary-card calories">
+                        <span class="value">${totals.calories.toFixed(0)}</span>
+                        <span class="label">${this.translations.calories}</span>
+                    </div>
+                    <div class="summary-card carbs">
+                        <span class="value">${totals.carbs.toFixed(0)}g</span>
+                        <span class="label">${this.translations.carbs}</span>
+                    </div>
+                    <div class="summary-card fat">
+                        <span class="value">${totals.fat.toFixed(0)}g</span>
+                        <span class="label">${this.translations.fat}</span>
+                    </div>
+                    <div class="summary-card protein">
+                        <span class="value">${totals.protein.toFixed(0)}g</span>
+                        <span class="label">${this.translations.protein}</span>
+                    </div>
+                `;
+      })()}
         </div>
 
         <div class="buttons-container">
@@ -295,11 +317,36 @@ export default class PageMeal extends Page {
             + ${this.translations.addFood}
           </button>
           
-          <button class="primary" @click="${this._handleSave}" ?disabled="${false}">
-             ${this.translations.saveMeal}
-          </button>
+
 
           ${!this.isNew ? html`
+             <div class="input-group">
+                  <label for="date">Date:</label>
+                  <input 
+                    type="date" 
+                    id="date" 
+                    .value="${this.selectedDate}" 
+                    @change="${this._handleDateChange}"
+                  >
+             </div>
+
+             <div class="input-group">
+                  <label for="category">Category:</label>
+                  <select 
+                    id="category" 
+                    .value="${this.selectedCategory}" 
+                    @change="${(e: Event) => this.selectedCategory = (e.target as HTMLInputElement).value as any}"
+                    style="padding: 8px; background: var(--input-background); color: var(--input-text); border: 1px solid var(--input-border, #ccc); border-radius: 4px; width: 100%; box-sizing: border-box;"
+                  >
+                    <option value="breakfast">Breakfast</option>
+                    <option value="snack1">Snack (Morning)</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="snack2">Snack (Afternoon)</option>
+                    <option value="dinner">Dinner</option>
+                    <option value="snack3">Snack (Evening)</option>
+                  </select>
+             </div>
+
              <button class="secondary" @click="${this._addToDiary}">
                  Add to Diary
              </button>
@@ -310,6 +357,46 @@ export default class PageMeal extends Page {
       </div>
     `;
   }
+
+  private _generateId(): string {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  }
+
+  private async _createNewMeal(id: string) {
+    this.meal = {
+      id: id,
+      name: this.translations.newMeal || 'New Meal', // default name
+      description: '',
+      foods: []
+    };
+    this.isNew = true;
+    try {
+      await this.db.saveMeal(this.meal);
+    } catch (e) {
+      console.error("Error creating new meal", e);
+      this.error = "Failed to create new meal";
+    }
+  }
+
+  // private _initNewDraft() ... _loadDraft ... _saveDraft REMOVED
+
+  private async _handleNameChange(e: Event) {
+    this.meal = { ...this.meal, name: (e.target as HTMLInputElement).value };
+    await this.db.saveMeal(this.meal);
+  }
+
+  private async _handleDescriptionChange(e: Event) {
+    this.meal = { ...this.meal, description: (e.target as HTMLInputElement).value };
+    await this.db.saveMeal(this.meal);
+  }
+
+  private async _handleAddFood() {
+    this.meal.id = this.meal.id || this._generateId();
+    await this.db.saveMeal(this.meal);
+    this.triggerPageNavigation({ page: 'search', mealId: this.meal.id });
+  }
+
+
 }
 
 declare global {

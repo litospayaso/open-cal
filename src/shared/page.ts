@@ -166,7 +166,6 @@ export default class Page<api = {}> extends LitElement {
    * @returns url.searchParams: URLSearchParams
    */
   getQueryParamsURL(): URLSearchParams {
-    console.log('%c this.getHref()', 'background: #df03fc; color: #f8fc03', this.getHref());
     const url: URL = new URL(this.getHref());
     return url.searchParams;
   }

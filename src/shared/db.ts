@@ -215,12 +215,72 @@ export class DBService {
 
   async saveMeal(meal: Meal): Promise<void> {
     await this.ensureInit();
-    return new Promise((resolve, reject) => {
+
+    // First save the meal
+    await new Promise<void>((resolve, reject) => {
       const transaction = this.db!.transaction([STORE_MEALS], 'readwrite');
       const store = transaction.objectStore(STORE_MEALS);
       const request = store.put(meal);
 
       request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+
+    // Then propagate changes to diary logs
+    await this._updateMealInLogs(meal);
+  }
+
+  private async _updateMealInLogs(meal: Meal): Promise<void> {
+    // Calculate new totals for the meal
+    const totals = meal.foods.reduce((acc, f) => {
+      const ratio = f.quantity / 100;
+      return {
+        calories: acc.calories + (f.product.nutriments?.['energy-kcal'] || 0) * ratio,
+        carbs: acc.carbs + (f.product.nutriments?.carbohydrates || 0) * ratio,
+        fat: acc.fat + (f.product.nutriments?.fat || 0) * ratio,
+        protein: acc.protein + (f.product.nutriments?.proteins || 0) * ratio
+      };
+    }, { calories: 0, carbs: 0, fat: 0, protein: 0 });
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([STORE_NAME], 'readwrite');
+      const store = transaction.objectStore(STORE_NAME);
+      const request = store.openCursor();
+
+      request.onsuccess = (event) => {
+        const cursor = (event.target as IDBRequest).result as IDBCursorWithValue;
+        if (cursor) {
+          const log = cursor.value as DailyLog;
+          let modified = false;
+          const categories: MealCategory[] = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3'];
+
+          categories.forEach(cat => {
+            log[cat].forEach(item => {
+              if (item.unit === 'meal' && item.product.code === meal.id) {
+                // Update name and nutrients
+                item.product.product_name = meal.name;
+                // Ensure nutriments object exists
+                if (!item.product.nutriments) {
+                  item.product.nutriments = {} as any;
+                }
+                item.product.nutriments['energy-kcal'] = totals.calories;
+                item.product.nutriments.carbohydrates = totals.carbs;
+                item.product.nutriments.fat = totals.fat;
+                item.product.nutriments.proteins = totals.protein;
+
+                modified = true;
+              }
+            });
+          });
+
+          if (modified) {
+            cursor.update(log);
+          }
+          cursor.continue();
+        } else {
+          resolve();
+        }
+      };
       request.onerror = () => reject(request.error);
     });
   }

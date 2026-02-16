@@ -1,7 +1,7 @@
 import { html, css, type PropertyValueMap } from 'lit';
 import { state } from 'lit/decorators.js';
 import Page from '../../shared/page';
-import { dbService, type DailyLog, type MealCategory } from '../../shared/db';
+import { type DailyLog, type MealCategory } from '../../shared/db';
 
 export default class PageHome extends Page {
   static styles = [
@@ -166,7 +166,7 @@ export default class PageHome extends Page {
         // Check if quantity is in grams or portion. For simplified MVP, assuming input is grams if not specified
         // But SearchProductItemInterface has nutriments per 100g usually.
 
-        const ratio = item.quantity / 100;
+        const ratio = item.unit === 'meal' ? item.quantity : item.quantity / 100;
 
         calories += (item.product.nutriments['energy-kcal'] || 0) * ratio;
         carbs += (item.product.nutriments.carbohydrates || 0) * ratio;
@@ -294,7 +294,7 @@ export default class PageHome extends Page {
             <component-search-result
             name="${item.product.product_name}"
             code="${item.product.code}"
-            calories="${(item.product.nutriments['energy-kcal'] || 0) * (item.quantity / 100)}"
+            calories="${((item.product.nutriments['energy-kcal'] || 0) * (item.unit === 'meal' ? item.quantity : item.quantity / 100)).toFixed(0)}"
             quantity="${item.quantity}${item.unit}"
             removable="true"
             @remove-click="${() => this._handleRemoveItem(category, index)}"

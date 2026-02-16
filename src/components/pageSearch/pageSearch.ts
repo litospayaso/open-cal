@@ -160,7 +160,7 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
           url: '', // unused?
           product_name: m.name,
           nutriments: {
-            'energy-kcal': m.foods.reduce((acc, f) => acc + (f.product.nutriments?.['energy-kcal'] || 0), 0)
+            'energy-kcal': m.foods.reduce((acc, f) => acc + (f.product.nutriments?.['energy-kcal'] || 0) * (f.quantity / 100), 0)
           } as any,
           // ... other props
         } as any));

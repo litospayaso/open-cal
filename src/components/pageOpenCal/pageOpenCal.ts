@@ -22,6 +22,9 @@ export default class PageOpenCal extends Page {
         display: flex;
         justify-content: center;
       }
+      .app-container {
+       padding-bottom: 60px; 
+      }
     `
   ];
 
@@ -64,9 +67,7 @@ export default class PageOpenCal extends Page {
 
   pageRender() {
     const params = this.getQueryParamsURL();
-    console.log('%c params', 'background: #df03fc; color: #f8fc03', params);
     this.page = params.get('page') || 'home';
-    console.log('%c this.page', 'background: #df03fc; color: #f8fc03', this.page);
     this.updateGroupButtonOptions();
 
     switch (this.page) {
@@ -109,7 +110,10 @@ export default class PageOpenCal extends Page {
   }
 
   render() {
-    return html`${this.pageRender()}
+    return html`
+    <div class="app-container">
+      ${this.pageRender()}
+    </div>
     <div class="group-button-container">
       <component-group-button 
         .options="${this.groupButtonOptions}" 

@@ -346,16 +346,8 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
     if (!this.product || !this.mealId) return;
 
     try {
-      const draft = localStorage.getItem('current_draft_meal');
-      if (draft) {
-        const meal = JSON.parse(draft);
-        // Verify ID matches? 
-        if (meal.id !== this.mealId) {
-          console.warn("Meal ID mismatch", meal.id, this.mealId);
-          // Fallback: Use the storage one if it looks like what we expect, or just error?
-          // Ideally we trust the user flow. If they navigated here from a meal, localstorage should match.
-        }
-
+      const meal = await this.db.getMeal(this.mealId);
+      if (meal) {
         const foodItem = {
           product: {
             code: this.product.code,
@@ -366,16 +358,21 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
               proteins: this.product.product?.nutriments?.proteins_100g || 0,
             } as any,
             product_name: (this.product.product as any).product_name,
+            nutrition_data: 'per_100g',
+            nutrition_data_per: '100g',
+            nutrition_data_prepared_per: '100g'
           },
           quantity: this.grams,
           unit: 'g'
         };
 
+        if (!meal.foods) meal.foods = []; // Safety check
         meal.foods.push(foodItem);
-        localStorage.setItem('current_draft_meal', JSON.stringify(meal));
-        this.triggerPageNavigation({ page: 'meal', id: this.mealId });
+
+        await this.db.saveMeal(meal);
+        this.triggerPageNavigation({ page: 'meal', mealId: this.mealId });
       } else {
-        this.error = "Draft meal not found";
+        this.error = "Meal not found in database";
       }
     } catch (e) {
       console.error("Error adding to meal", e);
@@ -430,9 +427,11 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
           </div>
         </div>
         <div class="calculator">
-          <button class="edit-btn" @click="${this._toggleEditMode}">
-            ${this.isEditing ? '❌' : '✏️'}
-          </button>
+          ${!this.mealId ? html`
+            <button class="edit-btn" @click="${this._toggleEditMode}">
+              ${this.isEditing ? '❌' : '✏️'}
+            </button>
+            ` : ''}
             <div class="calculator-top">
               <div class="inputs-section">
                 <div class="input-group">
@@ -445,7 +444,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
                         min="0"
                     />
                 </div>
-                
+                ${!this.mealId ? html`
                 <div class="input-group">
                   <label for="date">Date:</label>
                   <input 
@@ -472,6 +471,8 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
                     <option value="snack3">Snack (Evening)</option>
                   </select>
                 </div>
+                  ` : ''
+      }
               </div>
 
               <div class="chart-section">
