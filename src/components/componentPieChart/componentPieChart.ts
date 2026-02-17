@@ -28,8 +28,9 @@ export default class ComponentPieChart extends LitElement {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 60%;
-        height: 60%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        height: 80%;
         background-color: var(--card-background, #fff);
         border-radius: 50%;
         display: flex;

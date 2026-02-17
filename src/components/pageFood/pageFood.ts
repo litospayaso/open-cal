@@ -83,20 +83,37 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         margin-top: 1rem;
         margin-top: 1rem;
         position: relative;
+        max-width: 600px;
+        margin: 16px auto;
       }
       .input-group {
         margin-bottom: 1rem;
-        display: flex;
+        display: grid;
+        grid-template-columns: 140px 1fr;
         align-items: center;
         gap: 10px;
       }
-      input {
+
+      @media (max-width: 600px) {
+        .input-group {
+          grid-template-columns: 1fr;
+          gap: 5px;
+        }
+      }
+
+      .input-group label {
+        font-weight: bold;
+        color: var(--card-text, #333);
+      }
+      .input-group input,
+      .input-group select {
         padding: 8px;
         background: var(--input-background);
         color: var(--input-text);
         border: 1px solid var(--input-border, #ccc);
         border-radius: 4px;
-        width: 100px;
+        width: 100%;
+        box-sizing: border-box;
       }
       .nutrients-grid {
         display: grid;
@@ -517,19 +534,21 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
             </div>
         `
       }
-            <button 
-              @click="${this._toggleFavorite}" 
-              class="favorite-btn"
-              aria-label="${this.isFavoriteState ? 'Remove from favorites' : 'Add to favorites'}"
-            >
-              <svg
-                class="favorite-icon ${this.isFavoriteState ? 'is-favorite' : ''}"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-              </svg>
-            </button>
+      ${!this.isEditing ? html`
+        <button 
+          @click="${this._toggleFavorite}" 
+          class="favorite-btn"
+          aria-label="${this.isFavoriteState ? 'Remove from favorites' : 'Add to favorites'}"
+        >
+          <svg
+            class="favorite-icon ${this.isFavoriteState ? 'is-favorite' : ''}"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>
+        </button>
+        ` : ''}
           </div>
         </div>
         <div class="calculator">
@@ -591,7 +610,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
                       <span style="font-weight: bold; font-size: 1.2rem;">
                           ${Math.round((this.isEditing ? this.editedProduct : this.product)?.product?.nutriments?.['energy-kcal_100g'] || 0)}
                       </span>
-                      <span style="font-size: 0.8rem; color: var(--input-placeholder, #666);">kcal</span>
+                      <span style="font-size: 0.7rem; color: var(--input-placeholder, #666);">kcal/100g</span>
                   </div>
                 </component-pie-chart>
               </div>
