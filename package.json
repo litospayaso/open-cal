@@ -1,7 +1,7 @@
 {
   "name": "storybook-latest",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,6 +9,7 @@
     "start": "npm run storybook",
     "test": "web-test-runner --config wtr.config.mjs --coverage",
     "test:watch": "web-test-runner --config wtr.config.mjs --watch --chromium",
+    "deploy:pages": "node scripts/gh-pages.js",
     "preview": "vite preview",
     "changeset": "changeset",
     "changeset:version": "changeset version",
@@ -20,7 +21,8 @@
     "lit": "^3.3.1"
   },
   "workspaces": [
-    "src/components/*"
+    "src/components/*",
+    "."
   ],
   "devDependencies": {
     "@changesets/cli": "^2.29.8",
@@ -41,6 +43,7 @@
     "camelcase": "^9.0.0",
     "esbuild": "^0.27.2",
     "esbuild-plugin-lit": "^0.1.1",
+    "gh-pages": "^6.3.0",
     "glob": "^13.0.1",
     "husky": "^4.0.0",
     "playwright": "^1.58.1",

@@ -1,0 +1,35 @@
+{
+  "short_name": "OpenCal",
+  "name": "OpenCal",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/litospayaso/salosuika/refs/heads/main/src/assets/icons/icon-512.webp",
+      "sizes": "512x512",
+      "type": "image/webp"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/litospayaso/salosuika/refs/heads/main/src/assets/icons/icon-256.webp",
+      "sizes": "256x256",
+      "type": "image/webp"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/litospayaso/salosuika/refs/heads/main/src/assets/icons/icon-128.webp",
+      "sizes": "128x128",
+      "type": "image/webp"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/litospayaso/salosuika/refs/heads/main/src/assets/icons/icon-96.webp",
+      "sizes": "96x96",
+      "type": "image/webp"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/litospayaso/salosuika/refs/heads/main/src/assets/icons/icon-72.webp",
+      "sizes": "72x72",
+      "type": "image/webp"
+    }
+  ],
+  "start_url": "https://litospayaso.github.io/open-cal/",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

@@ -91,29 +91,17 @@ await asyncForEach(glob.sync('./src/components/**/index.ts'), async file => {
   console.log('\x1b[32m%s\x1b[0m', '-----------------------------');
 });
 
-const content = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>open-cal</title>
-</head>
-<script src="./components/pageOpenCal/${finalVersion}/pageOpenCal.js"></script>
-<body>
-  <page-opencal></page-opencal>
-</body>
-</html>
-`
 
-console.log('\x1b[32m%s\x1b[0m', '-----------------------------');
-fs.writeFile('./dist/index.html', content, err => {
+fs.copyFile(`./dist/components/pageOpenCal/${finalVersion}/pageOpenCal.js`, './gh-pages/pageOpenCal.js', err => {
   if (err) {
+    console.log('\x1b[32m%s\x1b[0m', '\n-----------------------------');
     console.log('\x1b[32m%s\x1b[36m%s\x1b[0m', '[ERROR]:      ', err);
     console.log('\x1b[32m%s\x1b[0m', '-----------------------------');
   } else {
-    console.log('\x1b[32m%s\x1b[36m%s\x1b[0m', '[index.html]:      ', ' Test page written correctly!');
+    console.log('\x1b[32m%s\x1b[0m', '\n-----------------------------');
+    console.log('\x1b[32m%s\x1b[36m%s\x1b[0m', '[pageOpenCal.js]:      ', ' Lib copy correctly!');
     console.log('\x1b[32m%s\x1b[0m', '-----------------------------');
   }
 });
+
 
