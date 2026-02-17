@@ -1,7 +1,7 @@
 {
   "name": "Brote",
   "short_name": "Brote",
-  "start_url": "/",
+  "start_url": "https://litospayaso.github.io/open-cal/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
