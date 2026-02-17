@@ -356,6 +356,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
     if (this.editedProduct) {
       this.product = this.editedProduct;
       await this.db.cacheProduct(this.product);
+      await this.db.updateProductInMeals(this.product);
       this.isEditing = false;
       this.editedProduct = null;
     }

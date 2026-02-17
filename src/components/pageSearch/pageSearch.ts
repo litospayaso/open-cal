@@ -36,6 +36,9 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
       .search-container component-search-input{
         flex: 1;
       }
+      .btn-create {
+        margin-bottom: 16px;
+      }
       button.scan-btn {
         padding: 0;
         width: 52px;
@@ -166,14 +169,9 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
           } as any,
         } as any));
 
-        // products = [
-        //   {
-        //     code: this._generateId(),
-        //     product_name: this.translations.createNewMeal,
-        //     nutriments: {} as any,
-        //   },
-        //   ...mealItems
-        // ];
+        products = [
+          ...mealItems
+        ];
       }
 
       this.searchResult = await Promise.all(products.map(async product => {
@@ -306,7 +304,7 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
         </div>
 
         ${this.viewMode === 'meals' ? html`
-          <button class="btn" @click="${() => this.triggerPageNavigation({ page: 'meal', mealId: this._generateId() })}">
+          <button class="btn btn-create" @click="${() => this.triggerPageNavigation({ page: 'meal', mealId: this._generateId() })}">
               ${this.translations.createNewMeal}
           </button>
         ` : html``}
@@ -331,6 +329,13 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
           ` : ''}
           ${this.searchResult.length === 0 && this.query.length > 0 ? html`
             <p>${this.translations.noResultsFound}</p>
+
+            ${this.viewMode === 'search' ? html`
+              <button class="btn btn-create" @click="${() => this.triggerPageNavigation({ page: 'food', code: this._generateId(), query: this.query })}">
+                ${this.translations.createNewProduct}
+              </button>
+            ` : ''}
+
           ` : ''}
         `}
       </div>

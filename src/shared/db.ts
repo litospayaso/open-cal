@@ -216,7 +216,6 @@ export class DBService {
   async saveMeal(meal: Meal): Promise<void> {
     await this.ensureInit();
 
-    // First save the meal
     await new Promise<void>((resolve, reject) => {
       const transaction = this.db!.transaction([STORE_MEALS], 'readwrite');
       const store = transaction.objectStore(STORE_MEALS);
@@ -257,9 +256,7 @@ export class DBService {
           categories.forEach(cat => {
             log[cat].forEach(item => {
               if (item.unit === 'meal' && item.product.code === meal.id) {
-                // Update name and nutrients
                 item.product.product_name = meal.name;
-                // Ensure nutriments object exists
                 if (!item.product.nutriments) {
                   item.product.nutriments = {} as any;
                 }
@@ -331,6 +328,46 @@ export class DBService {
       request.onsuccess = () => resolve();
       request.onerror = () => reject(request.error);
     });
+  }
+
+  async updateProductInMeals(product: any): Promise<void> {
+    await this.ensureInit(); // Ensure DB is initialized
+
+    const meals = await this.getAllMeals();
+    const mealsToUpdate: Meal[] = [];
+
+    for (const meal of meals) {
+      let mealModified = false;
+      if (meal.foods && meal.foods.length > 0) {
+        meal.foods.forEach(food => {
+          if (food.product.code === product.code) {
+
+            food.product.product_name = (product.product as any).product_name;
+            food.product.brands = (product.product as any).brands;
+
+            if ((product.product as any).nutriments) {
+              if (!food.product.nutriments) {
+                food.product.nutriments = {} as any;
+              }
+              food.product.nutriments['energy-kcal'] = (product.product as any).nutriments['energy-kcal_100g'];
+              food.product.nutriments.carbohydrates = (product.product as any).nutriments.carbohydrates_100g;
+              food.product.nutriments.fat = (product.product as any).nutriments.fat_100g;
+              food.product.nutriments.proteins = (product.product as any).nutriments.proteins_100g;
+            }
+
+            mealModified = true;
+          }
+        });
+      }
+
+      if (mealModified) {
+        mealsToUpdate.push(meal);
+      }
+    }
+
+    for (const meal of mealsToUpdate) {
+      await this.saveMeal(meal);
+    }
   }
 
   private async ensureInit(): Promise<void> {
