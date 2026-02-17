@@ -1,5 +1,11 @@
 # page-code-scanner
 
+## 0.0.2
+
+### Patch Changes
+
+- f76112f: removing scanner overlay
+
 ## 0.0.1
 
 ### Patch Changes
