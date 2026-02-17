@@ -79,7 +79,7 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
   @state() query: string = '';
   @state() viewMode: 'cached' | 'favorites' | 'search' | 'meals' = 'cached';
   @state() groupButtonOptions = [
-    { text: this.translations.cached, id: 'cached', active: true },
+    { text: this.translations.recents, id: 'cached', active: true },
     { text: this.translations.favorites, id: 'favorites', active: false },
     { text: this.translations.search, id: 'search', active: false },
     { text: this.translations.meals, id: 'meals', active: false }
@@ -93,13 +93,13 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
 
     if (this.mealId) {
       this.groupButtonOptions = [
-        { text: this.translations.cached, id: 'cached', active: true },
+        { text: this.translations.recents, id: 'cached', active: true },
         { text: this.translations.favorites, id: 'favorites', active: false },
         { text: this.translations.search, id: 'search', active: false }
       ]
     } else {
       this.groupButtonOptions = [
-        { text: this.translations.cached, id: 'cached', active: true },
+        { text: this.translations.recents, id: 'cached', active: true },
         { text: this.translations.favorites, id: 'favorites', active: false },
         { text: this.translations.search, id: 'search', active: false },
         { text: this.translations.meals, id: 'meals', active: false }
@@ -164,26 +164,22 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
           nutriments: {
             'energy-kcal': m.foods.reduce((acc, f) => acc + (f.product.nutriments?.['energy-kcal'] || 0) * (f.quantity / 100), 0)
           } as any,
-          // ... other props
         } as any));
 
-        // Prepend create new
-        products = [
-          {
-            code: this._generateId(),
-            product_name: this.translations.createNewMeal,
-            nutriments: {} as any,
-          },
-          ...mealItems
-        ];
+        // products = [
+        //   {
+        //     code: this._generateId(),
+        //     product_name: this.translations.createNewMeal,
+        //     nutriments: {} as any,
+        //   },
+        //   ...mealItems
+        // ];
       }
 
       this.searchResult = await Promise.all(products.map(async product => {
-        if (this.viewMode === 'meals') return product; // Skip product lookups for meals
+        if (this.viewMode === 'meals') return product;
 
         const isFavorite = await this.db.isFavorite(product.code);
-        // Normalize structure if it comes from cache (nested product object)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const normalized: any = { ...product, isFavorite };
         if (product.product) {
           normalized.product_name = product.product.product_name || normalized.product_name;
@@ -212,15 +208,12 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
     if (isButtonClick) {
       this._switchMode('search');
     } else {
-      // Enter key or similar
       this._loadData();
     }
   }
 
   private _handleSearchBlur(e: CustomEvent) {
     this.query = e.detail.query;
-    // "If the user is in search food it will be the same behavior it will fetch to the api"
-    // "after the blur it will filter the selected list... by the input text"
     this._loadData();
   }
 
@@ -311,6 +304,12 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
                 @group-button-click="${this._handleModeSwitch}"
              ></component-group-button>
         </div>
+
+        ${this.viewMode === 'meals' ? html`
+          <button class="btn" @click="${() => this.triggerPageNavigation({ page: 'meal', mealId: this._generateId() })}">
+              ${this.translations.createNewMeal}
+          </button>
+        ` : html``}
 
         ${this.loading ? html`
           <component-spinner class="loading-spinner"></component-spinner>

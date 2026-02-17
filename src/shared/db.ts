@@ -321,6 +321,18 @@ export class DBService {
     });
   }
 
+  async clearAllData(): Promise<void> {
+    if (this.db) {
+      this.db.close();
+      this.db = null;
+    }
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.deleteDatabase(DB_NAME);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
   private async ensureInit(): Promise<void> {
     if (!this.db) {
       await this.init();

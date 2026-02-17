@@ -11,12 +11,9 @@ export const getProduct = async (barcode: string): Promise<ProductInterface> => 
 
 export const searchProduct = async (query: string): Promise<SearchProductInterface> => {
   const lang = localStorage.getItem('language') || 'en';
-  // Use cgi/search.pl for better text search relevance
   const response = await request(`/cgi/search.pl?search_terms=${query}&search_simple=1&action=process&json=1&page_size=35&fields=code,brands,product_name,product_name_${lang},product_name_en,nutriments&lc=${lang}`);
 
   if (response && response.products) {
-    // 1. Map to resolve localized names
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const products = response.products.map((p: any) => {
       return {
         ...p,
@@ -24,26 +21,21 @@ export const searchProduct = async (query: string): Promise<SearchProductInterfa
       };
     });
 
-    // 2. Sort results
     const lowerQuery = query.toLowerCase();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     products.sort((a: any, b: any) => {
       const nameA = (a.product_name || '').toLowerCase();
       const nameB = (b.product_name || '').toLowerCase();
 
-      // Exact match priority
       const exactA = nameA === lowerQuery;
       const exactB = nameB === lowerQuery;
       if (exactA && !exactB) return -1;
       if (!exactA && exactB) return 1;
 
-      // Starts with priority
       const startA = nameA.startsWith(lowerQuery);
       const startB = nameB.startsWith(lowerQuery);
       if (startA && !startB) return -1;
       if (!startA && startB) return 1;
 
-      // Contains priority
       const incA = nameA.includes(lowerQuery);
       const incB = nameB.includes(lowerQuery);
       if (incA && !incB) return -1;

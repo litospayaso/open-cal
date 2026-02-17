@@ -87,6 +87,17 @@ export default class Page<api = {}> extends LitElement {
       cursor: pointer;
       font-size: 1rem;
     }
+    .btn-danger {
+      background-color: var(--palette-red, #f44336);
+      color: white;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1rem;
+    }
     .btn:hover {
       opacity: 0.9;
     }

@@ -23,7 +23,6 @@ export default class PageUser extends Page {
       :host {
         display: block;
         padding: 1rem;
-        padding-bottom: 80px;
       }
       
       .section-title {
@@ -78,6 +77,48 @@ export default class PageUser extends Page {
         border-color: var(--fat-color) !important;
         border-width: var(--counter-border-width) !important;
       }
+      .danger-zone {
+        border: 1px solid var(--palette-red, #f44336);
+        background: rgba(244, 67, 54, 0.1);
+      }
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        color: var(--app-text-color-primary, #333);
+      }
+      .modal {
+        background: var(--card-background, #fff);
+        color: var(--card-text);
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 90%;
+        width: 300px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        text-align: center;
+      }
+      .modal-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        justify-content: center;
+      }
+      .btn-secondary {
+        background: #ccc;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+      }
     `
   ];
 
@@ -91,6 +132,7 @@ export default class PageUser extends Page {
 
   @state() theme: 'light' | 'dark' = 'light';
   @state() language: string = 'en';
+  @state() showClearModal: boolean = false;
 
   onPageInit(): void {
     const savedProfile = localStorage.getItem('user_profile');
@@ -169,6 +211,17 @@ export default class PageUser extends Page {
     this.setLanguage(this.language);
   }
 
+  private async _clearAllData() {
+    try {
+      localStorage.clear();
+      await this.db.clearAllData();
+      window.location.reload();
+    } catch (e) {
+      console.error('Failed to clear data', e);
+      alert('Failed to clear data');
+    }
+  }
+
   render() {
     return html`
       <div class="card">
@@ -241,6 +294,27 @@ export default class PageUser extends Page {
           </select>
         </div>
       </div>
+
+      <div class="card danger-zone">
+        <h2>${this.translations.dangerZone || 'Danger Zone'}</h2>
+        <p style="margin-bottom: 10px;">${this.translations.clearDataWarning || 'Clear all your data permanently. This cannot be undone.'}</p>
+        <button class="btn-danger" @click="${() => this.showClearModal = true}">
+          ${this.translations.clearAllData || 'Clear All Data'}
+        </button>
+      </div>
+
+      ${this.showClearModal ? html`
+        <div class="modal-overlay">
+          <div class="modal">
+            <h3>${this.translations.confirmClearData || 'Are you sure?'}</h3>
+            <p>${this.translations.confirmClearDataDesc || 'This will delete all your logs, meals, and settings permanently.'}</p>
+            <div class="modal-buttons">
+              <button class="btn" @click="${() => this.showClearModal = false}">${this.translations.cancel || 'Cancel'}</button>
+              <button class="btn-danger" @click="${this._clearAllData}">${this.translations.confirm || 'Confirm'}</button>
+            </div>
+          </div>
+        </div>
+      ` : ''}
     `;
   }
 }

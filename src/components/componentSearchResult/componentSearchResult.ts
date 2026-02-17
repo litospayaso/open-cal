@@ -101,8 +101,8 @@ export class ComponentSearchResult extends LitElement {
     }
 
     .favorite-icon.is-favorite {
-      fill: #ffd700;
-      stroke: #ffd700;
+      fill: var(--favorite-color, #ffd700);
+      stroke: var(--favorite-color, #ffd700);
     }
   `;
 

@@ -73,8 +73,8 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         transition: fill 0.3s ease, stroke 0.3s ease;
       }
       .favorite-icon.is-favorite {
-        fill: #ffd700;
-        stroke: #ffd700;
+        fill: var(--favorite-color, #ffd700);
+        stroke: var(--favorite-color, #ffd700);
       }
       .calculator {
         background: var(--section-background);

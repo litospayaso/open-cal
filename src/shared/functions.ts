@@ -92,6 +92,8 @@ export const variableStyles = css`
       --group-button-active-bg: var(--palette-green);
       --group-button-active-text: #fff;
       --group-button-hover-bg: rgba(0, 0, 0, 0.05);
+
+      --favorite-color: var(--palette-green);
     }
 
     [data-theme="dark"] {
@@ -117,8 +119,10 @@ export const variableStyles = css`
       /* using palette-blue for better visibility in dark mode */
 
       --group-button-active-bg: var(--palette-purple);
-      --group-button-active-text: #000;
+      --group-button-active-text: #fff;
       --group-button-hover-bg: rgba(255, 255, 255, 0.1);
+
+      --favorite-color: var(--palette-purple);
     }
 
     body {
