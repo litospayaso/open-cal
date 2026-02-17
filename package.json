@@ -1,7 +1,7 @@
 {
-  "name": "storybook-latest",
+  "name": "brote",
   "private": true,
-  "version": "0.0.1",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,7 +9,7 @@
     "start": "npm run storybook",
     "test": "web-test-runner --config wtr.config.mjs --coverage",
     "test:watch": "web-test-runner --config wtr.config.mjs --watch --chromium",
-    "deploy:pages": "node scripts/gh-pages.js",
+    "deploy:pages": "npm run build && node scripts/gh-pages.js",
     "preview": "vite preview",
     "changeset": "changeset",
     "changeset:version": "changeset version",
