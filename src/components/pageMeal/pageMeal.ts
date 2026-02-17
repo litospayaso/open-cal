@@ -341,6 +341,7 @@ export default class PageMeal extends Page {
                     <component-search-result 
                     name="${food.product.product_name}" 
                     code="${food.product.code}" 
+                    brands="${food.product.brands || ''}"
                     calories="${calories.toFixed(1)}" 
                     quantity="${food.quantity}g"
                     removable="true"

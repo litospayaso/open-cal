@@ -28,6 +28,7 @@ export interface ProductInterface {
   code: string,
   product: {
     nutriments?: NutrimentInterface;
+    brands?: string;
   }
 }
 
@@ -46,7 +47,8 @@ export interface SearchProductItemInterface {
   nutrition_data: string,
   nutrition_data_per: string,
   nutrition_data_prepared_per: string,
-  product_name: string
+  product_name: string,
+  brands?: string
 }
 
 

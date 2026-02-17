@@ -302,6 +302,7 @@ export default class PageHome extends Page {
             <component-search-result
             name="${item.product.product_name}"
             code="${item.product.code}"
+            brands="${item.product.brands || ''}"
             calories="${((item.product.nutriments['energy-kcal'] || 0) * (item.unit === 'meal' ? item.quantity : item.quantity / 100)).toFixed(0)}"
             quantity="${item.unit !== 'meal' ? `${item.quantity}${item.unit}` : ''}"
             removable="true"

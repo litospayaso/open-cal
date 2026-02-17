@@ -14,6 +14,7 @@ export interface SearchResultComponentInterface {
 export class ComponentSearchResult extends LitElement {
   @property({ type: String }) name = '';
   @property({ type: String }) code = '';
+  @property({ type: String }) brands = '';
   @property({ type: String }) calories = '';
   @property({ type: String }) quantity = '';
   @property({ type: Boolean }) removable = false;
@@ -64,6 +65,12 @@ export class ComponentSearchResult extends LitElement {
       cursor: pointer;
     }
 
+    .brand-section {
+      font-size: 0.8rem;
+      color: var(--input-placeholder);
+      margin-top: 2px;
+    }
+
     .quantity-section {
       font-size: 0.8rem;
       color: var(--input-placeholder);
@@ -107,6 +114,7 @@ export class ComponentSearchResult extends LitElement {
         </div>
         <div class="name-section" @click="${this._handleElementClick}">
           <div>${this.name}</div>
+          ${this.brands ? html`<div class="brand-section">${this.brands}</div>` : ''}
           ${this.quantity ? html`<div class="quantity-section">${this.quantity}</div>` : ''}
         </div>
         ${this.calories && Number(this.calories) > 0 ? html`

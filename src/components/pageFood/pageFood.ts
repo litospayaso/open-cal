@@ -47,7 +47,9 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         display: flex;
         flex-direction: row;
         align-items: center;
-        gap: 20px;
+        justify-content: center;
+        position: relative;
+        width: 100%;
       }
       .favorite-btn {
         background: none;
@@ -57,6 +59,8 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         display: flex;
         align-items: center;
         justify-content: center;
+        position: absolute;
+        right: 0;
       }
       .favorite-icon {
         width: 32px;
@@ -173,6 +177,22 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         border-radius: 4px;
         background: var(--input-background);
         color: var(--input-text);
+        text-align: center;
+      }
+      .brand-input {
+        font-size: 1em;
+        margin: 0.5em 0;
+        width: 100%;
+        padding: 5px;
+        border: 1px solid var(--input-border, #ccc);
+        border-radius: 4px;
+        background: var(--input-background);
+        color: var(--input-text);
+        text-align: center;
+      }
+      .product-brand {
+        font-size: 1rem;
+        color: var(--input-placeholder, #666);
       }
       .calculator-top {
         display: flex;
@@ -324,6 +344,14 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
     this.requestUpdate();
   }
 
+  private _handleBrandChange(e: Event) {
+    if (!this.editedProduct || !this.editedProduct.product) return;
+    const input = e.target as HTMLInputElement;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (this.editedProduct.product as any).brands = input.value;
+    this.requestUpdate();
+  }
+
   private async _saveEdit() {
     if (this.editedProduct) {
       this.product = this.editedProduct;
@@ -351,7 +379,8 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
           product_name: (this.product.product as any).product_name,
           nutrition_data: 'per_100g', // assumption
           nutrition_data_per: '100g',
-          nutrition_data_prepared_per: '100g'
+          nutrition_data_prepared_per: '100g',
+          brands: (this.product.product as any).brands
         },
         quantity: this.grams,
         unit: 'g'
@@ -385,7 +414,8 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
             product_name: (this.product.product as any).product_name,
             nutrition_data: 'per_100g',
             nutrition_data_per: '100g',
-            nutrition_data_prepared_per: '100g'
+            nutrition_data_prepared_per: '100g',
+            brands: (this.product.product as any).brands
           },
           quantity: this.grams,
           unit: 'g'
@@ -434,15 +464,33 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
           <div class="emoji-container">
             <component-emoji text="${(this.product.product as any).product_name || 'Unknown Product'}" size="l"></component-emoji>
           </div>
+          </div>
           <div class="product-name">
             ${this.isEditing
-        ? html`<input 
-                    class="name-input"
-                    type="text" 
-                    .value="${(this.editedProduct?.product as any).product_name || ''}" 
-                    @input="${this._handleNameChange}"
-                  />`
-        : html`<h1>${(this.product.product as any).product_name || 'Unknown Product'}</h1>`
+        ? html`
+            <div style="width: 100%;">
+              <input 
+                class="name-input"
+                type="text" 
+                .value="${(this.editedProduct?.product as any).product_name || ''}" 
+                @input="${this._handleNameChange}"
+                placeholder="Product Name"
+              />
+              <input 
+                class="brand-input"
+                type="text" 
+                .value="${(this.editedProduct?.product as any).brands || ''}" 
+                @input="${this._handleBrandChange}"
+                placeholder="Brand"
+              />
+            </div>
+          `
+        : html`
+            <div style="text-align: center;">
+              <h1 class="product-name-title">${(this.product.product as any).product_name || 'Unknown Product'}</h1>
+              ${(this.product.product as any).brands ? html`<div class="product-brand">${(this.product.product as any).brands}</div>` : ''}
+            </div>
+        `
       }
             <button 
               @click="${this._toggleFavorite}" 

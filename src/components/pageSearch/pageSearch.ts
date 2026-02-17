@@ -188,6 +188,7 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
         if (product.product) {
           normalized.product_name = product.product.product_name || normalized.product_name;
           normalized.nutriments = product.product.nutriments || normalized.nutriments;
+          normalized.brands = product.product.brands || normalized.brands;
         }
         return normalized;
       }));
@@ -320,6 +321,7 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
                 <component-search-result 
                   name="${product.product_name}" 
                   code="${product.code}" 
+                  brands="${product.brands || ''}"
                   calories="${product.nutriments && product.nutriments['energy-kcal'] ? product.nutriments['energy-kcal'] : -1}" 
                   favorite="${product.isFavorite}"
                   @favorite-click="${this._handleFavoriteClick}"

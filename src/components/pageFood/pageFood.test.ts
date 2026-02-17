@@ -49,8 +49,8 @@ describe('PageFood Component Spec:', () => {
   });
 
   it('should display product name', (done) => {
-    waitForElement(() => shadow.querySelector('.product-header h1')).then(() => {
-      const header = shadow.querySelector('.product-header h1');
+    waitForElement(() => shadow.querySelector('h1.product-name-title')).then(() => {
+      const header = shadow.querySelector('h1.product-name-title');
       expect(header).to.exist;
       expect(header?.textContent).to.include('Test Food');
       done();
