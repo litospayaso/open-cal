@@ -419,6 +419,43 @@ export class DBService {
     });
   }
 
+  async deleteMealReference(mealId: string): Promise<void> {
+    await this.ensureInit();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([STORE_NAME], 'readwrite');
+      const store = transaction.objectStore(STORE_NAME);
+      const request = store.openCursor();
+
+      request.onsuccess = (event) => {
+        const cursor = (event.target as IDBRequest).result as IDBCursorWithValue;
+        if (cursor) {
+          const log = cursor.value as DailyLog;
+          let modified = false;
+          const categories: MealCategory[] = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3'];
+
+          categories.forEach(cat => {
+            if (log[cat]) {
+              // Filter out the meal by ID
+              const originalLength = log[cat].length;
+              log[cat] = log[cat].filter(item => !(item.unit === 'meal' && item.product.code === mealId));
+              if (log[cat].length !== originalLength) {
+                modified = true;
+              }
+            }
+          });
+
+          if (modified) {
+            cursor.update(log);
+          }
+          cursor.continue();
+        } else {
+          resolve();
+        }
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
   private async ensureInit(): Promise<void> {
     if (!this.db) {
       await this.init();

@@ -141,6 +141,84 @@ export default class PageMeal extends Page {
           flex-direction: column;
         }
       }
+      .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative; 
+        border-bottom: 2px solid var(--palette-green, #4fb9ad);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      .header-container h1 {
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: 0;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0 10px;
+      }
+      .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: var(--card-background, #fff);
+        border: 1px solid var(--card-border, #ccc);
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 10;
+        min-width: 150px;
+        display: flex;
+        flex-direction: column;
+      }
+      .dropdown-item {
+        padding: 10px;
+        border: none;
+        background: none;
+        text-align: left;
+        cursor: pointer;
+        color: var(--card-text);
+        font-size: 1rem;
+      }
+      .dropdown-item:hover {
+        background-color: var(--input-background);
+      }
+      .dropdown-item.delete {
+        color: var(--palette-red, #f44336);
+      }
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        color: var(--app-text-color-primary, #333);
+      }
+      .modal {
+        background: var(--card-background, #fff);
+        color: var(--card-text);
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 90%;
+        width: 300px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        text-align: center;
+      }
+      .modal-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        justify-content: center;
+      }
     `
   ];
 
@@ -154,6 +232,18 @@ export default class PageMeal extends Page {
   @state() error: string = '';
   @state() selectedCategory: 'breakfast' | 'snack1' | 'lunch' | 'snack2' | 'dinner' | 'snack3' = 'lunch';
   @state() selectedDate: string = new Date().toISOString().split('T')[0];
+  @state() showMenu: boolean = false;
+  @state() showDeleteModal: boolean = false;
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener('click', this._handleOutsideClick);
+  }
+
+  private _handleOutsideClick = () => {
+    this.showMenu = false;
+    window.removeEventListener('click', this._handleOutsideClick);
+  }
 
   private _handleDateChange(e: Event) {
     this.selectedDate = (e.target as HTMLInputElement).value;
@@ -269,10 +359,72 @@ export default class PageMeal extends Page {
     this.triggerPageNavigation({ page: 'search', mealId: this.meal.id });
   }
 
+  private _toggleMenu(e: Event) {
+    e.stopPropagation();
+    this.showMenu = !this.showMenu;
+    if (this.showMenu) {
+      window.addEventListener('click', this._handleOutsideClick);
+    } else {
+      window.removeEventListener('click', this._handleOutsideClick);
+    }
+  }
+
+  private async _handleDuplicate() {
+    this.showMenu = false;
+    const newId = this._generateId();
+    const newMeal: Meal = {
+      ...this.meal,
+      id: newId,
+      name: `${this.meal.name} - duplicated`,
+    };
+
+    try {
+      await this.db.saveMeal(newMeal);
+      this.triggerPageNavigation({ page: 'meal', mealId: newId });
+      this.onPageInit()
+    } catch (e) {
+      console.error("Error duplicating meal", e);
+      this.error = "Failed to duplicate meal";
+    }
+  }
+
+  private _handleDelete() {
+    this.showMenu = false;
+    this.showDeleteModal = true;
+  }
+
+  private async _confirmDelete() {
+    try {
+      if (this.meal.id) {
+        await this.db.deleteMeal(this.meal.id);
+        await this.db.deleteMealReference(this.meal.id);
+        this.triggerPageNavigation({ page: 'home' });
+      }
+    } catch (e) {
+      console.error("Error deleting meal", e);
+      this.error = "Failed to delete meal";
+    } finally {
+      this.showDeleteModal = false;
+    }
+  }
+
   render() {
     return html`
       <div class="page-container">
-        <h1>${this.isNew ? this.translations.createNewMeal : this.translations.editProduct}</h1>
+        <div class="header-container">
+            <h1>${this.isNew ? this.translations.createNewMeal : this.translations.editProduct}</h1>
+            ${!this.isNew ? html`
+            <div style="position: relative;">
+                <button class="menu-btn" @click="${this._toggleMenu}">&#8942;</button>
+                ${this.showMenu ? html`
+                <div class="dropdown-menu">
+                    <button class="dropdown-item" @click="${this._handleDuplicate}">Duplicate Meal</button>
+                    <button class="dropdown-item delete" @click="${this._handleDelete}">Delete Meal</button>
+                </div>
+                ` : ''}
+            </div>
+            ` : ''}
+        </div>
         
         <div class="input-group">
           <label>${this.translations.mealName}</label>
@@ -397,6 +549,19 @@ export default class PageMeal extends Page {
 
           ${this.error ? html`<div class="error-message">${this.error}</div>` : ''}
         </div>
+
+        ${this.showDeleteModal ? html`
+        <div class="modal-overlay">
+          <div class="modal">
+            <h3>Are you sure?</h3>
+            <p>This will delete this meal and remove it from all daily logs.</p>
+            <div class="modal-buttons">
+              <button class="btn" @click="${() => this.showDeleteModal = false}">Cancel</button>
+              <button class="btn-danger" @click="${this._confirmDelete}">Delete</button>
+            </div>
+          </div>
+        </div>
+        ` : ''}
       </div>
     `;
   }

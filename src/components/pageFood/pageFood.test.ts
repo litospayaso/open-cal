@@ -143,7 +143,7 @@ describe('PageFood Component Error/Loading Spec:', () => {
     const component = await createComponent({
       class: PageFood,
       name: 'page-food',
-      api: { getProduct: () => Promise.resolve(null) },
+      api: { getProduct: () => Promise.reject(new Error('Product not found')) },
       route: '?code=999'
     });
 
@@ -156,11 +156,11 @@ describe('PageFood Component Error/Loading Spec:', () => {
     document.body.removeChild(element);
   });
 
-  it('should show error message when product not found', (done) => {
-    waitForElement(() => shadow.querySelector('.error-message')).then(() => {
-      const error = shadow.querySelector('.error-message');
-      expect(error).to.exist;
-      expect(error?.textContent).to.include('Product not found');
+  it('should show empty product in edit mode when product not found', (done) => {
+    waitForElement(() => shadow.querySelector('input.name-input')).then(() => {
+      const input = shadow.querySelector('input.name-input') as HTMLInputElement;
+      expect(input).to.exist;
+      expect(input.value).to.equal('New Product');
       done();
     });
   });

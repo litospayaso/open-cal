@@ -57,6 +57,10 @@ export default class Page<api = {}> extends LitElement {
       font-size: 1rem;
       box-sizing: border-box;
     }
+    option {
+      background-color: var(--card-background);
+      color: var(--card-text);
+    }
     .theme-toggles {
       display: flex;
       gap: 1rem;
