@@ -1,0 +1,20 @@
+# search-page
+
+## 0.0.1
+
+### Patch Changes
+
+- 5257fc3: updating styles, adding codeScanner page
+- c355ace: updating food editing and fetching
+- 7f692fe: refactor of connection with database
+- 6c80ba9: adding cached and favourites to search page
+- 3bac4b3: adding branding to food
+- 5fbe765: adding clear data functionality
+- 76b17cf: adding emoji component, user page and dark mode support
+- c7230de: updating color scheme for carbs, proteins, calories and fat
+- 0b8cfaa: updating endpoints to fetch search data in the user language
+- 80d22c5: spreading food edit functionality to all meals
+- 0185baf: first iteration over page-meal
+- 4d5532f: adding navigation to home page
+- fdf5392: first version of meal page
+- 3ff2278: updating styles and adding edit food/meal navigation in home page
