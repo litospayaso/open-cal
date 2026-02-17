@@ -36,7 +36,7 @@ const handleResponse = async (response: Response) => {
  * @returns a HTTP response with the data requested.
  */
 export const request = async (url: string, http?: HttpRequestInterface): Promise<any> => {
-  const domain = `https://world.openfoodfacts.net/api/`
+  const domain = `https://world.openfoodfacts.net/`;
   const method = http?.method ? http.method : 'GET';
 
   const options = {
@@ -70,8 +70,8 @@ export const setQueryParams = (url: string, queryParams?: QueryParams): string =
     .map(
       key =>
         `${key}=${
-          // @ts-ignore
-          typeof queryParams[key] === 'string' ? queryParams[key] : JSON.stringify(queryParams[key])
+        // @ts-ignore
+        typeof queryParams[key] === 'string' ? queryParams[key] : JSON.stringify(queryParams[key])
         }`
     )
     .join('&');

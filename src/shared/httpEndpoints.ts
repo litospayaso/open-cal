@@ -3,17 +3,57 @@ import type { ProductInterface, SearchProductInterface } from './http.interfaces
 import { request } from './httpRequest';
 
 
-
-export const getData = async (): Promise<any> => {
-  return request(`/whatever`);
-};
-
 export const getProduct = async (barcode: string): Promise<ProductInterface> => {
-  return request(`v3/product/${barcode}?product_type=food&cc=es&lc=en&fields=nutriments,product_name&knowledge_panel_client=web&activate_knowledge_panels_simplified=true&activate_knowledge_panel_physical_activities=false&knowledge_panels_included=nutriments&knowledge_panels_excluded=+allergens_hierarchy&blame=0`);
+  const lang = localStorage.getItem('language') || 'en';
+  const response = await request(`api/v3/product/${barcode}?product_type=food&cc=${lang}&lc=${lang}&fields=brands,nutriments,product_name,product_name_${lang},product_name_en&knowledge_panel_client=web&activate_knowledge_panels_simplified=true&activate_knowledge_panel_physical_activities=false&knowledge_panels_included=nutriments&knowledge_panels_excluded=+allergens_hierarchy&blame=0`);
+  return response;
 };
 
 export const searchProduct = async (query: string): Promise<SearchProductInterface> => {
   const lang = localStorage.getItem('language') || 'en';
-  return request(`/v2/search?categories_tags_${lang}=${query}&fields=code,brands,product_name,nutriments&lc=${lang}&page_size=30&sort_by=popularity`);
-  // return request(`v2/search?categories_tags=${query}&lc=en&fields=code,product_name&sort_by=popularity`);
+  // Use cgi/search.pl for better text search relevance
+  const response = await request(`/cgi/search.pl?search_terms=${query}&search_simple=1&action=process&json=1&page_size=35&fields=code,brands,product_name,product_name_${lang},product_name_en,nutriments&lc=${lang}`);
+
+  if (response && response.products) {
+    // 1. Map to resolve localized names
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const products = response.products.map((p: any) => {
+      return {
+        ...p,
+        product_name: p[`product_name_${lang}`] || p.product_name_en || p.product_name || ''
+      };
+    });
+
+    // 2. Sort results
+    const lowerQuery = query.toLowerCase();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    products.sort((a: any, b: any) => {
+      const nameA = (a.product_name || '').toLowerCase();
+      const nameB = (b.product_name || '').toLowerCase();
+
+      // Exact match priority
+      const exactA = nameA === lowerQuery;
+      const exactB = nameB === lowerQuery;
+      if (exactA && !exactB) return -1;
+      if (!exactA && exactB) return 1;
+
+      // Starts with priority
+      const startA = nameA.startsWith(lowerQuery);
+      const startB = nameB.startsWith(lowerQuery);
+      if (startA && !startB) return -1;
+      if (!startA && startB) return 1;
+
+      // Contains priority
+      const incA = nameA.includes(lowerQuery);
+      const incB = nameB.includes(lowerQuery);
+      if (incA && !incB) return -1;
+      if (!incA && incB) return 1;
+
+      return 0;
+    });
+
+    response.products = products;
+  }
+
+  return response;
 };
