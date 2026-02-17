@@ -370,6 +370,55 @@ export class DBService {
     }
   }
 
+  async updateProductInLogs(product: any): Promise<void> {
+    await this.ensureInit();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([STORE_NAME], 'readwrite');
+      const store = transaction.objectStore(STORE_NAME);
+      const request = store.openCursor();
+
+      request.onsuccess = (event) => {
+        const cursor = (event.target as IDBRequest).result as IDBCursorWithValue;
+        if (cursor) {
+          const log = cursor.value as DailyLog;
+          let modified = false;
+          const categories: MealCategory[] = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3'];
+
+          categories.forEach(cat => {
+            if (log[cat]) {
+              log[cat].forEach(item => {
+                if (item.product.code === product.code) {
+                  item.product.product_name = (product.product as any).product_name;
+                  item.product.brands = (product.product as any).brands;
+
+                  if ((product.product as any).nutriments) {
+                    if (!item.product.nutriments) {
+                      item.product.nutriments = {} as any;
+                    }
+                    const newNutriments = (product.product as any).nutriments;
+                    item.product.nutriments['energy-kcal'] = newNutriments['energy-kcal_100g'];
+                    item.product.nutriments.carbohydrates = newNutriments.carbohydrates_100g;
+                    item.product.nutriments.fat = newNutriments.fat_100g;
+                    item.product.nutriments.proteins = newNutriments.proteins_100g;
+                  }
+                  modified = true;
+                }
+              });
+            }
+          });
+
+          if (modified) {
+            cursor.update(log);
+          }
+          cursor.continue();
+        } else {
+          resolve();
+        }
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
   private async ensureInit(): Promise<void> {
     if (!this.db) {
       await this.init();

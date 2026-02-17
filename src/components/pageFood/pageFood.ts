@@ -264,18 +264,41 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
             this.product = response;
             await this.db.cacheProduct(response);
           } else {
-            this.error = 'Product not found';
+            this._initNewProduct(code, params.get('query'));
           }
         }
       } catch (err) {
-        console.error('Error fetching product:', err);
-        this.error = 'Failed to load product data';
+        console.warn('Product not found, initializing new:', err);
+        this._initNewProduct(code, params.get('query'));
       } finally {
         this.loading = false;
       }
     } else {
       this.error = 'No product code provided';
     }
+  }
+
+  private _initNewProduct(code: string, queryName: string | null) {
+    this.product = {
+      code: code,
+      status: 1,
+      status_verbose: 'product found',
+      product: {
+        product_name: queryName || 'New Product',
+        brands: '',
+        nutriments: {
+          'energy-kcal_100g': 0,
+          carbohydrates_100g: 0,
+          fat_100g: 0,
+          proteins_100g: 0,
+          'energy-kcal': 0,
+          carbohydrates: 0,
+          fat: 0,
+          proteins: 0
+        } as any
+      }
+    };
+    this._toggleEditMode();
   }
 
   private async _toggleFavorite() {
@@ -357,6 +380,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
       this.product = this.editedProduct;
       await this.db.cacheProduct(this.product);
       await this.db.updateProductInMeals(this.product);
+      await this.db.updateProductInLogs(this.product);
       this.isEditing = false;
       this.editedProduct = null;
     }

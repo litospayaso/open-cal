@@ -26,9 +26,12 @@ export interface QueryParams {
 
 export interface ProductInterface {
   code: string,
+  status?: number;
+  status_verbose?: string;
   product: {
     nutriments?: NutrimentInterface;
     brands?: string;
+    product_name?: string;
   }
 }
 

@@ -36,6 +36,12 @@ export default class PageUser extends Page {
         gap: 10px;
       }
 
+      @media (max-width: 600px) {
+        .macro-inputs {
+          flex-direction: column;
+        }
+      }
+
       .macro-inputs .form-group {
         flex: 1;
       }
