@@ -280,6 +280,14 @@ export default class PageHome extends Page {
     }
   }
 
+  private _handleElementClick(item: any) {
+    if (item.unit === 'meal') {
+      this.triggerPageNavigation({ page: 'meal', mealId: item.product.code });
+    } else {
+      this.triggerPageNavigation({ page: 'food', code: item.product.code });
+    }
+  }
+
   renderCategory(title: string, category: MealCategory) {
     const items = this.dailyLog ? this.dailyLog[category] : [];
 
@@ -295,8 +303,9 @@ export default class PageHome extends Page {
             name="${item.product.product_name}"
             code="${item.product.code}"
             calories="${((item.product.nutriments['energy-kcal'] || 0) * (item.unit === 'meal' ? item.quantity : item.quantity / 100)).toFixed(0)}"
-            quantity="${item.quantity}${item.unit}"
+            quantity="${item.unit !== 'meal' ? `${item.quantity}${item.unit}` : ''}"
             removable="true"
+            @element-click="${() => this._handleElementClick(item)}"
             @remove-click="${() => this._handleRemoveItem(category, index)}"
             ></component-search-result>
         `)}

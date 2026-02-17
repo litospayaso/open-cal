@@ -34,6 +34,11 @@ export default class Page<api = {}> extends LitElement {
       padding-bottom: 0.5rem;
       margin-bottom: 1rem;
     }
+    h1 {
+      border-bottom: 2px solid var(--palette-green, #4fb9ad);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+    }
     .form-group {
       margin-bottom: 1rem;
     }
@@ -42,7 +47,7 @@ export default class Page<api = {}> extends LitElement {
       margin-bottom: 0.5rem;
       font-weight: bold;
     }
-    input, select {
+    input, select, textarea {
       width: 100%;
       padding: 0.5rem;
       background-color: var(--input-background);
@@ -69,6 +74,20 @@ export default class Page<api = {}> extends LitElement {
       background: var(--palette-purple, #a285bb);
     }
     button:hover {
+      opacity: 0.9;
+    }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      background-color: var(--group-button-active-bg, var(--palette-green));
+      color: var(--group-button-active-text, #fff);
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .btn:hover {
       opacity: 0.9;
     }
     ` as CSSResultGroup];

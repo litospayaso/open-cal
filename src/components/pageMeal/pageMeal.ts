@@ -19,6 +19,14 @@ export default class PageMeal extends Page {
       .input-group {
         margin-bottom: 1rem;
       }
+      .add-to-diary-container .input-group {
+        width: 100%;
+      }
+      .add-to-diary-container {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+      }
       label {
         display: block;
         margin-bottom: 0.5rem;
@@ -65,16 +73,6 @@ export default class PageMeal extends Page {
       }
       button.primary {
         background-color: var(--palette-green);
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 20px;
-        cursor: pointer;
-        font-size: 1rem;
-        font-weight: bold;
-      }
-      button.secondary {
-        background-color: var(--palette-purple);
         color: white;
         padding: 10px 20px;
         border: none;
@@ -137,7 +135,10 @@ export default class PageMeal extends Page {
       }
       @media (max-width: 600px) {
         .summary-cards {
-            grid-template-columns: 1fr 1fr;
+          grid-template-columns: 1fr 1fr;
+        }
+        .add-to-diary-container {
+          flex-direction: column;
         }
       }
     `
@@ -230,134 +231,6 @@ export default class PageMeal extends Page {
     await this.db.saveMeal(this.meal); // Auto-save removal
   }
 
-  render() {
-    return html`
-      <div class="page-container">
-        <h1>${this.isNew ? this.translations.createNewMeal : this.translations.editProduct}</h1>
-        
-        <div class="input-group">
-          <label>${this.translations.mealName}</label>
-          <input 
-            type="text" 
-            .value="${this.meal.name}" 
-            placeholder="${this.translations.enterMealName}" 
-            @input="${this._handleNameChange}"
-          >
-        </div>
-
-        <div class="input-group">
-          <label>${this.translations.mealDescription}</label>
-          <textarea 
-            .value="${this.meal.description}" 
-            placeholder="${this.translations.enterMealDescription}"
-            @input="${this._handleDescriptionChange}"
-          ></textarea>
-        </div>
-
-        <h3>${this.translations.addFood}</h3>
-        
-        <div class="foods-list">
-          ${this.meal.foods.length === 0 ? html`
-            <div class="empty-foods">${this.translations.noFoodsAdded}</div> 
-          ` : this.meal.foods.map((food, index) => {
-      const ratio = food.quantity / 100;
-      const calories = (food.product.nutriments?.['energy-kcal'] || 0) * ratio;
-      return html`
-            <div class="food-item-container">
-                <div class="food-item-content">
-                    <component-search-result 
-                    name="${food.product.product_name}" 
-                    code="${food.product.code}" 
-                    calories="${calories.toFixed(1)}" 
-                    quantity="${food.quantity}g"
-                    removable="true"
-                    @remove-click="${() => this._removeFood(index)}"
-                    >
-                  </component-search-result>
-                </div>
-            </div>
-          `})}
-        </div>
-
-        <div class="summary-cards">
-             ${(() => {
-        const totals = this.meal.foods.reduce((acc, f) => {
-          const ratio = f.quantity / 100;
-          return {
-            calories: acc.calories + (f.product.nutriments?.['energy-kcal'] || 0) * ratio,
-            carbs: acc.carbs + (f.product.nutriments?.carbohydrates || 0) * ratio,
-            fat: acc.fat + (f.product.nutriments?.fat || 0) * ratio,
-            protein: acc.protein + (f.product.nutriments?.proteins || 0) * ratio
-          };
-        }, { calories: 0, carbs: 0, fat: 0, protein: 0 });
-
-        return html`
-                    <div class="summary-card calories">
-                        <span class="value">${totals.calories.toFixed(0)}</span>
-                        <span class="label">${this.translations.calories}</span>
-                    </div>
-                    <div class="summary-card carbs">
-                        <span class="value">${totals.carbs.toFixed(0)}g</span>
-                        <span class="label">${this.translations.carbs}</span>
-                    </div>
-                    <div class="summary-card fat">
-                        <span class="value">${totals.fat.toFixed(0)}g</span>
-                        <span class="label">${this.translations.fat}</span>
-                    </div>
-                    <div class="summary-card protein">
-                        <span class="value">${totals.protein.toFixed(0)}g</span>
-                        <span class="label">${this.translations.protein}</span>
-                    </div>
-                `;
-      })()}
-        </div>
-
-        <div class="buttons-container">
-          <button class="secondary" @click="${this._handleAddFood}">
-            + ${this.translations.addFood}
-          </button>
-          
-
-
-          ${!this.isNew ? html`
-             <div class="input-group">
-                  <label for="date">Date:</label>
-                  <input 
-                    type="date" 
-                    id="date" 
-                    .value="${this.selectedDate}" 
-                    @change="${this._handleDateChange}"
-                  >
-             </div>
-
-             <div class="input-group">
-                  <label for="category">Category:</label>
-                  <select 
-                    id="category" 
-                    .value="${this.selectedCategory}" 
-                    @change="${(e: Event) => this.selectedCategory = (e.target as HTMLInputElement).value as any}"
-                    style="padding: 8px; background: var(--input-background); color: var(--input-text); border: 1px solid var(--input-border, #ccc); border-radius: 4px; width: 100%; box-sizing: border-box;"
-                  >
-                    <option value="breakfast">Breakfast</option>
-                    <option value="snack1">Snack (Morning)</option>
-                    <option value="lunch">Lunch</option>
-                    <option value="snack2">Snack (Afternoon)</option>
-                    <option value="dinner">Dinner</option>
-                    <option value="snack3">Snack (Evening)</option>
-                  </select>
-             </div>
-
-             <button class="secondary" @click="${this._addToDiary}">
-                 Add to Diary
-             </button>
-          ` : ''}
-
-          ${this.error ? html`<div class="error-message">${this.error}</div>` : ''}
-        </div>
-      </div>
-    `;
-  }
-
   private _generateId(): string {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
   }
@@ -396,6 +269,136 @@ export default class PageMeal extends Page {
     this.triggerPageNavigation({ page: 'search', mealId: this.meal.id });
   }
 
+  render() {
+    return html`
+      <div class="page-container">
+        <h1>${this.isNew ? this.translations.createNewMeal : this.translations.editProduct}</h1>
+        
+        <div class="input-group">
+          <label>${this.translations.mealName}</label>
+          <input 
+            type="text" 
+            .value="${this.meal.name}" 
+            placeholder="${this.translations.enterMealName}" 
+            @input="${this._handleNameChange}"
+          >
+        </div>
+
+        <div class="input-group">
+          <label>${this.translations.mealDescription}</label>
+          <textarea 
+            .value="${this.meal.description}" 
+            placeholder="${this.translations.enterMealDescription}"
+            @input="${this._handleDescriptionChange}"
+          ></textarea>
+        </div>
+
+                <div class="summary-cards">
+             ${(() => {
+        const totals = this.meal.foods.reduce((acc, f) => {
+          const ratio = f.quantity / 100;
+          return {
+            calories: acc.calories + (f.product.nutriments?.['energy-kcal'] || 0) * ratio,
+            carbs: acc.carbs + (f.product.nutriments?.carbohydrates || 0) * ratio,
+            fat: acc.fat + (f.product.nutriments?.fat || 0) * ratio,
+            protein: acc.protein + (f.product.nutriments?.proteins || 0) * ratio
+          };
+        }, { calories: 0, carbs: 0, fat: 0, protein: 0 });
+
+        return html`
+                    <div class="summary-card calories">
+                        <span class="value">${totals.calories.toFixed(0)}</span>
+                        <span class="label">${this.translations.calories}</span>
+                    </div>
+                    <div class="summary-card carbs">
+                        <span class="value">${totals.carbs.toFixed(0)}g</span>
+                        <span class="label">${this.translations.carbs}</span>
+                    </div>
+                    <div class="summary-card fat">
+                        <span class="value">${totals.fat.toFixed(0)}g</span>
+                        <span class="label">${this.translations.fat}</span>
+                    </div>
+                    <div class="summary-card protein">
+                        <span class="value">${totals.protein.toFixed(0)}g</span>
+                        <span class="label">${this.translations.protein}</span>
+                    </div>
+                `;
+      })()}
+        </div>
+
+
+        <h3>${this.translations.foods}</h3>
+        
+        <div class="foods-list">
+          ${this.meal.foods.length === 0 ? html`
+            <div class="empty-foods">${this.translations.noFoodsAdded}</div> 
+          ` : this.meal.foods.map((food, index) => {
+        const ratio = food.quantity / 100;
+        const calories = (food.product.nutriments?.['energy-kcal'] || 0) * ratio;
+        return html`
+            <div class="food-item-container">
+                <div class="food-item-content">
+                    <component-search-result 
+                    name="${food.product.product_name}" 
+                    code="${food.product.code}" 
+                    calories="${calories.toFixed(1)}" 
+                    quantity="${food.quantity}g"
+                    removable="true"
+                    @remove-click="${() => this._removeFood(index)}"
+                    >
+                  </component-search-result>
+                </div>
+            </div>
+          `})}
+        </div>
+
+        <div class="buttons-container">
+          <button class="btn" @click="${this._handleAddFood}">
+            + ${this.translations.addFood}
+          </button>
+          
+
+          <div class="add-to-diary-container">
+
+              <div class="input-group">
+                 <label for="category">Category:</label>
+                 <select 
+                   id="category" 
+                   .value="${this.selectedCategory}" 
+                   @change="${(e: Event) => this.selectedCategory = (e.target as HTMLInputElement).value as any}"
+                   style="padding: 8px; background: var(--input-background); color: var(--input-text); border: 1px solid var(--input-border, #ccc); border-radius: 4px; width: 100%; box-sizing: border-box;"
+                 >
+                   <option value="breakfast">Breakfast</option>
+                   <option value="snack1">Snack (Morning)</option>
+                   <option value="lunch">Lunch</option>
+                   <option value="snack2">Snack (Afternoon)</option>
+                   <option value="dinner">Dinner</option>
+                   <option value="snack3">Snack (Evening)</option>
+                 </select>
+              </div>
+
+            <div class="input-group">
+                 <label for="date">Date:</label>
+                 <input 
+                   type="date" 
+                   id="date" 
+                   .value="${this.selectedDate}" 
+                   @change="${this._handleDateChange}"
+                 >
+            </div>
+
+          </div>
+
+
+             <button class="btn" @click="${this._addToDiary}">
+                 Add to Diary
+             </button>
+
+          ${this.error ? html`<div class="error-message">${this.error}</div>` : ''}
+        </div>
+      </div>
+    `;
+  }
 
 }
 

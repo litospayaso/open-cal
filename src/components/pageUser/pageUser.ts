@@ -226,8 +226,8 @@ export default class PageUser extends Page {
         <div class="form-group">
           <label>${this.translations.theme || 'Theme'}</label>
           <div class="theme-toggles">
-            <button class="${this.theme === 'light' ? 'active' : ''}" @click="${() => this._handleThemeChange('light')}">${this.translations.light || 'Light'}</button>
-            <button class="${this.theme === 'dark' ? 'active' : ''}" @click="${() => this._handleThemeChange('dark')}">${this.translations.dark || 'Dark'}</button>
+            <button class="btn" style="color: white; background-color:var(--palette-green)" @click="${() => this._handleThemeChange('light')}">${this.translations.light || 'Light'}</button>
+            <button class="btn" style="color: white; background-color:var(--palette-purple)" @click="${() => this._handleThemeChange('dark')}">${this.translations.dark || 'Dark'}</button>
           </div>
         </div>
         <div class="form-group">

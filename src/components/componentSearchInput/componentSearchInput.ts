@@ -51,8 +51,8 @@ export class ComponentSearchInput extends LitElement {
       justify-content: center;
       font-size: 1.2rem;
       cursor: pointer;
-      background-color: var(--palette-purple);
-      color: var(--button-icon-color, white);
+      background-color: var(--group-button-active-bg, var(--palette-green));
+      color: var(--group-button-active-text, #fff);
       border: none;
       border-radius: 50%;
       transition: transform 0.2s ease, background-color 0.3s ease;
@@ -60,7 +60,7 @@ export class ComponentSearchInput extends LitElement {
     }
     button:hover {
       transform: scale(1.05);
-      background-color: var(--palette-blue);
+      opacity: 0.9;
     }
     button:active {
       transform: scale(0.95);

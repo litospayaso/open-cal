@@ -55,11 +55,11 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
       }
       button.scan-btn:hover {
         transform: scale(1.05);
-        background-color: var(--group-button-hover-bg, rgba(0, 0, 0, 0.05));
+        opacity: 0.9;
       }
       button.scan-btn:active {
         transform: scale(0.95);
-        background-color: var(--group-button-active-bg, var(--palette-green));
+        opacity: 0.9;
       }
       .loading-spinner {
         display: flex;
@@ -74,6 +74,7 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
 
   @state() searchResult: (SearchProductItemInterface & { isFavorite?: boolean })[] = [];
   @state() loading: boolean = false;
+  @state() mealId: string | null = null;
 
   @state() query: string = '';
   @state() viewMode: 'cached' | 'favorites' | 'search' | 'meals' = 'cached';
@@ -88,9 +89,9 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
     await this.db.init();
     const params = this.getQueryParamsURL();
     const viewMode = params.get('viewMode');
-    const mealId = params.get('mealId');
+    this.mealId = params.get('mealId');
 
-    if (mealId) {
+    if (this.mealId) {
       this.groupButtonOptions = [
         { text: this.translations.cached, id: 'cached', active: true },
         { text: this.translations.favorites, id: 'favorites', active: false },
@@ -148,16 +149,10 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
         }
       } else if (this.viewMode === 'meals') {
         const meals = await this.db.getAllMeals();
-        // Transform meals to match searchResult structure roughly or just use a flag?
-        // searchResult expects SearchProductItemInterface.
-        // We can map meals to a similar structure or use a separate list. 
-        // But to keep it simple with existing render, let's cast.
-        // We need special handling in render for meals if we use the same list.
-        // OR we add a specific "createNew" item.
 
         const mealItems = meals.map(m => ({
           code: m.id,
-          url: '', // unused?
+          url: '',
           product_name: m.name,
           nutriments: {
             'energy-kcal': m.foods.reduce((acc, f) => acc + (f.product.nutriments?.['energy-kcal'] || 0) * (f.quantity / 100), 0)
@@ -280,7 +275,7 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
   render() {
     return html`
       <div class="page-container">
-        <h1>${this.translations.searchProduct}</h1>
+        <h1>${this.mealId ? this.translations.addFood : this.translations.searchProduct}</h1>
         <div class="search-container">
           <component-search-input 
             placeholder="${this.translations.searchProduct}" 

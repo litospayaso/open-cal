@@ -76,7 +76,9 @@ export default class PageOpenCal extends Page {
           @page-navigation="${({ detail }: CustomEvent<{ [key: string]: string }>) => this.navigateToPage(detail)}"
         ></page-search>`;
       case 'home':
-        return html`<page-home></page-home>`;
+        return html`<page-home
+          @page-navigation="${({ detail }: CustomEvent<{ [key: string]: string }>) => this.navigateToPage(detail)}"
+        ></page-home>`;
       case 'food':
         return html`<page-food 
           @page-navigation="${({ detail }: CustomEvent<{ [key: string]: string }>) => this.navigateToPage(detail)}"
