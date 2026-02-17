@@ -163,6 +163,17 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         right: 10px;
         z-index: 10;
       }
+      .name-input {
+        font-size: 2em;
+        font-weight: bold;
+        margin: 0.67em 0;
+        width: 100%;
+        padding: 5px;
+        border: 1px solid var(--input-border, #ccc);
+        border-radius: 4px;
+        background: var(--input-background);
+        color: var(--input-text);
+      }
       .calculator-top {
         display: flex;
         flex-direction: column;
@@ -296,6 +307,20 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (this.editedProduct.product.nutriments as any)[key] = val;
+
+    if (key === 'energy-kcal_100g') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (this.editedProduct.product.nutriments as any)['energy-kcal'] = val;
+    }
+
+    this.requestUpdate();
+  }
+
+  private _handleNameChange(e: Event) {
+    if (!this.editedProduct || !this.editedProduct.product) return;
+    const input = e.target as HTMLInputElement;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (this.editedProduct.product as any).product_name = input.value;
     this.requestUpdate();
   }
 
@@ -410,7 +435,15 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
             <component-emoji text="${(this.product.product as any).product_name || 'Unknown Product'}" size="l"></component-emoji>
           </div>
           <div class="product-name">
-            <h1>${(this.product.product as any).product_name || 'Unknown Product'}</h1>
+            ${this.isEditing
+        ? html`<input 
+                    class="name-input"
+                    type="text" 
+                    .value="${(this.editedProduct?.product as any).product_name || ''}" 
+                    @input="${this._handleNameChange}"
+                  />`
+        : html`<h1>${(this.product.product as any).product_name || 'Unknown Product'}</h1>`
+      }
             <button 
               @click="${this._toggleFavorite}" 
               class="favorite-btn"

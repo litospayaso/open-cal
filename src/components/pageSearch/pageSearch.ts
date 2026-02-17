@@ -143,7 +143,14 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
       } else if (this.viewMode === 'search') {
         if (this.query) {
           const searchResponse = await this.api.searchProduct(this.query);
-          products = searchResponse.products || [];
+          const rawProducts = searchResponse.products || [];
+
+          // Check if any of these are cached/edited
+          products = await Promise.all(rawProducts.map(async (p: any) => {
+            const cached = await this.db.getCachedProduct(p.code);
+            return cached || p;
+          }));
+
         } else {
           products = [];
         }
