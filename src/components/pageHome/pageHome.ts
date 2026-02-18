@@ -2,6 +2,7 @@ import { html, css, type PropertyValueMap } from 'lit';
 import { state } from 'lit/decorators.js';
 import Page from '../../shared/page';
 import { type DailyLog, type MealCategory } from '../../shared/db';
+import '../componentProgressBar';
 
 export default class PageHome extends Page {
   static styles = [
@@ -54,7 +55,9 @@ export default class PageHome extends Page {
         cursor: pointer;
         z-index: 1;
       }
-
+      .progress-container{
+        margin: 16px 0;
+      }
       .summary-cards {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -132,10 +135,29 @@ export default class PageHome extends Page {
   @state() dailyLog: DailyLog | null = null;
   @state() loading: boolean = true;
   @state() totals = { calories: 0, carbs: 0, fat: 0, protein: 0 };
+  @state() userGoals = {
+    calories: 2000,
+    macros: { protein: 30, carbs: 40, fat: 30 }
+  };
 
   protected async firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): Promise<void> {
     super.firstUpdated(_changedProperties);
+    this.loadUserProfile();
     await this.loadData();
+  }
+
+  loadUserProfile() {
+    const savedProfile = localStorage.getItem('user_profile');
+    if (savedProfile) {
+      try {
+        const profile = JSON.parse(savedProfile);
+        if (profile.goals) {
+          this.userGoals = profile.goals;
+        }
+      } catch (e) {
+        console.error('Failed to parse user profile', e);
+      }
+    }
   }
 
   async loadData() {
@@ -163,9 +185,6 @@ export default class PageHome extends Page {
     categories.forEach(cat => {
       this.dailyLog![cat].forEach(item => {
         // Calculate based on quantity (assuming 100g base for nutrients)
-        // Check if quantity is in grams or portion. For simplified MVP, assuming input is grams if not specified
-        // But SearchProductItemInterface has nutriments per 100g usually.
-
         const ratio = item.unit === 'meal' ? item.quantity : item.quantity / 100;
 
         calories += (item.product.nutriments['energy-kcal'] || 0) * ratio;
@@ -242,6 +261,20 @@ export default class PageHome extends Page {
         </div>
       </div>
 
+      <div class="progress-container">
+        <component-progress-bar
+            .dailyCaloriesGoal=${this.userGoals.calories}
+            .caloriesEaten=${this.totals.calories}
+            .fatEaten=${this.totals.fat}
+            .carbsEaten=${this.totals.carbs}
+            .proteinEaten=${this.totals.protein}
+            .fatGoalPercent=${this.userGoals.macros.fat}
+            .carbsGoalPercent=${this.userGoals.macros.carbs}
+            .proteinGoalPercent=${this.userGoals.macros.protein}
+            .translations=${JSON.stringify(this.translations)}
+        ></component-progress-bar>
+      </div>
+
       <div class="summary-cards">
         <div class="summary-card calories">
           <span class="value">${this.totals.calories}</span>
@@ -269,6 +302,7 @@ export default class PageHome extends Page {
       ${this.renderCategory(this.translations.snackEvening, 'snack3')}
     `;
   }
+
 
   async _handleRemoveItem(category: MealCategory, index: number) {
     if (!this.dailyLog) return;

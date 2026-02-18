@@ -31848,35 +31848,6 @@
         pointer-events: none;
       }
 
-      .scan-area {
-        width: 80%;
-        max-width: 300px;
-        aspect-ratio: 1/1;
-        border: 2px solid white;
-        border-radius: 12px;
-        box-shadow: 0 0 0 100vh rgba(0, 0, 0, 0.5);
-        position: relative;
-        z-index: 10;
-      }
-
-      .scan-area::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 10%;
-        right: 10%;
-        height: 2px;
-        background: red;
-        animation: scan 2s linear infinite;
-        opacity: 0.7;
-      }
-
-      @keyframes scan {
-        0% { transform: translateY(-100px); opacity: 0; }
-        50% { opacity: 1; }
-        100% { transform: translateY(100px); opacity: 0; }
-      }
-
       .controls {
         position: absolute;
         bottom: 85px;

@@ -72,6 +72,9 @@ export const translations = {
     confirmClearDataDesc: 'Esto eliminará todos tus registros, comidas y configuraciones permanentemente.',
     cancel: 'Cancelar',
     confirm: 'Confirmar',
+    kcalEated: 'kcal consumidas',
+    remainingCals: 'Todavía puedes tomar {cal} calorias',
+    remainingCalsOver: 'Has excedido tu ingesta diaria de calorías en {cal} calorias'
   },
   en: {
     search: 'Search',
@@ -146,6 +149,9 @@ export const translations = {
     confirmClearDataDesc: 'This will delete all your logs, meals, and settings permanently.',
     cancel: 'Cancel',
     confirm: 'Confirm',
+    kcalEated: 'kcal eated',
+    remainingCals: 'You can still eat {cal} calories',
+    remainingCalsOver: 'You have exceeded your daily calorie intake by {cal} calories'
   },
   fr: {
     search: 'Rechercher',
@@ -220,6 +226,9 @@ export const translations = {
     confirmClearDataDesc: 'Cela supprimera définitivement tous vos journaux, repas et paramètres.',
     cancel: 'Annuler',
     confirm: 'Confirmer',
+    kcalEated: 'kcal consommées',
+    remainingCals: 'Vous pouvez encore consommer {cal} calories',
+    remainingCalsOver: 'Vous avez dépassé votre apport calorique quotidien de {cal} calories'
   },
   de: {
     search: 'Suche',
@@ -294,6 +303,9 @@ export const translations = {
     confirmClearDataDesc: 'Dies wird alle Ihre Protokolle, Mahlzeiten und Einstellungen dauerhaft löschen.',
     cancel: 'Abbrechen',
     confirm: 'Bestätigen',
+    kcalEated: 'kcal konsumiert',
+    remainingCals: 'Du kannst noch {cal} Kalorien zu dir nehmen',
+    remainingCalsOver: 'Du hast deine tägliche Kalorienzufuhr um {cal} Kalorien überschritten'
   },
   it: {
     search: 'Cerca',
@@ -368,5 +380,8 @@ export const translations = {
     confirmClearDataDesc: 'Questo eliminerà definitivamente tutti i tuoi diari, pasti e impostazioni.',
     cancel: 'Annulla',
     confirm: 'Conferma',
+    kcalEated: 'kcal consumidas',
+    remainingCals: 'Puoi ancora consumare {cal} calorie',
+    remainingCalsOver: 'Hai superato l\'apporto calorico giornaliero di {cal} calorie'
   },
 }
