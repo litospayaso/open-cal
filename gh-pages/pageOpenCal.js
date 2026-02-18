@@ -26101,7 +26101,10 @@
       confirmClearData: "\xBFEst\xE1s seguro?",
       confirmClearDataDesc: "Esto eliminar\xE1 todos tus registros, comidas y configuraciones permanentemente.",
       cancel: "Cancelar",
-      confirm: "Confirmar"
+      confirm: "Confirmar",
+      kcalEated: "kcal consumidas",
+      remainingCals: "Todav\xEDa puedes tomar {cal} calorias",
+      remainingCalsOver: "Has excedido tu ingesta diaria de calor\xEDas en {cal} calorias"
     },
     en: {
       search: "Search",
@@ -26175,7 +26178,10 @@
       confirmClearData: "Are you sure?",
       confirmClearDataDesc: "This will delete all your logs, meals, and settings permanently.",
       cancel: "Cancel",
-      confirm: "Confirm"
+      confirm: "Confirm",
+      kcalEated: "kcal eated",
+      remainingCals: "You can still eat {cal} calories",
+      remainingCalsOver: "You have exceeded your daily calorie intake by {cal} calories"
     },
     fr: {
       search: "Rechercher",
@@ -26249,7 +26255,10 @@
       confirmClearData: "\xCAtes-vous s\xFBr ?",
       confirmClearDataDesc: "Cela supprimera d\xE9finitivement tous vos journaux, repas et param\xE8tres.",
       cancel: "Annuler",
-      confirm: "Confirmer"
+      confirm: "Confirmer",
+      kcalEated: "kcal consomm\xE9es",
+      remainingCals: "Vous pouvez encore consommer {cal} calories",
+      remainingCalsOver: "Vous avez d\xE9pass\xE9 votre apport calorique quotidien de {cal} calories"
     },
     de: {
       search: "Suche",
@@ -26323,7 +26332,10 @@
       confirmClearData: "Sind Sie sicher?",
       confirmClearDataDesc: "Dies wird alle Ihre Protokolle, Mahlzeiten und Einstellungen dauerhaft l\xF6schen.",
       cancel: "Abbrechen",
-      confirm: "Best\xE4tigen"
+      confirm: "Best\xE4tigen",
+      kcalEated: "kcal konsumiert",
+      remainingCals: "Du kannst noch {cal} Kalorien zu dir nehmen",
+      remainingCalsOver: "Du hast deine t\xE4gliche Kalorienzufuhr um {cal} Kalorien \xFCberschritten"
     },
     it: {
       search: "Cerca",
@@ -26397,7 +26409,10 @@
       confirmClearData: "Sei sicuro?",
       confirmClearDataDesc: "Questo eliminer\xE0 definitivamente tutti i tuoi diari, pasti e impostazioni.",
       cancel: "Annulla",
-      confirm: "Conferma"
+      confirm: "Conferma",
+      kcalEated: "kcal consumidas",
+      remainingCals: "Puoi ancora consumare {cal} calorie",
+      remainingCalsOver: "Hai superato l'apporto calorico giornaliero di {cal} calorie"
     }
   };
 
@@ -34073,6 +34088,203 @@
   // src/components/pageUser/index.ts
   register("page-user", PageUser);
 
+  // src/components/componentProgressBar/componentProgressBar.ts
+  var ComponentProgressBar = class extends i4 {
+    constructor() {
+      super(...arguments);
+      this.dailyCaloriesGoal = 0;
+      this.caloriesEaten = 0;
+      this.fatEaten = 0;
+      this.carbsEaten = 0;
+      this.proteinEaten = 0;
+      this.fatGoalPercent = 0;
+      this.carbsGoalPercent = 0;
+      this.proteinGoalPercent = 0;
+      this.translationsTexts = {};
+    }
+    set translations(translations2) {
+      this.translationsTexts = JSON.parse(translations2);
+    }
+    static {
+      this.styles = i`
+    :host {
+      display: block;
+      width: 100%;
+      font-family: var(--font-family, sans-serif);
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .progress-bar-text {
+        font-size: 0.9rem;
+        color: var(--text-color, #333);
+        margin-bottom: 4px;
+        font-weight: 500;
+    }
+
+    .progress-bar-track {
+      width: 100%;
+      height: 12px;
+      background-color: var(--input-background, #e0e0e0);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .segment {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+
+    .segment.fat {
+      background-color: var(--fat-color, #f1c40f);
+    }
+
+    .segment.carbs {
+      background-color: var(--carbs-color, #3498db);
+    }
+
+    .segment.protein {
+      background-color: var(--protein-color, #e74c3c);
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+
+    .label-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .label {
+      text-align: right;
+      font-size: 0.9rem;
+      color: var(--text-color, #333);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    
+    .label span {
+        font-weight: bold;
+    }
+
+    .label.fat {
+        color: var(--fat-color, #f1c40f);
+    }
+
+    .label.carbs {
+        color: var(--carbs-color, #3498db);
+    }
+
+    .label.protein {
+        color: var(--protein-color, #e74c3c);
+    }
+
+    .macros-label {
+        display: flex;
+        gap: 15px;
+        font-size: 0.85rem;
+        color: var(--text-color, #666);
+    }
+    
+    .macros-label span {
+        font-weight: bold;
+    }
+  `;
+    }
+    render() {
+      const fatCalories = this.fatEaten * 9;
+      const carbsCalories = this.carbsEaten * 4;
+      const proteinCalories = this.proteinEaten * 4;
+      const totalGoal = this.dailyCaloriesGoal > 0 ? this.dailyCaloriesGoal : 1;
+      const totalCalories = this.caloriesEaten;
+      const usagePercent = Math.min(totalCalories / totalGoal * 100, 100);
+      let renderedFatWidth = 0;
+      let renderedCarbsWidth = 0;
+      let renderedProteinWidth = 0;
+      if (totalCalories > 0) {
+        const measuredTotal = fatCalories + carbsCalories + proteinCalories;
+        if (measuredTotal > 0) {
+          renderedFatWidth = fatCalories / measuredTotal * usagePercent;
+          renderedCarbsWidth = carbsCalories / measuredTotal * usagePercent;
+          renderedProteinWidth = proteinCalories / measuredTotal * usagePercent;
+        }
+      }
+      const currentFatPercent = totalCalories > 0 ? fatCalories / totalCalories * 100 : 0;
+      const currentCarbsPercent = totalCalories > 0 ? carbsCalories / totalCalories * 100 : 0;
+      const currentProteinPercent = totalCalories > 0 ? proteinCalories / totalCalories * 100 : 0;
+      const remaining = this.dailyCaloriesGoal - this.caloriesEaten;
+      let statusText = "";
+      if (this.caloriesEaten <= this.dailyCaloriesGoal) {
+        statusText = this.translationsTexts["remainingCals"]?.replace("{cal}", remaining.toString());
+      } else {
+        statusText = this.translationsTexts["remainingCalsOver"]?.replace("{cal}", Math.abs(remaining).toString());
+      }
+      return b2`
+      <div class="container">
+        <div class="progress-bar-text">
+            ${statusText}
+        </div>
+        <div class="progress-bar-track" role="progressbar" aria-valuenow="${this.caloriesEaten}" aria-valuemin="0" aria-valuemax="${this.dailyCaloriesGoal}" aria-label="Daily calories progress">
+           <div class="segment fat" style="width: ${renderedFatWidth}%" title="Fat: ${this.fatEaten}g"></div>
+           <div class="segment carbs" style="width: ${renderedCarbsWidth}%" title="Carbs: ${this.carbsEaten}g"></div>
+           <div class="segment protein" style="width: ${renderedProteinWidth}%" title="Protein: ${this.proteinEaten}g"></div>
+        </div>
+        <div class="label-container">
+          <div class="macros-label">
+             <div><span class="label fat">${this.translationsTexts["fat"]}</span> <span>${Math.round(currentFatPercent)}</span> / ${this.fatGoalPercent}%</div>
+             <div><span class="label carbs">${this.translationsTexts["carbs"]}</span> <span>${Math.round(currentCarbsPercent)}</span> / ${this.carbsGoalPercent}%</div>
+             <div><span class="label protein">${this.translationsTexts["protein"]}</span> <span>${Math.round(currentProteinPercent)}</span> / ${this.proteinGoalPercent}%</div>
+          </div>
+          <div class="label">
+             <span>${this.caloriesEaten}</span> / ${this.dailyCaloriesGoal} ${this.translationsTexts["kcalEated"]}
+          </div>
+        </div>
+      </div>
+    `;
+    }
+  };
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentProgressBar.prototype, "dailyCaloriesGoal", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentProgressBar.prototype, "caloriesEaten", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentProgressBar.prototype, "fatEaten", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentProgressBar.prototype, "carbsEaten", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentProgressBar.prototype, "proteinEaten", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentProgressBar.prototype, "fatGoalPercent", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentProgressBar.prototype, "carbsGoalPercent", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentProgressBar.prototype, "proteinGoalPercent", 2);
+  __decorateClass([
+    n4({ type: String })
+  ], ComponentProgressBar.prototype, "translations", 1);
+  __decorateClass([
+    r5()
+  ], ComponentProgressBar.prototype, "translationsTexts", 2);
+
+  // src/components/componentProgressBar/index.ts
+  register("component-progress-bar", ComponentProgressBar);
+
   // src/components/pageHome/pageHome.ts
   var PageHome = class extends Page {
     constructor() {
@@ -34081,6 +34293,10 @@
       this.dailyLog = null;
       this.loading = true;
       this.totals = { calories: 0, carbs: 0, fat: 0, protein: 0 };
+      this.userGoals = {
+        calories: 2e3,
+        macros: { protein: 30, carbs: 40, fat: 30 }
+      };
     }
     static {
       this.styles = [
@@ -34133,7 +34349,9 @@
         cursor: pointer;
         z-index: 1;
       }
-
+      .progress-container{
+        margin: 16px 0;
+      }
       .summary-cards {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -34209,7 +34427,21 @@
     }
     async firstUpdated(_changedProperties) {
       super.firstUpdated(_changedProperties);
+      this.loadUserProfile();
       await this.loadData();
+    }
+    loadUserProfile() {
+      const savedProfile = localStorage.getItem("user_profile");
+      if (savedProfile) {
+        try {
+          const profile = JSON.parse(savedProfile);
+          if (profile.goals) {
+            this.userGoals = profile.goals;
+          }
+        } catch (e5) {
+          console.error("Failed to parse user profile", e5);
+        }
+      }
     }
     async loadData() {
       this.loading = true;
@@ -34294,6 +34526,20 @@
         </div>
       </div>
 
+      <div class="progress-container">
+        <component-progress-bar
+            .dailyCaloriesGoal=${this.userGoals.calories}
+            .caloriesEaten=${this.totals.calories}
+            .fatEaten=${this.totals.fat}
+            .carbsEaten=${this.totals.carbs}
+            .proteinEaten=${this.totals.protein}
+            .fatGoalPercent=${this.userGoals.macros.fat}
+            .carbsGoalPercent=${this.userGoals.macros.carbs}
+            .proteinGoalPercent=${this.userGoals.macros.protein}
+            .translations=${JSON.stringify(this.translations)}
+        ></component-progress-bar>
+      </div>
+
       <div class="summary-cards">
         <div class="summary-card calories">
           <span class="value">${this.totals.calories}</span>
@@ -34373,6 +34619,9 @@
   __decorateClass([
     r5()
   ], PageHome.prototype, "totals", 2);
+  __decorateClass([
+    r5()
+  ], PageHome.prototype, "userGoals", 2);
 
   // src/components/pageHome/index.ts
   register("page-home", PageHome);
