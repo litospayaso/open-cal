@@ -26044,6 +26044,11 @@
       allergens: "Al\xE9rgenos",
       ingredients: "Ingredientes",
       nutritionalInfo: "Informaci\xF3n nutricional",
+      quantity: "Cantidad",
+      grams: "Gramos",
+      date: "Fecha",
+      category: "Categor\xEDa",
+      addToDiary: "A\xF1adir al diario",
       searchProduct: "Buscar producto",
       noResultsFound: "No se encontraron resultados",
       noFoodsAdded: "No se han a\xF1adido alimentos",
@@ -26084,8 +26089,11 @@
       editProduct: "Editar producto",
       meals: "Comidas",
       createNewMeal: "Crear nueva comida",
+      newMeal: "Nueva comida",
       mealName: "Nombre de la comida",
       mealDescription: "Descripci\xF3n (Receta)",
+      duplicateMeal: "Duplicar comida",
+      deleteMeal: "Eliminar comida",
       addToMeal: "A\xF1adir a la comida",
       saveMeal: "Guardar comida",
       addFood: "A\xF1adir alimento",
@@ -26100,6 +26108,7 @@
       clearAllData: "Borrar todos los datos",
       confirmClearData: "\xBFEst\xE1s seguro?",
       confirmClearDataDesc: "Esto eliminar\xE1 todos tus registros, comidas y configuraciones permanentemente.",
+      deleteMealMessage: "Esto eliminar\xE1 esta comida y la eliminar\xE1 de todos los registros diarios.",
       cancel: "Cancelar",
       confirm: "Confirmar",
       kcalEated: "kcal consumidas",
@@ -26121,6 +26130,11 @@
       allergens: "Allergens",
       ingredients: "Ingredients",
       nutritionalInfo: "Nutritional info",
+      quantity: "Quantity",
+      grams: "Grams",
+      date: "Date",
+      category: "Category",
+      addToDiary: "Add to Diary",
       searchProduct: "Search product",
       noResultsFound: "No results found",
       noFoodsAdded: "No foods added",
@@ -26161,8 +26175,11 @@
       editProduct: "Edit product",
       meals: "Meals",
       createNewMeal: "Create new meal",
+      newMeal: "New Meal",
       mealName: "Meal name",
       mealDescription: "Description (Recipe)",
+      duplicateMeal: "Duplicate meal",
+      deleteMeal: "Delete meal",
       addToMeal: "Add to meal",
       saveMeal: "Save meal",
       addFood: "Add food",
@@ -26177,6 +26194,7 @@
       clearAllData: "Clear All Data",
       confirmClearData: "Are you sure?",
       confirmClearDataDesc: "This will delete all your logs, meals, and settings permanently.",
+      deleteMealMessage: "This will delete this meal and remove it from all daily logs.",
       cancel: "Cancel",
       confirm: "Confirm",
       kcalEated: "kcal eated",
@@ -26198,6 +26216,11 @@
       allergens: "Allerg\xE8nes",
       ingredients: "Ingr\xE9dients",
       nutritionalInfo: "Informations nutritionnelles",
+      quantity: "Quantit\xE9",
+      grams: "Grammes",
+      date: "Date",
+      category: "Cat\xE9gorie",
+      addToDiary: "Ajouter au journal",
       searchProduct: "Rechercher un produit",
       noResultsFound: "Aucun r\xE9sultat trouv\xE9",
       noFoodsAdded: "Aucun aliment ajout\xE9",
@@ -26238,8 +26261,11 @@
       editProduct: "Modifier le produit",
       meals: "Repas",
       createNewMeal: "Cr\xE9er un nouveau repas",
+      newMeal: "Nouveau repas",
       mealName: "Nom du repas",
       mealDescription: "Description (Recette)",
+      duplicateMeal: "Dupliquer le repas",
+      deleteMeal: "Supprimer le repas",
       addToMeal: "Ajouter au repas",
       saveMeal: "Enregistrer le repas",
       addFood: "Ajouter un aliment",
@@ -26254,6 +26280,7 @@
       clearAllData: "Effacer toutes les donn\xE9es",
       confirmClearData: "\xCAtes-vous s\xFBr ?",
       confirmClearDataDesc: "Cela supprimera d\xE9finitivement tous vos journaux, repas et param\xE8tres.",
+      deleteMealMessage: "Cela supprimera d\xE9finitivement ce repas et le supprimera de tous les journaux quotidiens.",
       cancel: "Annuler",
       confirm: "Confirmer",
       kcalEated: "kcal consomm\xE9es",
@@ -26275,6 +26302,11 @@
       allergens: "Allergene",
       ingredients: "Zutaten",
       nutritionalInfo: "N\xE4hrwertangaben",
+      quantity: "Menge",
+      grams: "Gramm",
+      date: "Datum",
+      category: "Kategorie",
+      addToDiary: "Zum Tagebuch hinzuf\xFCgen",
       searchProduct: "Produkt suchen",
       noResultsFound: "Keine Ergebnisse gefunden",
       noFoodsAdded: "Keine Lebensmittel hinzugef\xFCgt",
@@ -26315,8 +26347,11 @@
       editProduct: "Produkt bearbeiten",
       meals: "Mahlzeiten",
       createNewMeal: "Neue Mahlzeit erstellen",
+      newMeal: "Neue Mahlzeit",
       mealName: "Name der Mahlzeit",
       mealDescription: "Beschreibung (Rezept)",
+      duplicateMeal: "Duplizieren Mahlzeit",
+      deleteMeal: "L\xF6schen Mahlzeit",
       addToMeal: "Zur Mahlzeit hinzuf\xFCgen",
       saveMeal: "Mahlzeit speichern",
       addFood: "Lebensmittel hinzuf\xFCgen",
@@ -26331,6 +26366,7 @@
       clearAllData: "Alle Daten l\xF6schen",
       confirmClearData: "Sind Sie sicher?",
       confirmClearDataDesc: "Dies wird alle Ihre Protokolle, Mahlzeiten und Einstellungen dauerhaft l\xF6schen.",
+      deleteMealMessage: "Dies wird diese Mahlzeit dauerhaft l\xF6schen und sie aus allen t\xE4glichen Protokollen entfernen.",
       cancel: "Abbrechen",
       confirm: "Best\xE4tigen",
       kcalEated: "kcal konsumiert",
@@ -26352,6 +26388,11 @@
       allergens: "Allergeni",
       ingredients: "Ingredienti",
       nutritionalInfo: "Informazioni nutrizionali",
+      quantity: "Quantit\xE0",
+      grams: "Grammi",
+      date: "Data",
+      category: "Categoria",
+      addToDiary: "Aggiungi al diario",
       searchProduct: "Cerca prodotto",
       noResultsFound: "Nessun risultato trovato",
       noFoodsAdded: "Nessun alimento aggiunto",
@@ -26392,8 +26433,11 @@
       editProduct: "Modifica prodotto",
       meals: "Pasti",
       createNewMeal: "Crea nuovo pasto",
+      newMeal: "Nuovo pasto",
       mealName: "Nome del pasto",
       mealDescription: "Descrizione (Ricetta)",
+      duplicateMeal: "Duplica pasto",
+      deleteMeal: "Elimina pasto",
       addToMeal: "Aggiungi al pasto",
       saveMeal: "Salva pasto",
       addFood: "Aggiungi alimento",
@@ -26408,6 +26452,7 @@
       clearAllData: "Cancella tutti i dati",
       confirmClearData: "Sei sicuro?",
       confirmClearDataDesc: "Questo eliminer\xE0 definitivamente tutti i tuoi diari, pasti e impostazioni.",
+      deleteMealMessage: "Questo eliminer\xE0 definitivamente questo pasto e lo rimuover\xE0 da tutti i diari giornalieri.",
       cancel: "Annulla",
       confirm: "Conferma",
       kcalEated: "kcal consumidas",
@@ -32601,8 +32646,6 @@
               carbohydrates: this.product.product?.nutriments?.carbohydrates_100g || 0,
               fat: this.product.product?.nutriments?.fat_100g || 0,
               proteins: this.product.product?.nutriments?.proteins_100g || 0
-              // Add other required fields if necessary, or cast.
-              // For now mapping what we use in PageHome/ComponentSearchResult
             },
             product_name: this.product.product.product_name,
             nutrition_data: "per_100g",
@@ -32733,7 +32776,7 @@
             <div class="calculator-top">
               <div class="inputs-section">
                 <div class="input-group">
-                    <label for="grams">Quantity (grams):</label>
+                    <label for="grams">${this.translations.quantity} (${this.translations.grams}):</label>
                     <input 
                         id="grams" 
                         type="number" 
@@ -32744,7 +32787,7 @@
                 </div>
                 ${!this.mealId ? b2`
                 <div class="input-group">
-                  <label for="date">Date:</label>
+                  <label for="date">${this.translations.date}:</label>
                   <input 
                     id="date" 
                     type="date" 
@@ -32754,19 +32797,19 @@
                 </div>
 
                 <div class="input-group">
-                  <label for="category">Category:</label>
+                  <label for="category">${this.translations.category}:</label>
                   <select 
                     id="category" 
                     .value="${this.selectedCategory}" 
                     @change="${(e5) => this.selectedCategory = e5.target.value}"
                     style="padding: 8px; background: var(--input-background); color: var(--input-text); border: 1px solid var(--input-border, #ccc); border-radius: 4px; width: 100%; box-sizing: border-box;"
                   >
-                    <option value="breakfast">Breakfast</option>
-                    <option value="snack1">Snack (Morning)</option>
-                    <option value="lunch">Lunch</option>
-                    <option value="snack2">Snack (Afternoon)</option>
-                    <option value="dinner">Dinner</option>
-                    <option value="snack3">Snack (Evening)</option>
+                    <option value="breakfast">${this.translations.breakfast}</option>
+                    <option value="snack1">${this.translations.snack1}</option>
+                    <option value="lunch">${this.translations.lunch}</option>
+                    <option value="snack2">${this.translations.snack2}</option>
+                    <option value="dinner">${this.translations.dinner}</option>
+                    <option value="snack3">${this.translations.snack3}</option>
                   </select>
                 </div>
                   ` : ""}
@@ -32793,25 +32836,25 @@
                     <div class="nutrient-value">
                       ${this.isEditing ? b2`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.["energy-kcal_100g"] || 0).toString()}" @input="${(e5) => this._handleNutrientChange(e5, "energy-kcal_100g")}">` : this._calculateNutrient(this.product.product?.nutriments?.["energy-kcal_100g"])}
                     </div>
-                    <div class="nutrient-label">${this.isEditing ? "Calories (kcal / 100g)" : "Calories (kcal)"}</div>
+                    <div class="nutrient-label">${this.isEditing ? this.translations.calories + " (kcal / 100g)" : this.translations.calories + " (kcal)"}</div>
                 </div>
                 <div class="nutrient-item carbs">
                     <div class="nutrient-value">
                       ${this.isEditing ? b2`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.carbohydrates_100g || 0).toString()}" @input="${(e5) => this._handleNutrientChange(e5, "carbohydrates_100g")}">` : this._calculateNutrient(this.product.product?.nutriments?.carbohydrates_100g)}
                     </div>
-                    <div class="nutrient-label">${this.isEditing ? "Carbs (g / 100g)" : "Carbs (g)"}</div>
+                    <div class="nutrient-label">${this.isEditing ? this.translations.carbs + " (g / 100g)" : this.translations.carbs + " (g)"}</div>
                 </div>
                 <div class="nutrient-item protein">
                     <div class="nutrient-value">
                       ${this.isEditing ? b2`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.proteins_100g || 0).toString()}" @input="${(e5) => this._handleNutrientChange(e5, "proteins_100g")}">` : this._calculateNutrient(this.product.product?.nutriments?.proteins_100g)}
                     </div>
-                    <div class="nutrient-label">${this.isEditing ? "Protein (g / 100g)" : "Protein (g)"}</div>
+                    <div class="nutrient-label">${this.isEditing ? this.translations.protein + " (g / 100g)" : this.translations.protein + " (g)"}</div>
                 </div>
                 <div class="nutrient-item fat">
                     <div class="nutrient-value">
                       ${this.isEditing ? b2`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.fat_100g || 0).toString()}" @input="${(e5) => this._handleNutrientChange(e5, "fat_100g")}">` : this._calculateNutrient(this.product.product?.nutriments?.fat_100g)}
                     </div>
-                    <div class="nutrient-label">${this.isEditing ? "Fat (g / 100g)" : "Fat (g)"}</div>
+                    <div class="nutrient-label">${this.isEditing ? this.translations.fat + " (g / 100g)" : this.translations.fat + " (g)"}</div>
                 </div>
             </div>
 
@@ -32834,7 +32877,7 @@
                 @click="${this._addToDiary}"
                 class="add-to-diary-button"
               >
-                Add to Diary
+                ${this.translations.addToDiary}
               </button>
              `}
         </div>
@@ -34465,8 +34508,8 @@
                 <button class="menu-btn" @click="${this._toggleMenu}">&#8942;</button>
                 ${this.showMenu ? b2`
                 <div class="dropdown-menu">
-                    <button class="dropdown-item" @click="${this._handleDuplicate}">Duplicate Meal</button>
-                    <button class="dropdown-item delete" @click="${this._handleDelete}">Delete Meal</button>
+                    <button class="dropdown-item" @click="${this._handleDuplicate}">${this.translations.duplicateMeal}</button>
+                    <button class="dropdown-item delete" @click="${this._handleDelete}">${this.translations.deleteMeal}</button>
                 </div>
                 ` : ""}
             </div>
@@ -34561,24 +34604,24 @@
           <div class="add-to-diary-container">
 
               <div class="input-group">
-                 <label for="category">Category:</label>
+                 <label for="category">${this.translations.category}:</label>
                  <select 
                    id="category" 
                    .value="${this.selectedCategory}" 
                    @change="${(e5) => this.selectedCategory = e5.target.value}"
                    style="padding: 8px; background: var(--input-background); color: var(--input-text); border: 1px solid var(--input-border, #ccc); border-radius: 4px; width: 100%; box-sizing: border-box;"
                  >
-                   <option value="breakfast">Breakfast</option>
-                   <option value="snack1">Snack (Morning)</option>
-                   <option value="lunch">Lunch</option>
-                   <option value="snack2">Snack (Afternoon)</option>
-                   <option value="dinner">Dinner</option>
-                   <option value="snack3">Snack (Evening)</option>
+                   <option value="breakfast">${this.translations.breakfast}</option>
+                   <option value="snack1">${this.translations.snack1}</option>
+                   <option value="lunch">${this.translations.lunch}</option>
+                   <option value="snack2">${this.translations.snack2}</option>
+                   <option value="dinner">${this.translations.dinner}</option>
+                   <option value="snack3">${this.translations.snack3}</option>
                  </select>
               </div>
 
             <div class="input-group">
-                 <label for="date">Date:</label>
+                 <label for="date">${this.translations.date}:</label>
                  <input 
                    type="date" 
                    id="date" 
@@ -34591,7 +34634,7 @@
 
 
              <button class="btn" @click="${this._addToDiary}">
-                 Add to Diary
+                 ${this.translations.addToDiary}
              </button>
 
           ${this.error ? b2`<div class="error-message">${this.error}</div>` : ""}
@@ -34600,11 +34643,11 @@
         ${this.showDeleteModal ? b2`
         <div class="modal-overlay">
           <div class="modal">
-            <h3>Are you sure?</h3>
-            <p>This will delete this meal and remove it from all daily logs.</p>
+            <h3>${this.translations.confirmClearData}</h3>
+            <p>${this.translations.deleteMealMessage}</p>
             <div class="modal-buttons">
-              <button class="btn" @click="${() => this.showDeleteModal = false}">Cancel</button>
-              <button class="btn-danger" @click="${this._confirmDelete}">Delete</button>
+              <button class="btn" @click="${() => this.showDeleteModal = false}">${this.translations.cancel}</button>
+              <button class="btn-danger" @click="${this._confirmDelete}">${this.translations.delete}</button>
             </div>
           </div>
         </div>
