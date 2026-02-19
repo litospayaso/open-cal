@@ -1,5 +1,11 @@
 # brote
 
+## 1.0.3
+
+### Patch Changes
+
+- e9f425f: saving default portion value in food page
+
 ## 1.0.2
 
 ### Patch Changes

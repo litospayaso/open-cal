@@ -1,5 +1,11 @@
 # page-meal
 
+## 0.0.2
+
+### Patch Changes
+
+- b9464bc: updating page translations
+
 ## 0.0.1
 
 ### Patch Changes
