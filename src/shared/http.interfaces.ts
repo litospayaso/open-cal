@@ -32,6 +32,7 @@ export interface ProductInterface {
     nutriments?: NutrimentInterface;
     brands?: string;
     product_name?: string;
+    default_grams?: number;
   }
 }
 

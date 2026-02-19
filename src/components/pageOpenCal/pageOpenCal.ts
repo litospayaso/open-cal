@@ -3,7 +3,6 @@ import Page from '../../shared/page';
 import { state } from 'lit/decorators.js';
 import { loadCss, variableStyles } from '../../shared/functions';
 import type { GroupButtonOption } from '../componentGroupButton/componentGroupButton';
-import '../pageMeal/pageMeal';
 
 export default class PageOpenCal extends Page {
   static styles = [

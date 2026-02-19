@@ -274,11 +274,17 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         const cached = await this.db.getCachedProduct(code);
         if (cached) {
           this.product = cached;
+          if (this.product && this.product.product?.default_grams) {
+            this.grams = this.product.product.default_grams;
+          }
           this.loading = false;
         } else {
           const response = await this.api.getProduct(code);
           if (response && response.product) {
             this.product = response;
+            if (this.product.product?.default_grams) {
+              this.grams = this.product.product.default_grams;
+            }
             await this.db.cacheProduct(response);
           } else {
             this._initNewProduct(code, params.get('query'));
@@ -361,15 +367,12 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
     const val = Number(input.value);
 
     if (!this.editedProduct.product.nutriments) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       this.editedProduct.product.nutriments = {} as any;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (this.editedProduct.product.nutriments as any)[key] = val;
 
     if (key === 'energy-kcal_100g') {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.editedProduct.product.nutriments as any)['energy-kcal'] = val;
     }
 
@@ -379,7 +382,6 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
   private _handleNameChange(e: Event) {
     if (!this.editedProduct || !this.editedProduct.product) return;
     const input = e.target as HTMLInputElement;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (this.editedProduct.product as any).product_name = input.value;
     this.requestUpdate();
   }
@@ -387,7 +389,6 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
   private _handleBrandChange(e: Event) {
     if (!this.editedProduct || !this.editedProduct.product) return;
     const input = e.target as HTMLInputElement;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (this.editedProduct.product as any).brands = input.value;
     this.requestUpdate();
   }
@@ -395,6 +396,9 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
   private async _saveEdit() {
     if (this.editedProduct) {
       this.product = this.editedProduct;
+      if (this.product.product) {
+        this.product.product.default_grams = this.grams;
+      }
       await this.db.cacheProduct(this.product);
       await this.db.updateProductInMeals(this.product);
       await this.db.updateProductInLogs(this.product);
@@ -415,8 +419,6 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
             carbohydrates: this.product.product?.nutriments?.carbohydrates_100g || 0,
             fat: this.product.product?.nutriments?.fat_100g || 0,
             proteins: this.product.product?.nutriments?.proteins_100g || 0,
-            // Add other required fields if necessary, or cast.
-            // For now mapping what we use in PageHome/ComponentSearchResult
           } as any,
           product_name: (this.product.product as any).product_name,
           nutrition_data: 'per_100g', // assumption
@@ -560,7 +562,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
             <div class="calculator-top">
               <div class="inputs-section">
                 <div class="input-group">
-                    <label for="grams">Quantity (grams):</label>
+                    <label for="grams">${this.translations.quantity} (${this.translations.grams}):</label>
                     <input 
                         id="grams" 
                         type="number" 
@@ -571,7 +573,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
                 </div>
                 ${!this.mealId ? html`
                 <div class="input-group">
-                  <label for="date">Date:</label>
+                  <label for="date">${this.translations.date}:</label>
                   <input 
                     id="date" 
                     type="date" 
@@ -581,19 +583,19 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
                 </div>
 
                 <div class="input-group">
-                  <label for="category">Category:</label>
+                  <label for="category">${this.translations.category}:</label>
                   <select 
                     id="category" 
                     .value="${this.selectedCategory}" 
                     @change="${(e: Event) => this.selectedCategory = (e.target as HTMLInputElement).value as MealCategory}"
                     style="padding: 8px; background: var(--input-background); color: var(--input-text); border: 1px solid var(--input-border, #ccc); border-radius: 4px; width: 100%; box-sizing: border-box;"
                   >
-                    <option value="breakfast">Breakfast</option>
-                    <option value="snack1">Snack (Morning)</option>
-                    <option value="lunch">Lunch</option>
-                    <option value="snack2">Snack (Afternoon)</option>
-                    <option value="dinner">Dinner</option>
-                    <option value="snack3">Snack (Evening)</option>
+                    <option value="breakfast">${this.translations.breakfast}</option>
+                    <option value="snack1">${this.translations.snack1}</option>
+                    <option value="lunch">${this.translations.lunch}</option>
+                    <option value="snack2">${this.translations.snack2}</option>
+                    <option value="dinner">${this.translations.dinner}</option>
+                    <option value="snack3">${this.translations.snack3}</option>
                   </select>
                 </div>
                   ` : ''
@@ -623,7 +625,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         ? html`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.['energy-kcal_100g'] || 0).toString()}" @input="${(e: Event) => this._handleNutrientChange(e, 'energy-kcal_100g')}">`
         : this._calculateNutrient(this.product.product?.nutriments?.['energy-kcal_100g'])}
                     </div>
-                    <div class="nutrient-label">Calories (kcal)</div>
+                    <div class="nutrient-label">${this.isEditing ? this.translations.calories + ' (kcal / 100g)' : this.translations.calories + ' (kcal)'}</div>
                 </div>
                 <div class="nutrient-item carbs">
                     <div class="nutrient-value">
@@ -631,7 +633,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         ? html`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.carbohydrates_100g || 0).toString()}" @input="${(e: Event) => this._handleNutrientChange(e, 'carbohydrates_100g')}">`
         : this._calculateNutrient(this.product.product?.nutriments?.carbohydrates_100g)}
                     </div>
-                    <div class="nutrient-label">Carbs (g)</div>
+                    <div class="nutrient-label">${this.isEditing ? this.translations.carbs + ' (g / 100g)' : this.translations.carbs + ' (g)'}</div>
                 </div>
                 <div class="nutrient-item protein">
                     <div class="nutrient-value">
@@ -639,7 +641,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         ? html`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.proteins_100g || 0).toString()}" @input="${(e: Event) => this._handleNutrientChange(e, 'proteins_100g')}">`
         : this._calculateNutrient(this.product.product?.nutriments?.proteins_100g)}
                     </div>
-                    <div class="nutrient-label">Protein (g)</div>
+                    <div class="nutrient-label">${this.isEditing ? this.translations.protein + ' (g / 100g)' : this.translations.protein + ' (g)'}</div>
                 </div>
                 <div class="nutrient-item fat">
                     <div class="nutrient-value">
@@ -647,7 +649,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         ? html`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.fat_100g || 0).toString()}" @input="${(e: Event) => this._handleNutrientChange(e, 'fat_100g')}">`
         : this._calculateNutrient(this.product.product?.nutriments?.fat_100g)}
                     </div>
-                    <div class="nutrient-label">Fat (g)</div>
+                    <div class="nutrient-label">${this.isEditing ? this.translations.fat + ' (g / 100g)' : this.translations.fat + ' (g)'}</div>
                 </div>
             </div>
 
@@ -670,7 +672,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
                 @click="${this._addToDiary}"
                 class="add-to-diary-button"
               >
-                Add to Diary
+                ${this.translations.addToDiary}
               </button>
              `)}
         </div>

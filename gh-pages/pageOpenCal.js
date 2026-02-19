@@ -27144,575 +27144,6 @@
     }
     `;
 
-  // src/components/pageMeal/pageMeal.ts
-  var PageMeal = class extends Page {
-    constructor() {
-      super(...arguments);
-      this.meal = {
-        id: "",
-        name: "",
-        description: "",
-        foods: []
-      };
-      this.isNew = true;
-      this.error = "";
-      this.selectedCategory = "lunch";
-      this.selectedDate = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
-      this.showMenu = false;
-      this.showDeleteModal = false;
-      this._handleOutsideClick = () => {
-        this.showMenu = false;
-        window.removeEventListener("click", this._handleOutsideClick);
-      };
-    }
-    static {
-      this.styles = [
-        Page.styles,
-        i`
-      :host {
-        display: block;
-        padding: 20px;
-        font-family: sans-serif;
-      }
-      .page-container {
-        max-width: 600px;
-        margin: 0 auto;
-      }
-      .input-group {
-        margin-bottom: 1rem;
-      }
-      .add-to-diary-container .input-group {
-        width: 100%;
-      }
-      .add-to-diary-container {
-        display: flex;
-        flex-direction: row;
-        gap: 1rem;
-      }
-      label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: bold;
-      }
-      input, textarea {
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid var(--input-border, #ccc);
-        border-radius: 4px;
-        box-sizing: border-box;
-        font-family: inherit;
-      }
-      .foods-list {
-        margin-top: 1rem;
-        background: var(--card-background);
-      }
-      .food-item-container {
-        display: flex;
-        align-items: center;
-        padding-right: 10px;
-      }
-      .food-item-content {
-        flex: 1;
-      }
-      .delete-food-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 1.2rem;
-        color: #ff4d4d;
-        padding: 5px;
-      }
-      .empty-foods {
-        padding: 1rem;
-        text-align: center;
-        color: var(--text-color-secondary);
-      }
-      .buttons-container {
-        margin-top: 2rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      button.primary {
-        background-color: var(--palette-green);
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 20px;
-        cursor: pointer;
-        font-size: 1rem;
-        font-weight: bold;
-      }
-      button[disabled] {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-      .error-message {
-        color: red;
-        margin-top: 0.5rem;
-        text-align: center;
-      }
-      .summary-cards {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
-        margin-top: 1rem;
-        border-top: 1px solid var(--card-border);
-        padding-top: 1rem;
-      }
-      .summary-card {
-        background: var(--card-background);
-        border: 1px solid var(--card-border);
-        border-radius: 8px;
-        padding: 5px;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-      .summary-card.calories {
-        border-color: var(--calories-color);
-        border-width: var(--counter-border-width);
-      }
-      .summary-card.carbs {
-        border-color: var(--carbs-color);
-        border-width: var(--counter-border-width);
-      }
-      .summary-card.fat {
-        border-color: var(--fat-color);
-        border-width: var(--counter-border-width);
-      }
-      .summary-card.protein {
-        border-color: var(--protein-color);
-        border-width: var(--counter-border-width);
-      }
-      .summary-card .value {
-        font-size: 1.1rem;
-        font-weight: bold;
-        color: var(--card-text);
-      }
-      .summary-card .label {
-        font-size: 0.7rem;
-        color: var(--input-placeholder);
-      }
-      @media (max-width: 600px) {
-        .summary-cards {
-          grid-template-columns: 1fr 1fr;
-        }
-        .add-to-diary-container {
-          flex-direction: column;
-        }
-      }
-      .header-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: relative; 
-        border-bottom: 2px solid var(--palette-green, #4fb9ad);
-        padding-bottom: 0.5rem;
-        margin-bottom: 1rem;
-      }
-      .header-container h1 {
-        border-bottom: none;
-        padding-bottom: 0;
-        margin-bottom: 0;
-      }
-      .menu-btn {
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-        padding: 0 10px;
-      }
-      .dropdown-menu {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        background: var(--card-background, #fff);
-        border: 1px solid var(--card-border, #ccc);
-        border-radius: 4px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        z-index: 10;
-        min-width: 150px;
-        display: flex;
-        flex-direction: column;
-      }
-      .dropdown-item {
-        padding: 10px;
-        border: none;
-        background: none;
-        text-align: left;
-        cursor: pointer;
-        color: var(--card-text);
-        font-size: 1rem;
-      }
-      .dropdown-item:hover {
-        background-color: var(--input-background);
-      }
-      .dropdown-item.delete {
-        color: var(--palette-red, #f44336);
-      }
-      .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        color: var(--app-text-color-primary, #333);
-      }
-      .modal {
-        background: var(--card-background, #fff);
-        color: var(--card-text);
-        padding: 20px;
-        border-radius: 8px;
-        max-width: 90%;
-        width: 300px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        text-align: center;
-      }
-      .modal-buttons {
-        display: flex;
-        gap: 10px;
-        margin-top: 20px;
-        justify-content: center;
-      }
-    `
-      ];
-    }
-    disconnectedCallback() {
-      super.disconnectedCallback();
-      window.removeEventListener("click", this._handleOutsideClick);
-    }
-    _handleDateChange(e5) {
-      this.selectedDate = e5.target.value;
-    }
-    async onPageInit() {
-      await this.db.init();
-      const params = this.getQueryParamsURL();
-      const id = params.get("mealId");
-      if (id) {
-        if (id === "new") {
-          const newId = this._generateId();
-          await this._createNewMeal(newId);
-        } else {
-          const meal = await this.db.getMeal(id);
-          if (meal) {
-            this.meal = meal;
-            this.isNew = false;
-          } else {
-            await this._createNewMeal(id);
-          }
-        }
-      } else {
-        const newId = this._generateId();
-        await this._createNewMeal(newId);
-      }
-    }
-    async _addToDiary() {
-      const date = this.selectedDate;
-      const totals = this.meal.foods.reduce((acc, f3) => {
-        const ratio = f3.quantity / 100;
-        return {
-          calories: acc.calories + (f3.product.nutriments?.["energy-kcal"] || 0) * ratio,
-          carbs: acc.carbs + (f3.product.nutriments?.carbohydrates || 0) * ratio,
-          fat: acc.fat + (f3.product.nutriments?.fat || 0) * ratio,
-          protein: acc.protein + (f3.product.nutriments?.proteins || 0) * ratio
-        };
-      }, { calories: 0, carbs: 0, fat: 0, protein: 0 });
-      const mealItem = {
-        product: {
-          code: this.meal.id,
-          product_name: this.meal.name,
-          nutriments: {
-            "energy-kcal": totals.calories,
-            carbohydrates: totals.carbs,
-            fat: totals.fat,
-            proteins: totals.protein
-          },
-          nutrition_data: "per_serving",
-          nutrition_data_per: "serving",
-          nutrition_data_prepared_per: "serving"
-        },
-        quantity: 1,
-        // 1 serv of the meal
-        unit: "meal"
-      };
-      try {
-        await this.db.addFoodItem(date, this.selectedCategory, mealItem);
-        this.triggerPageNavigation({ page: "home" });
-      } catch (e5) {
-        console.error("Error adding meal to diary", e5);
-        this.error = "Failed to add to diary";
-      }
-    }
-    async _removeFood(index) {
-      const newFoods = [...this.meal.foods];
-      newFoods.splice(index, 1);
-      this.meal = { ...this.meal, foods: newFoods };
-      await this.db.saveMeal(this.meal);
-    }
-    _generateId() {
-      return Date.now().toString(36) + Math.random().toString(36).substr(2);
-    }
-    async _createNewMeal(id) {
-      this.meal = {
-        id,
-        name: this.translations.newMeal || "New Meal",
-        // default name
-        description: "",
-        foods: []
-      };
-      this.isNew = true;
-      try {
-        await this.db.saveMeal(this.meal);
-      } catch (e5) {
-        console.error("Error creating new meal", e5);
-        this.error = "Failed to create new meal";
-      }
-    }
-    // private _initNewDraft() ... _loadDraft ... _saveDraft REMOVED
-    async _handleNameChange(e5) {
-      this.meal = { ...this.meal, name: e5.target.value };
-      await this.db.saveMeal(this.meal);
-    }
-    async _handleDescriptionChange(e5) {
-      this.meal = { ...this.meal, description: e5.target.value };
-      await this.db.saveMeal(this.meal);
-    }
-    async _handleAddFood() {
-      this.meal.id = this.meal.id || this._generateId();
-      await this.db.saveMeal(this.meal);
-      this.triggerPageNavigation({ page: "search", mealId: this.meal.id });
-    }
-    _toggleMenu(e5) {
-      e5.stopPropagation();
-      this.showMenu = !this.showMenu;
-      if (this.showMenu) {
-        window.addEventListener("click", this._handleOutsideClick);
-      } else {
-        window.removeEventListener("click", this._handleOutsideClick);
-      }
-    }
-    async _handleDuplicate() {
-      this.showMenu = false;
-      const newId = this._generateId();
-      const newMeal = {
-        ...this.meal,
-        id: newId,
-        name: `${this.meal.name} - duplicated`
-      };
-      try {
-        await this.db.saveMeal(newMeal);
-        this.triggerPageNavigation({ page: "meal", mealId: newId });
-        this.onPageInit();
-      } catch (e5) {
-        console.error("Error duplicating meal", e5);
-        this.error = "Failed to duplicate meal";
-      }
-    }
-    _handleDelete() {
-      this.showMenu = false;
-      this.showDeleteModal = true;
-    }
-    async _confirmDelete() {
-      try {
-        if (this.meal.id) {
-          await this.db.deleteMeal(this.meal.id);
-          await this.db.deleteMealReference(this.meal.id);
-          this.triggerPageNavigation({ page: "home" });
-        }
-      } catch (e5) {
-        console.error("Error deleting meal", e5);
-        this.error = "Failed to delete meal";
-      } finally {
-        this.showDeleteModal = false;
-      }
-    }
-    render() {
-      return b2`
-      <div class="page-container">
-        <div class="header-container">
-            <h1>${this.isNew ? this.translations.createNewMeal : this.translations.editProduct}</h1>
-            ${!this.isNew ? b2`
-            <div style="position: relative;">
-                <button class="menu-btn" @click="${this._toggleMenu}">&#8942;</button>
-                ${this.showMenu ? b2`
-                <div class="dropdown-menu">
-                    <button class="dropdown-item" @click="${this._handleDuplicate}">Duplicate Meal</button>
-                    <button class="dropdown-item delete" @click="${this._handleDelete}">Delete Meal</button>
-                </div>
-                ` : ""}
-            </div>
-            ` : ""}
-        </div>
-        
-        <div class="input-group">
-          <label>${this.translations.mealName}</label>
-          <input 
-            type="text" 
-            .value="${this.meal.name}" 
-            placeholder="${this.translations.enterMealName}" 
-            @input="${this._handleNameChange}"
-          >
-        </div>
-
-        <div class="input-group">
-          <label>${this.translations.mealDescription}</label>
-          <textarea 
-            .value="${this.meal.description}" 
-            placeholder="${this.translations.enterMealDescription}"
-            @input="${this._handleDescriptionChange}"
-          ></textarea>
-        </div>
-
-                <div class="summary-cards">
-             ${(() => {
-        const totals = this.meal.foods.reduce((acc, f3) => {
-          const ratio = f3.quantity / 100;
-          return {
-            calories: acc.calories + (f3.product.nutriments?.["energy-kcal"] || 0) * ratio,
-            carbs: acc.carbs + (f3.product.nutriments?.carbohydrates || 0) * ratio,
-            fat: acc.fat + (f3.product.nutriments?.fat || 0) * ratio,
-            protein: acc.protein + (f3.product.nutriments?.proteins || 0) * ratio
-          };
-        }, { calories: 0, carbs: 0, fat: 0, protein: 0 });
-        return b2`
-                    <div class="summary-card calories">
-                        <span class="value">${totals.calories.toFixed(0)}</span>
-                        <span class="label">${this.translations.calories}</span>
-                    </div>
-                    <div class="summary-card carbs">
-                        <span class="value">${totals.carbs.toFixed(0)}g</span>
-                        <span class="label">${this.translations.carbs}</span>
-                    </div>
-                    <div class="summary-card fat">
-                        <span class="value">${totals.fat.toFixed(0)}g</span>
-                        <span class="label">${this.translations.fat}</span>
-                    </div>
-                    <div class="summary-card protein">
-                        <span class="value">${totals.protein.toFixed(0)}g</span>
-                        <span class="label">${this.translations.protein}</span>
-                    </div>
-                `;
-      })()}
-        </div>
-
-
-        <h3>${this.translations.foods}</h3>
-        
-        <div class="foods-list">
-          ${this.meal.foods.length === 0 ? b2`
-            <div class="empty-foods">${this.translations.noFoodsAdded}</div> 
-          ` : this.meal.foods.map((food, index) => {
-        const ratio = food.quantity / 100;
-        const calories = (food.product.nutriments?.["energy-kcal"] || 0) * ratio;
-        return b2`
-            <div class="food-item-container">
-                <div class="food-item-content">
-                    <component-search-result 
-                    name="${food.product.product_name}" 
-                    code="${food.product.code}" 
-                    brands="${food.product.brands || ""}"
-                    calories="${calories.toFixed(1)}" 
-                    quantity="${food.quantity}g"
-                    removable="true"
-                    @remove-click="${() => this._removeFood(index)}"
-                    >
-                  </component-search-result>
-                </div>
-            </div>
-          `;
-      })}
-        </div>
-
-        <div class="buttons-container">
-          <button class="btn" @click="${this._handleAddFood}">
-            + ${this.translations.addFood}
-          </button>
-          
-
-          <div class="add-to-diary-container">
-
-              <div class="input-group">
-                 <label for="category">Category:</label>
-                 <select 
-                   id="category" 
-                   .value="${this.selectedCategory}" 
-                   @change="${(e5) => this.selectedCategory = e5.target.value}"
-                   style="padding: 8px; background: var(--input-background); color: var(--input-text); border: 1px solid var(--input-border, #ccc); border-radius: 4px; width: 100%; box-sizing: border-box;"
-                 >
-                   <option value="breakfast">Breakfast</option>
-                   <option value="snack1">Snack (Morning)</option>
-                   <option value="lunch">Lunch</option>
-                   <option value="snack2">Snack (Afternoon)</option>
-                   <option value="dinner">Dinner</option>
-                   <option value="snack3">Snack (Evening)</option>
-                 </select>
-              </div>
-
-            <div class="input-group">
-                 <label for="date">Date:</label>
-                 <input 
-                   type="date" 
-                   id="date" 
-                   .value="${this.selectedDate}" 
-                   @change="${this._handleDateChange}"
-                 >
-            </div>
-
-          </div>
-
-
-             <button class="btn" @click="${this._addToDiary}">
-                 Add to Diary
-             </button>
-
-          ${this.error ? b2`<div class="error-message">${this.error}</div>` : ""}
-        </div>
-
-        ${this.showDeleteModal ? b2`
-        <div class="modal-overlay">
-          <div class="modal">
-            <h3>Are you sure?</h3>
-            <p>This will delete this meal and remove it from all daily logs.</p>
-            <div class="modal-buttons">
-              <button class="btn" @click="${() => this.showDeleteModal = false}">Cancel</button>
-              <button class="btn-danger" @click="${this._confirmDelete}">Delete</button>
-            </div>
-          </div>
-        </div>
-        ` : ""}
-      </div>
-    `;
-    }
-  };
-  __decorateClass([
-    r5()
-  ], PageMeal.prototype, "meal", 2);
-  __decorateClass([
-    r5()
-  ], PageMeal.prototype, "isNew", 2);
-  __decorateClass([
-    r5()
-  ], PageMeal.prototype, "error", 2);
-  __decorateClass([
-    r5()
-  ], PageMeal.prototype, "selectedCategory", 2);
-  __decorateClass([
-    r5()
-  ], PageMeal.prototype, "selectedDate", 2);
-  __decorateClass([
-    r5()
-  ], PageMeal.prototype, "showMenu", 2);
-  __decorateClass([
-    r5()
-  ], PageMeal.prototype, "showDeleteModal", 2);
-
   // src/components/pageOpenCal/pageOpenCal.ts
   var _PageOpenCal = class _PageOpenCal extends Page {
     constructor() {
@@ -33040,11 +32471,17 @@
           const cached = await this.db.getCachedProduct(code);
           if (cached) {
             this.product = cached;
+            if (this.product && this.product.product?.default_grams) {
+              this.grams = this.product.product.default_grams;
+            }
             this.loading = false;
           } else {
             const response = await this.api.getProduct(code);
             if (response && response.product) {
               this.product = response;
+              if (this.product.product?.default_grams) {
+                this.grams = this.product.product.default_grams;
+              }
               await this.db.cacheProduct(response);
             } else {
               this._initNewProduct(code, params.get("query"));
@@ -33143,6 +32580,9 @@
     async _saveEdit() {
       if (this.editedProduct) {
         this.product = this.editedProduct;
+        if (this.product.product) {
+          this.product.product.default_grams = this.grams;
+        }
         await this.db.cacheProduct(this.product);
         await this.db.updateProductInMeals(this.product);
         await this.db.updateProductInLogs(this.product);
@@ -33353,25 +32793,25 @@
                     <div class="nutrient-value">
                       ${this.isEditing ? b2`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.["energy-kcal_100g"] || 0).toString()}" @input="${(e5) => this._handleNutrientChange(e5, "energy-kcal_100g")}">` : this._calculateNutrient(this.product.product?.nutriments?.["energy-kcal_100g"])}
                     </div>
-                    <div class="nutrient-label">Calories (kcal)</div>
+                    <div class="nutrient-label">${this.isEditing ? "Calories (kcal / 100g)" : "Calories (kcal)"}</div>
                 </div>
                 <div class="nutrient-item carbs">
                     <div class="nutrient-value">
                       ${this.isEditing ? b2`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.carbohydrates_100g || 0).toString()}" @input="${(e5) => this._handleNutrientChange(e5, "carbohydrates_100g")}">` : this._calculateNutrient(this.product.product?.nutriments?.carbohydrates_100g)}
                     </div>
-                    <div class="nutrient-label">Carbs (g)</div>
+                    <div class="nutrient-label">${this.isEditing ? "Carbs (g / 100g)" : "Carbs (g)"}</div>
                 </div>
                 <div class="nutrient-item protein">
                     <div class="nutrient-value">
                       ${this.isEditing ? b2`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.proteins_100g || 0).toString()}" @input="${(e5) => this._handleNutrientChange(e5, "proteins_100g")}">` : this._calculateNutrient(this.product.product?.nutriments?.proteins_100g)}
                     </div>
-                    <div class="nutrient-label">Protein (g)</div>
+                    <div class="nutrient-label">${this.isEditing ? "Protein (g / 100g)" : "Protein (g)"}</div>
                 </div>
                 <div class="nutrient-item fat">
                     <div class="nutrient-value">
                       ${this.isEditing ? b2`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.fat_100g || 0).toString()}" @input="${(e5) => this._handleNutrientChange(e5, "fat_100g")}">` : this._calculateNutrient(this.product.product?.nutriments?.fat_100g)}
                     </div>
-                    <div class="nutrient-label">Fat (g)</div>
+                    <div class="nutrient-label">${this.isEditing ? "Fat (g / 100g)" : "Fat (g)"}</div>
                 </div>
             </div>
 
@@ -34088,203 +33528,6 @@
   // src/components/pageUser/index.ts
   register("page-user", PageUser);
 
-  // src/components/componentProgressBar/componentProgressBar.ts
-  var ComponentProgressBar = class extends i4 {
-    constructor() {
-      super(...arguments);
-      this.dailyCaloriesGoal = 0;
-      this.caloriesEaten = 0;
-      this.fatEaten = 0;
-      this.carbsEaten = 0;
-      this.proteinEaten = 0;
-      this.fatGoalPercent = 0;
-      this.carbsGoalPercent = 0;
-      this.proteinGoalPercent = 0;
-      this.translationsTexts = {};
-    }
-    set translations(translations2) {
-      this.translationsTexts = JSON.parse(translations2);
-    }
-    static {
-      this.styles = i`
-    :host {
-      display: block;
-      width: 100%;
-      font-family: var(--font-family, sans-serif);
-    }
-
-    .container {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    
-    .progress-bar-text {
-        font-size: 0.9rem;
-        color: var(--text-color, #333);
-        margin-bottom: 4px;
-        font-weight: 500;
-    }
-
-    .progress-bar-track {
-      width: 100%;
-      height: 12px;
-      background-color: var(--input-background, #e0e0e0);
-      border: 1px solid var(--card-border);
-      border-radius: 6px;
-      overflow: hidden;
-      display: flex;
-    }
-
-    .segment {
-      height: 100%;
-      transition: width 0.3s ease;
-    }
-
-    .segment.fat {
-      background-color: var(--fat-color, #f1c40f);
-    }
-
-    .segment.carbs {
-      background-color: var(--carbs-color, #3498db);
-    }
-
-    .segment.protein {
-      background-color: var(--protein-color, #e74c3c);
-      border-top-right-radius: 6px;
-      border-bottom-right-radius: 6px;
-    }
-
-    .label-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .label {
-      text-align: right;
-      font-size: 0.9rem;
-      color: var(--text-color, #333);
-      font-weight: 500;
-      white-space: nowrap;
-    }
-    
-    .label span {
-        font-weight: bold;
-    }
-
-    .label.fat {
-        color: var(--fat-color, #f1c40f);
-    }
-
-    .label.carbs {
-        color: var(--carbs-color, #3498db);
-    }
-
-    .label.protein {
-        color: var(--protein-color, #e74c3c);
-    }
-
-    .macros-label {
-        display: flex;
-        gap: 15px;
-        font-size: 0.85rem;
-        color: var(--text-color, #666);
-    }
-    
-    .macros-label span {
-        font-weight: bold;
-    }
-  `;
-    }
-    render() {
-      const fatCalories = this.fatEaten * 9;
-      const carbsCalories = this.carbsEaten * 4;
-      const proteinCalories = this.proteinEaten * 4;
-      const totalGoal = this.dailyCaloriesGoal > 0 ? this.dailyCaloriesGoal : 1;
-      const totalCalories = this.caloriesEaten;
-      const usagePercent = Math.min(totalCalories / totalGoal * 100, 100);
-      let renderedFatWidth = 0;
-      let renderedCarbsWidth = 0;
-      let renderedProteinWidth = 0;
-      if (totalCalories > 0) {
-        const measuredTotal = fatCalories + carbsCalories + proteinCalories;
-        if (measuredTotal > 0) {
-          renderedFatWidth = fatCalories / measuredTotal * usagePercent;
-          renderedCarbsWidth = carbsCalories / measuredTotal * usagePercent;
-          renderedProteinWidth = proteinCalories / measuredTotal * usagePercent;
-        }
-      }
-      const currentFatPercent = totalCalories > 0 ? fatCalories / totalCalories * 100 : 0;
-      const currentCarbsPercent = totalCalories > 0 ? carbsCalories / totalCalories * 100 : 0;
-      const currentProteinPercent = totalCalories > 0 ? proteinCalories / totalCalories * 100 : 0;
-      const remaining = this.dailyCaloriesGoal - this.caloriesEaten;
-      let statusText = "";
-      if (this.caloriesEaten <= this.dailyCaloriesGoal) {
-        statusText = this.translationsTexts["remainingCals"]?.replace("{cal}", remaining.toString());
-      } else {
-        statusText = this.translationsTexts["remainingCalsOver"]?.replace("{cal}", Math.abs(remaining).toString());
-      }
-      return b2`
-      <div class="container">
-        <div class="progress-bar-text">
-            ${statusText}
-        </div>
-        <div class="progress-bar-track" role="progressbar" aria-valuenow="${this.caloriesEaten}" aria-valuemin="0" aria-valuemax="${this.dailyCaloriesGoal}" aria-label="Daily calories progress">
-           <div class="segment fat" style="width: ${renderedFatWidth}%" title="Fat: ${this.fatEaten}g"></div>
-           <div class="segment carbs" style="width: ${renderedCarbsWidth}%" title="Carbs: ${this.carbsEaten}g"></div>
-           <div class="segment protein" style="width: ${renderedProteinWidth}%" title="Protein: ${this.proteinEaten}g"></div>
-        </div>
-        <div class="label-container">
-          <div class="macros-label">
-             <div><span class="label fat">${this.translationsTexts["fat"]}</span> <span>${Math.round(currentFatPercent)}</span> / ${this.fatGoalPercent}%</div>
-             <div><span class="label carbs">${this.translationsTexts["carbs"]}</span> <span>${Math.round(currentCarbsPercent)}</span> / ${this.carbsGoalPercent}%</div>
-             <div><span class="label protein">${this.translationsTexts["protein"]}</span> <span>${Math.round(currentProteinPercent)}</span> / ${this.proteinGoalPercent}%</div>
-          </div>
-          <div class="label">
-             <span>${this.caloriesEaten}</span> / ${this.dailyCaloriesGoal} ${this.translationsTexts["kcalEated"]}
-          </div>
-        </div>
-      </div>
-    `;
-    }
-  };
-  __decorateClass([
-    n4({ type: Number })
-  ], ComponentProgressBar.prototype, "dailyCaloriesGoal", 2);
-  __decorateClass([
-    n4({ type: Number })
-  ], ComponentProgressBar.prototype, "caloriesEaten", 2);
-  __decorateClass([
-    n4({ type: Number })
-  ], ComponentProgressBar.prototype, "fatEaten", 2);
-  __decorateClass([
-    n4({ type: Number })
-  ], ComponentProgressBar.prototype, "carbsEaten", 2);
-  __decorateClass([
-    n4({ type: Number })
-  ], ComponentProgressBar.prototype, "proteinEaten", 2);
-  __decorateClass([
-    n4({ type: Number })
-  ], ComponentProgressBar.prototype, "fatGoalPercent", 2);
-  __decorateClass([
-    n4({ type: Number })
-  ], ComponentProgressBar.prototype, "carbsGoalPercent", 2);
-  __decorateClass([
-    n4({ type: Number })
-  ], ComponentProgressBar.prototype, "proteinGoalPercent", 2);
-  __decorateClass([
-    n4({ type: String })
-  ], ComponentProgressBar.prototype, "translations", 1);
-  __decorateClass([
-    r5()
-  ], ComponentProgressBar.prototype, "translationsTexts", 2);
-
-  // src/components/componentProgressBar/index.ts
-  register("component-progress-bar", ComponentProgressBar);
-
   // src/components/pageHome/pageHome.ts
   var PageHome = class extends Page {
     constructor() {
@@ -34623,8 +33866,774 @@
     r5()
   ], PageHome.prototype, "userGoals", 2);
 
+  // src/components/componentProgressBar/componentProgressBar.ts
+  var ComponentProgressBar = class extends i4 {
+    constructor() {
+      super(...arguments);
+      this.dailyCaloriesGoal = 0;
+      this.caloriesEaten = 0;
+      this.fatEaten = 0;
+      this.carbsEaten = 0;
+      this.proteinEaten = 0;
+      this.fatGoalPercent = 0;
+      this.carbsGoalPercent = 0;
+      this.proteinGoalPercent = 0;
+      this.translationsTexts = {};
+    }
+    set translations(translations2) {
+      this.translationsTexts = JSON.parse(translations2);
+    }
+    static {
+      this.styles = i`
+    :host {
+      display: block;
+      width: 100%;
+      font-family: var(--font-family, sans-serif);
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .progress-bar-text {
+        font-size: 0.9rem;
+        color: var(--text-color, #333);
+        margin-bottom: 4px;
+        font-weight: 500;
+    }
+
+    .progress-bar-track {
+      width: 100%;
+      height: 12px;
+      background-color: var(--input-background, #e0e0e0);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .segment {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+
+    .segment.fat {
+      background-color: var(--fat-color, #f1c40f);
+    }
+
+    .segment.carbs {
+      background-color: var(--carbs-color, #3498db);
+    }
+
+    .segment.protein {
+      background-color: var(--protein-color, #e74c3c);
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+
+    .label-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .label {
+      text-align: right;
+      font-size: 0.9rem;
+      color: var(--text-color, #333);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    
+    .label span {
+        font-weight: bold;
+    }
+
+    .label.fat {
+        color: var(--fat-color, #f1c40f);
+    }
+
+    .label.carbs {
+        color: var(--carbs-color, #3498db);
+    }
+
+    .label.protein {
+        color: var(--protein-color, #e74c3c);
+    }
+
+    .macros-label {
+        display: flex;
+        gap: 15px;
+        font-size: 0.85rem;
+        color: var(--text-color, #666);
+    }
+    
+    .macros-label span {
+        font-weight: bold;
+    }
+  `;
+    }
+    render() {
+      const fatCalories = this.fatEaten * 9;
+      const carbsCalories = this.carbsEaten * 4;
+      const proteinCalories = this.proteinEaten * 4;
+      const totalGoal = this.dailyCaloriesGoal > 0 ? this.dailyCaloriesGoal : 1;
+      const totalCalories = this.caloriesEaten;
+      const usagePercent = Math.min(totalCalories / totalGoal * 100, 100);
+      let renderedFatWidth = 0;
+      let renderedCarbsWidth = 0;
+      let renderedProteinWidth = 0;
+      if (totalCalories > 0) {
+        const measuredTotal = fatCalories + carbsCalories + proteinCalories;
+        if (measuredTotal > 0) {
+          renderedFatWidth = fatCalories / measuredTotal * usagePercent;
+          renderedCarbsWidth = carbsCalories / measuredTotal * usagePercent;
+          renderedProteinWidth = proteinCalories / measuredTotal * usagePercent;
+        }
+      }
+      const currentFatPercent = totalCalories > 0 ? fatCalories / totalCalories * 100 : 0;
+      const currentCarbsPercent = totalCalories > 0 ? carbsCalories / totalCalories * 100 : 0;
+      const currentProteinPercent = totalCalories > 0 ? proteinCalories / totalCalories * 100 : 0;
+      const remaining = this.dailyCaloriesGoal - this.caloriesEaten;
+      let statusText = "";
+      if (this.caloriesEaten <= this.dailyCaloriesGoal) {
+        statusText = this.translationsTexts["remainingCals"]?.replace("{cal}", remaining.toString());
+      } else {
+        statusText = this.translationsTexts["remainingCalsOver"]?.replace("{cal}", Math.abs(remaining).toString());
+      }
+      return b2`
+      <div class="container">
+        <div class="progress-bar-text">
+            ${statusText}
+        </div>
+        <div class="progress-bar-track" role="progressbar" aria-valuenow="${this.caloriesEaten}" aria-valuemin="0" aria-valuemax="${this.dailyCaloriesGoal}" aria-label="Daily calories progress">
+           <div class="segment fat" style="width: ${renderedFatWidth}%" title="Fat: ${this.fatEaten}g"></div>
+           <div class="segment carbs" style="width: ${renderedCarbsWidth}%" title="Carbs: ${this.carbsEaten}g"></div>
+           <div class="segment protein" style="width: ${renderedProteinWidth}%" title="Protein: ${this.proteinEaten}g"></div>
+        </div>
+        <div class="label-container">
+          <div class="macros-label">
+             <div><span class="label fat">${this.translationsTexts["fat"]}</span> <span>${Math.round(currentFatPercent)}</span> / ${this.fatGoalPercent}%</div>
+             <div><span class="label carbs">${this.translationsTexts["carbs"]}</span> <span>${Math.round(currentCarbsPercent)}</span> / ${this.carbsGoalPercent}%</div>
+             <div><span class="label protein">${this.translationsTexts["protein"]}</span> <span>${Math.round(currentProteinPercent)}</span> / ${this.proteinGoalPercent}%</div>
+          </div>
+          <div class="label">
+             <span>${this.caloriesEaten}</span> / ${this.dailyCaloriesGoal} ${this.translationsTexts["kcalEated"]}
+          </div>
+        </div>
+      </div>
+    `;
+    }
+  };
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentProgressBar.prototype, "dailyCaloriesGoal", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentProgressBar.prototype, "caloriesEaten", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentProgressBar.prototype, "fatEaten", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentProgressBar.prototype, "carbsEaten", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentProgressBar.prototype, "proteinEaten", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentProgressBar.prototype, "fatGoalPercent", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentProgressBar.prototype, "carbsGoalPercent", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentProgressBar.prototype, "proteinGoalPercent", 2);
+  __decorateClass([
+    n4({ type: String })
+  ], ComponentProgressBar.prototype, "translations", 1);
+  __decorateClass([
+    r5()
+  ], ComponentProgressBar.prototype, "translationsTexts", 2);
+
+  // src/components/componentProgressBar/index.ts
+  register("component-progress-bar", ComponentProgressBar);
+
   // src/components/pageHome/index.ts
   register("page-home", PageHome);
+
+  // src/components/pageMeal/pageMeal.ts
+  var PageMeal = class extends Page {
+    constructor() {
+      super(...arguments);
+      this.meal = {
+        id: "",
+        name: "",
+        description: "",
+        foods: []
+      };
+      this.isNew = true;
+      this.error = "";
+      this.selectedCategory = "lunch";
+      this.selectedDate = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+      this.showMenu = false;
+      this.showDeleteModal = false;
+      this._handleOutsideClick = () => {
+        this.showMenu = false;
+        window.removeEventListener("click", this._handleOutsideClick);
+      };
+    }
+    static {
+      this.styles = [
+        Page.styles,
+        i`
+      :host {
+        display: block;
+        padding: 20px;
+        font-family: sans-serif;
+      }
+      .page-container {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .input-group {
+        margin-bottom: 1rem;
+      }
+      .add-to-diary-container .input-group {
+        width: 100%;
+      }
+      .add-to-diary-container {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+      }
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+      }
+      input, textarea {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid var(--input-border, #ccc);
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-family: inherit;
+      }
+      .foods-list {
+        margin-top: 1rem;
+        background: var(--card-background);
+      }
+      .food-item-container {
+        display: flex;
+        align-items: center;
+        padding-right: 10px;
+      }
+      .food-item-content {
+        flex: 1;
+      }
+      .delete-food-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2rem;
+        color: #ff4d4d;
+        padding: 5px;
+      }
+      .empty-foods {
+        padding: 1rem;
+        text-align: center;
+        color: var(--text-color-secondary);
+      }
+      .buttons-container {
+        margin-top: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      button.primary {
+        background-color: var(--palette-green);
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: bold;
+      }
+      button[disabled] {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .error-message {
+        color: red;
+        margin-top: 0.5rem;
+        text-align: center;
+      }
+      .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-top: 1rem;
+        border-top: 1px solid var(--card-border);
+        padding-top: 1rem;
+      }
+      .summary-card {
+        background: var(--card-background);
+        border: 1px solid var(--card-border);
+        border-radius: 8px;
+        padding: 5px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .summary-card.calories {
+        border-color: var(--calories-color);
+        border-width: var(--counter-border-width);
+      }
+      .summary-card.carbs {
+        border-color: var(--carbs-color);
+        border-width: var(--counter-border-width);
+      }
+      .summary-card.fat {
+        border-color: var(--fat-color);
+        border-width: var(--counter-border-width);
+      }
+      .summary-card.protein {
+        border-color: var(--protein-color);
+        border-width: var(--counter-border-width);
+      }
+      .summary-card .value {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: var(--card-text);
+      }
+      .summary-card .label {
+        font-size: 0.7rem;
+        color: var(--input-placeholder);
+      }
+      @media (max-width: 600px) {
+        .summary-cards {
+          grid-template-columns: 1fr 1fr;
+        }
+        .add-to-diary-container {
+          flex-direction: column;
+        }
+      }
+      .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative; 
+        border-bottom: 2px solid var(--palette-green, #4fb9ad);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      .header-container h1 {
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: 0;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0 10px;
+      }
+      .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: var(--card-background, #fff);
+        border: 1px solid var(--card-border, #ccc);
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 10;
+        min-width: 150px;
+        display: flex;
+        flex-direction: column;
+      }
+      .dropdown-item {
+        padding: 10px;
+        border: none;
+        background: none;
+        text-align: left;
+        cursor: pointer;
+        color: var(--card-text);
+        font-size: 1rem;
+      }
+      .dropdown-item:hover {
+        background-color: var(--input-background);
+      }
+      .dropdown-item.delete {
+        color: var(--palette-red, #f44336);
+      }
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        color: var(--app-text-color-primary, #333);
+      }
+      .modal {
+        background: var(--card-background, #fff);
+        color: var(--card-text);
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 90%;
+        width: 300px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        text-align: center;
+      }
+      .modal-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        justify-content: center;
+      }
+    `
+      ];
+    }
+    disconnectedCallback() {
+      super.disconnectedCallback();
+      window.removeEventListener("click", this._handleOutsideClick);
+    }
+    _handleDateChange(e5) {
+      this.selectedDate = e5.target.value;
+    }
+    async onPageInit() {
+      await this.db.init();
+      const params = this.getQueryParamsURL();
+      const id = params.get("mealId");
+      if (id) {
+        if (id === "new") {
+          const newId = this._generateId();
+          await this._createNewMeal(newId);
+        } else {
+          const meal = await this.db.getMeal(id);
+          if (meal) {
+            this.meal = meal;
+            this.isNew = false;
+          } else {
+            await this._createNewMeal(id);
+          }
+        }
+      } else {
+        const newId = this._generateId();
+        await this._createNewMeal(newId);
+      }
+    }
+    async _addToDiary() {
+      const date = this.selectedDate;
+      const totals = this.meal.foods.reduce((acc, f3) => {
+        const ratio = f3.quantity / 100;
+        return {
+          calories: acc.calories + (f3.product.nutriments?.["energy-kcal"] || 0) * ratio,
+          carbs: acc.carbs + (f3.product.nutriments?.carbohydrates || 0) * ratio,
+          fat: acc.fat + (f3.product.nutriments?.fat || 0) * ratio,
+          protein: acc.protein + (f3.product.nutriments?.proteins || 0) * ratio
+        };
+      }, { calories: 0, carbs: 0, fat: 0, protein: 0 });
+      const mealItem = {
+        product: {
+          code: this.meal.id,
+          product_name: this.meal.name,
+          nutriments: {
+            "energy-kcal": totals.calories,
+            carbohydrates: totals.carbs,
+            fat: totals.fat,
+            proteins: totals.protein
+          },
+          nutrition_data: "per_serving",
+          nutrition_data_per: "serving",
+          nutrition_data_prepared_per: "serving"
+        },
+        quantity: 1,
+        // 1 serv of the meal
+        unit: "meal"
+      };
+      try {
+        await this.db.addFoodItem(date, this.selectedCategory, mealItem);
+        this.triggerPageNavigation({ page: "home" });
+      } catch (e5) {
+        console.error("Error adding meal to diary", e5);
+        this.error = "Failed to add to diary";
+      }
+    }
+    async _removeFood(index) {
+      const newFoods = [...this.meal.foods];
+      newFoods.splice(index, 1);
+      this.meal = { ...this.meal, foods: newFoods };
+      await this.db.saveMeal(this.meal);
+    }
+    _generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+    async _createNewMeal(id) {
+      this.meal = {
+        id,
+        name: this.translations.newMeal || "New Meal",
+        // default name
+        description: "",
+        foods: []
+      };
+      this.isNew = true;
+      try {
+        await this.db.saveMeal(this.meal);
+      } catch (e5) {
+        console.error("Error creating new meal", e5);
+        this.error = "Failed to create new meal";
+      }
+    }
+    // private _initNewDraft() ... _loadDraft ... _saveDraft REMOVED
+    async _handleNameChange(e5) {
+      this.meal = { ...this.meal, name: e5.target.value };
+      await this.db.saveMeal(this.meal);
+    }
+    async _handleDescriptionChange(e5) {
+      this.meal = { ...this.meal, description: e5.target.value };
+      await this.db.saveMeal(this.meal);
+    }
+    async _handleAddFood() {
+      this.meal.id = this.meal.id || this._generateId();
+      await this.db.saveMeal(this.meal);
+      this.triggerPageNavigation({ page: "search", mealId: this.meal.id });
+    }
+    _toggleMenu(e5) {
+      e5.stopPropagation();
+      this.showMenu = !this.showMenu;
+      if (this.showMenu) {
+        window.addEventListener("click", this._handleOutsideClick);
+      } else {
+        window.removeEventListener("click", this._handleOutsideClick);
+      }
+    }
+    async _handleDuplicate() {
+      this.showMenu = false;
+      const newId = this._generateId();
+      const newMeal = {
+        ...this.meal,
+        id: newId,
+        name: `${this.meal.name} - duplicated`
+      };
+      try {
+        await this.db.saveMeal(newMeal);
+        this.triggerPageNavigation({ page: "meal", mealId: newId });
+        this.onPageInit();
+      } catch (e5) {
+        console.error("Error duplicating meal", e5);
+        this.error = "Failed to duplicate meal";
+      }
+    }
+    _handleDelete() {
+      this.showMenu = false;
+      this.showDeleteModal = true;
+    }
+    async _confirmDelete() {
+      try {
+        if (this.meal.id) {
+          await this.db.deleteMeal(this.meal.id);
+          await this.db.deleteMealReference(this.meal.id);
+          this.triggerPageNavigation({ page: "home" });
+        }
+      } catch (e5) {
+        console.error("Error deleting meal", e5);
+        this.error = "Failed to delete meal";
+      } finally {
+        this.showDeleteModal = false;
+      }
+    }
+    render() {
+      return b2`
+      <div class="page-container">
+        <div class="header-container">
+            <h1>${this.isNew ? this.translations.createNewMeal : this.translations.editProduct}</h1>
+            ${!this.isNew ? b2`
+            <div style="position: relative;">
+                <button class="menu-btn" @click="${this._toggleMenu}">&#8942;</button>
+                ${this.showMenu ? b2`
+                <div class="dropdown-menu">
+                    <button class="dropdown-item" @click="${this._handleDuplicate}">Duplicate Meal</button>
+                    <button class="dropdown-item delete" @click="${this._handleDelete}">Delete Meal</button>
+                </div>
+                ` : ""}
+            </div>
+            ` : ""}
+        </div>
+        
+        <div class="input-group">
+          <label>${this.translations.mealName}</label>
+          <input 
+            type="text" 
+            .value="${this.meal.name}" 
+            placeholder="${this.translations.enterMealName}" 
+            @input="${this._handleNameChange}"
+          >
+        </div>
+
+        <div class="input-group">
+          <label>${this.translations.mealDescription}</label>
+          <textarea 
+            .value="${this.meal.description}" 
+            placeholder="${this.translations.enterMealDescription}"
+            @input="${this._handleDescriptionChange}"
+          ></textarea>
+        </div>
+
+                <div class="summary-cards">
+             ${(() => {
+        const totals = this.meal.foods.reduce((acc, f3) => {
+          const ratio = f3.quantity / 100;
+          return {
+            calories: acc.calories + (f3.product.nutriments?.["energy-kcal"] || 0) * ratio,
+            carbs: acc.carbs + (f3.product.nutriments?.carbohydrates || 0) * ratio,
+            fat: acc.fat + (f3.product.nutriments?.fat || 0) * ratio,
+            protein: acc.protein + (f3.product.nutriments?.proteins || 0) * ratio
+          };
+        }, { calories: 0, carbs: 0, fat: 0, protein: 0 });
+        return b2`
+                    <div class="summary-card calories">
+                        <span class="value">${totals.calories.toFixed(0)}</span>
+                        <span class="label">${this.translations.calories}</span>
+                    </div>
+                    <div class="summary-card carbs">
+                        <span class="value">${totals.carbs.toFixed(0)}g</span>
+                        <span class="label">${this.translations.carbs}</span>
+                    </div>
+                    <div class="summary-card fat">
+                        <span class="value">${totals.fat.toFixed(0)}g</span>
+                        <span class="label">${this.translations.fat}</span>
+                    </div>
+                    <div class="summary-card protein">
+                        <span class="value">${totals.protein.toFixed(0)}g</span>
+                        <span class="label">${this.translations.protein}</span>
+                    </div>
+                `;
+      })()}
+        </div>
+
+
+        <h3>${this.translations.foods}</h3>
+        
+        <div class="foods-list">
+          ${this.meal.foods.length === 0 ? b2`
+            <div class="empty-foods">${this.translations.noFoodsAdded}</div> 
+          ` : this.meal.foods.map((food, index) => {
+        const ratio = food.quantity / 100;
+        const calories = (food.product.nutriments?.["energy-kcal"] || 0) * ratio;
+        return b2`
+            <div class="food-item-container">
+                <div class="food-item-content">
+                    <component-search-result 
+                    name="${food.product.product_name}" 
+                    code="${food.product.code}" 
+                    brands="${food.product.brands || ""}"
+                    calories="${calories.toFixed(1)}" 
+                    quantity="${food.quantity}g"
+                    removable="true"
+                    @remove-click="${() => this._removeFood(index)}"
+                    >
+                  </component-search-result>
+                </div>
+            </div>
+          `;
+      })}
+        </div>
+
+        <div class="buttons-container">
+          <button class="btn" @click="${this._handleAddFood}">
+            + ${this.translations.addFood}
+          </button>
+          
+
+          <div class="add-to-diary-container">
+
+              <div class="input-group">
+                 <label for="category">Category:</label>
+                 <select 
+                   id="category" 
+                   .value="${this.selectedCategory}" 
+                   @change="${(e5) => this.selectedCategory = e5.target.value}"
+                   style="padding: 8px; background: var(--input-background); color: var(--input-text); border: 1px solid var(--input-border, #ccc); border-radius: 4px; width: 100%; box-sizing: border-box;"
+                 >
+                   <option value="breakfast">Breakfast</option>
+                   <option value="snack1">Snack (Morning)</option>
+                   <option value="lunch">Lunch</option>
+                   <option value="snack2">Snack (Afternoon)</option>
+                   <option value="dinner">Dinner</option>
+                   <option value="snack3">Snack (Evening)</option>
+                 </select>
+              </div>
+
+            <div class="input-group">
+                 <label for="date">Date:</label>
+                 <input 
+                   type="date" 
+                   id="date" 
+                   .value="${this.selectedDate}" 
+                   @change="${this._handleDateChange}"
+                 >
+            </div>
+
+          </div>
+
+
+             <button class="btn" @click="${this._addToDiary}">
+                 Add to Diary
+             </button>
+
+          ${this.error ? b2`<div class="error-message">${this.error}</div>` : ""}
+        </div>
+
+        ${this.showDeleteModal ? b2`
+        <div class="modal-overlay">
+          <div class="modal">
+            <h3>Are you sure?</h3>
+            <p>This will delete this meal and remove it from all daily logs.</p>
+            <div class="modal-buttons">
+              <button class="btn" @click="${() => this.showDeleteModal = false}">Cancel</button>
+              <button class="btn-danger" @click="${this._confirmDelete}">Delete</button>
+            </div>
+          </div>
+        </div>
+        ` : ""}
+      </div>
+    `;
+    }
+  };
+  __decorateClass([
+    r5()
+  ], PageMeal.prototype, "meal", 2);
+  __decorateClass([
+    r5()
+  ], PageMeal.prototype, "isNew", 2);
+  __decorateClass([
+    r5()
+  ], PageMeal.prototype, "error", 2);
+  __decorateClass([
+    r5()
+  ], PageMeal.prototype, "selectedCategory", 2);
+  __decorateClass([
+    r5()
+  ], PageMeal.prototype, "selectedDate", 2);
+  __decorateClass([
+    r5()
+  ], PageMeal.prototype, "showMenu", 2);
+  __decorateClass([
+    r5()
+  ], PageMeal.prototype, "showDeleteModal", 2);
 
   // src/components/pageMeal/index.ts
   register("page-meal", PageMeal);

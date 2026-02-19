@@ -10,4 +10,5 @@ import '../pageHome/index';
 import '../pageHome/index';
 import '../pageMeal/index';
 
+
 register('page-opencal', PageOpenCal);

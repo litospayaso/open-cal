@@ -2,7 +2,6 @@ import { html, css, type PropertyValueMap } from 'lit';
 import { state } from 'lit/decorators.js';
 import Page from '../../shared/page';
 import { type DailyLog, type MealCategory } from '../../shared/db';
-import '../componentProgressBar';
 
 export default class PageHome extends Page {
   static styles = [
