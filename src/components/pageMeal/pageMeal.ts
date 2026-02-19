@@ -522,11 +522,11 @@ export default class PageMeal extends Page {
                    style="padding: 8px; background: var(--input-background); color: var(--input-text); border: 1px solid var(--input-border, #ccc); border-radius: 4px; width: 100%; box-sizing: border-box;"
                  >
                    <option value="breakfast">${this.translations.breakfast}</option>
-                   <option value="snack1">${this.translations.snack1}</option>
+                   <option value="snack1">${this.translations.snackMorning}</option>
                    <option value="lunch">${this.translations.lunch}</option>
-                   <option value="snack2">${this.translations.snack2}</option>
+                   <option value="snack2">${this.translations.snackAfternoon}</option>
                    <option value="dinner">${this.translations.dinner}</option>
-                   <option value="snack3">${this.translations.snack3}</option>
+                   <option value="snack3">${this.translations.snackEvening}</option>
                  </select>
               </div>
 
