@@ -418,8 +418,8 @@ export default class PageMeal extends Page {
                 <button class="menu-btn" @click="${this._toggleMenu}">&#8942;</button>
                 ${this.showMenu ? html`
                 <div class="dropdown-menu">
-                    <button class="dropdown-item" @click="${this._handleDuplicate}">Duplicate Meal</button>
-                    <button class="dropdown-item delete" @click="${this._handleDelete}">Delete Meal</button>
+                    <button class="dropdown-item" @click="${this._handleDuplicate}">${this.translations.duplicateMeal}</button>
+                    <button class="dropdown-item delete" @click="${this._handleDelete}">${this.translations.deleteMeal}</button>
                 </div>
                 ` : ''}
             </div>
@@ -514,24 +514,24 @@ export default class PageMeal extends Page {
           <div class="add-to-diary-container">
 
               <div class="input-group">
-                 <label for="category">Category:</label>
+                 <label for="category">${this.translations.category}:</label>
                  <select 
                    id="category" 
                    .value="${this.selectedCategory}" 
                    @change="${(e: Event) => this.selectedCategory = (e.target as HTMLInputElement).value as any}"
                    style="padding: 8px; background: var(--input-background); color: var(--input-text); border: 1px solid var(--input-border, #ccc); border-radius: 4px; width: 100%; box-sizing: border-box;"
                  >
-                   <option value="breakfast">Breakfast</option>
-                   <option value="snack1">Snack (Morning)</option>
-                   <option value="lunch">Lunch</option>
-                   <option value="snack2">Snack (Afternoon)</option>
-                   <option value="dinner">Dinner</option>
-                   <option value="snack3">Snack (Evening)</option>
+                   <option value="breakfast">${this.translations.breakfast}</option>
+                   <option value="snack1">${this.translations.snack1}</option>
+                   <option value="lunch">${this.translations.lunch}</option>
+                   <option value="snack2">${this.translations.snack2}</option>
+                   <option value="dinner">${this.translations.dinner}</option>
+                   <option value="snack3">${this.translations.snack3}</option>
                  </select>
               </div>
 
             <div class="input-group">
-                 <label for="date">Date:</label>
+                 <label for="date">${this.translations.date}:</label>
                  <input 
                    type="date" 
                    id="date" 
@@ -544,7 +544,7 @@ export default class PageMeal extends Page {
 
 
              <button class="btn" @click="${this._addToDiary}">
-                 Add to Diary
+                 ${this.translations.addToDiary}
              </button>
 
           ${this.error ? html`<div class="error-message">${this.error}</div>` : ''}
@@ -553,11 +553,11 @@ export default class PageMeal extends Page {
         ${this.showDeleteModal ? html`
         <div class="modal-overlay">
           <div class="modal">
-            <h3>Are you sure?</h3>
-            <p>This will delete this meal and remove it from all daily logs.</p>
+            <h3>${this.translations.confirmClearData}</h3>
+            <p>${this.translations.deleteMealMessage}</p>
             <div class="modal-buttons">
-              <button class="btn" @click="${() => this.showDeleteModal = false}">Cancel</button>
-              <button class="btn-danger" @click="${this._confirmDelete}">Delete</button>
+              <button class="btn" @click="${() => this.showDeleteModal = false}">${this.translations.cancel}</button>
+              <button class="btn-danger" @click="${this._confirmDelete}">${this.translations.delete}</button>
             </div>
           </div>
         </div>
