@@ -1,5 +1,11 @@
 # brote
 
+## 1.0.4
+
+### Patch Changes
+
+- e8340db: adding calories sum in food category
+
 ## 1.0.3
 
 ### Patch Changes

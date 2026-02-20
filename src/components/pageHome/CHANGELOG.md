@@ -1,5 +1,11 @@
 # home-page
 
+## 0.0.4
+
+### Patch Changes
+
+- e8340db: adding calories sum in food category
+
 ## 0.0.3
 
 ### Patch Changes
