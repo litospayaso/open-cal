@@ -25,6 +25,13 @@ const Template = ({
 export const Default = Template.bind({});
 // @ts-ignore
 Default.args = {
-  data: [10, 20, 15, 25, 30, 5, 40],
-  color: '',
+  data: [
+    { tag: 'Mon', value: 10 },
+    { tag: 'Tue', value: 20 },
+    { tag: 'Wed', value: 15 },
+    { tag: 'Thu', value: 25 },
+    { tag: 'Fri', value: 30 },
+    { tag: 'Sat', value: 5 },
+    { tag: 'Sun', value: 40 }
+  ],
 };

@@ -1,7 +1,6 @@
 import { html, css, LitElement, type PropertyValues } from 'lit';
-import { customElement, property, state, query } from 'lit/decorators.js';
+import { property, state, query } from 'lit/decorators.js';
 
-@customElement('component-line-chart')
 export default class ComponentLineChart extends LitElement {
   static styles = css`
     :host {
@@ -55,7 +54,7 @@ export default class ComponentLineChart extends LitElement {
     }
 
     .point {
-      fill: var(--card-background, #fff);
+      fill: var(--chart-line-color, #fff);
       stroke: var(--chart-line-color, var(--palette-green, #4caf50));
       stroke-width: 2;
       cursor: pointer;
@@ -67,29 +66,18 @@ export default class ComponentLineChart extends LitElement {
     }
   `;
 
-  @property({ type: Array }) data: number[] = [];
-  @property({ type: String }) color: string = '';
-  @property({ type: Number }) padding: number = 20;
+  @property({ type: Array }) data: { tag: string, value: number }[] = [];
 
-  @state() private _hoveredValue: number | null = null;
+  @state() private _hoveredText: string | null = null;
   @state() private _hoveredX: number = 0;
   @state() private _hoveredY: number = 0;
   @state() private _width: number = 0;
   @state() private _height: number = 0;
+  @state() private _padding: number = 40;
 
-  private _resizeObserver: ResizeObserver | null = null;
 
   connectedCallback() {
     super.connectedCallback();
-    this._resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        this._width = entry.contentRect.width;
-        this._height = entry.contentRect.height;
-        this.requestUpdate();
-      }
-    });
-    this._resizeObserver.observe(this);
-    // Force an initial update to check dimensions immediately
     this.requestUpdate();
   }
 
@@ -106,37 +94,30 @@ export default class ComponentLineChart extends LitElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    if (this._resizeObserver) {
-      this._resizeObserver.disconnect();
-    }
   }
 
   @query('.chart-container') private _chartContainer!: HTMLElement;
 
   updated(changedProperties: PropertyValues) {
-    if (changedProperties.has('color') && this.color) {
-      this.style.setProperty('--chart-line-color', this.color);
-    }
 
     if (changedProperties.has('data') || changedProperties.has('_width') || changedProperties.has('_height')) {
       this._generateChartSvg();
     }
   }
 
-  private _handleMouseEnter(val: number, x: number, y: number) {
-    this._hoveredValue = val;
+  private _handleMouseEnter(tag: string, val: number, x: number, y: number) {
+    this._hoveredText = `${tag}(${val})`;
     this._hoveredX = x;
     this._hoveredY = y;
   }
 
   private _handleMouseLeave() {
-    this._hoveredValue = null;
+    this._hoveredText = null;
   }
 
   private _generateChartSvg() {
     if (!this._chartContainer) return;
 
-    // Clear previous
     this._chartContainer.innerHTML = '';
 
     const width = this._width || this.offsetWidth || 300;
@@ -153,67 +134,138 @@ export default class ComponentLineChart extends LitElement {
 
     if (!this.data || this.data.length === 0) return;
 
-    const safeData = this.data.map(n => Number(n));
-    const maxVal = Math.max(...safeData, 1);
+    const safeData = this.data.map(item => ({ tag: item.tag, value: Number(item.value) }));
+    const maxVal = Math.max(...safeData.map(d => d.value), 1);
 
-    const availableWidth = width - (this.padding * 2);
-    const availableHeight = height - (this.padding * 2);
+    const availableWidth = width - (this._padding * 2);
+    const availableHeight = height - (this._padding * 2);
     const stepX = availableWidth / (Math.max(safeData.length - 1, 1));
 
-    // Polyline
-    const points = safeData.map((val, index) => {
-      const x = this.padding + (index * stepX);
-      const y = height - this.padding - ((val / maxVal) * availableHeight);
-      return `${x},${y}`;
-    }).join(' ');
+    // X-Axis
+    const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    xAxis.setAttribute('x1', this._padding.toString());
+    xAxis.setAttribute('y1', (height - this._padding).toString());
+    xAxis.setAttribute('x2', (width - this._padding).toString());
+    xAxis.setAttribute('y2', (height - this._padding).toString());
+    xAxis.setAttribute('class', 'axis');
+    svg.appendChild(xAxis);
 
-    const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-    polyline.setAttribute('points', points);
-    polyline.setAttribute('class', 'line');
-    // Styles are handled by CSS, but direct style setting is also possible if needed
-    // polyline.style.fill = 'none';
-    // polyline.style.stroke = 'var(--chart-line-color, var(--palette-green, #4caf50))';
-    // polyline.style.strokeWidth = '3';
-    // polyline.style.strokeLinecap = 'round';
-    // polyline.style.strokeLinejoin = 'round';
+    // Y-Axis
+    const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    yAxis.setAttribute('x1', (width - this._padding).toString());
+    yAxis.setAttribute('y1', this._padding.toString());
+    yAxis.setAttribute('x2', (width - this._padding).toString());
+    yAxis.setAttribute('y2', (height - this._padding).toString());
+    yAxis.setAttribute('class', 'axis');
+    svg.appendChild(yAxis);
 
-    svg.appendChild(polyline);
+    // Y-Axis Labels & Grid lines
+    const numLabels = 5;
+    for (let i = 0; i < numLabels; i++) {
+      const val = maxVal - (i * (maxVal / (numLabels - 1)));
+      const y = this._padding + (i * (availableHeight / (numLabels - 1)));
+
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', (width - this._padding + 8).toString());
+      text.setAttribute('y', y.toString());
+      text.setAttribute('text-anchor', 'start');
+      text.setAttribute('alignment-baseline', 'middle');
+      text.setAttribute('dominant-baseline', 'central');
+      text.setAttribute('font-size', '11px');
+      text.setAttribute('fill', 'var(--card-text, #333)');
+      text.textContent = Math.round(val).toString();
+      svg.appendChild(text);
+
+      // Horizontal dashed line
+      if (i < numLabels - 1) { // Don't draw over X-Axis
+        const gridLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        gridLine.setAttribute('x1', this._padding.toString());
+        gridLine.setAttribute('y1', y.toString());
+        gridLine.setAttribute('x2', (width - this._padding).toString());
+        gridLine.setAttribute('y2', y.toString());
+        gridLine.setAttribute('stroke', 'var(--chart-axis-color, var(--palette-grey, #ccc))');
+        gridLine.setAttribute('stroke-width', '0.5');
+        gridLine.setAttribute('stroke-dasharray', '4,4');
+        svg.appendChild(gridLine);
+      }
+    }
+
+    // X-Axis Labels
+    if (safeData.length > 0) {
+      // First label
+      const firstText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      firstText.setAttribute('x', this._padding.toString());
+      firstText.setAttribute('y', (height - this._padding + 15).toString());
+      firstText.setAttribute('text-anchor', 'start');
+      firstText.setAttribute('font-size', '11px');
+      firstText.setAttribute('fill', 'var(--card-text, #333)');
+      firstText.textContent = safeData[0].tag;
+      svg.appendChild(firstText);
+
+      // Last label
+      if (safeData.length > 1) {
+        const lastText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        lastText.setAttribute('x', (width - this._padding).toString());
+        lastText.setAttribute('y', (height - this._padding + 15).toString());
+        lastText.setAttribute('text-anchor', 'end');
+        lastText.setAttribute('font-size', '11px');
+        lastText.setAttribute('fill', 'var(--card-text, #333)');
+        lastText.textContent = safeData[safeData.length - 1].tag;
+        svg.appendChild(lastText);
+      }
+    }
+
+    // Smooth Path
+    const coords = safeData.map((item, index) => {
+      const x = this._padding + (index * stepX);
+      const y = height - this._padding - ((item.value / maxVal) * availableHeight);
+      return { x, y };
+    });
+
+    let pathData = '';
+    if (coords.length > 0) {
+      pathData += `M ${coords[0].x} ${coords[0].y}`;
+      for (let i = 0; i < coords.length - 1; i++) {
+        const current = coords[i];
+        const next = coords[i + 1];
+        const midX = (current.x + next.x) / 2;
+        pathData += ` C ${midX} ${current.y}, ${midX} ${next.y}, ${next.x} ${next.y}`;
+      }
+    }
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', pathData);
+    path.setAttribute('class', 'line');
+
+    svg.appendChild(path);
 
     // Circles
-    safeData.forEach((val, index) => {
-      const x = this.padding + (index * stepX);
-      const y = height - this.padding - ((val / maxVal) * availableHeight);
+    safeData.forEach((item, index) => {
+      const x = this._padding + (index * stepX);
+      const y = height - this._padding - ((item.value / maxVal) * availableHeight);
 
       const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       circle.setAttribute('cx', x.toString());
       circle.setAttribute('cy', y.toString());
-      circle.setAttribute('r', '4');
+      circle.setAttribute('r', '1.5');
       circle.setAttribute('class', 'point');
-      // Styles are handled by CSS, but direct style setting is also possible if needed
-      // circle.style.fill = 'var(--card-background, #fff)';
-      // circle.style.stroke = 'var(--chart-line-color, var(--palette-green, #4caf50))';
-      // circle.style.strokeWidth = '2';
-      // circle.style.cursor = 'pointer';
 
       // Event listeners for tooltip
-      circle.addEventListener('mouseenter', () => this._handleMouseEnter(val, x, y));
+      circle.addEventListener('mouseenter', () => this._handleMouseEnter(item.tag, item.value, x, y));
       circle.addEventListener('mouseleave', () => this._handleMouseLeave());
 
       svg.appendChild(circle);
     });
 
-    // Tooltip is handled by lit-html render, but we need to make sure we don't wipe it if it's inside chart-container?
-    // Actually, I can render the tooltip OUTSIDE the container or inside via lit, but if I wipe innerHTML I lose it if it's there.
-    // I can split the render: chart container (for svg) and tooltip container.
   }
 
   render() {
     return html`
         <div style="position: relative; width: 100%; height: 100%;">
             <div class="chart-container"></div>
-            ${this._hoveredValue !== null ? html`
+            ${this._hoveredText !== null ? html`
                 <div class="tooltip" style="left: ${this._hoveredX}px; top: ${this._hoveredY}px; opacity: 1;">
-                    ${this._hoveredValue}
+                    ${this._hoveredText}
                 </div>
             ` : ''}
         </div>
