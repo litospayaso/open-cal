@@ -27112,81 +27112,79 @@
     }
   };
   var variableStyles = i`
-        :root {
-      --palette-grey: #a19fa2;
-      --palette-green: #4fb9ad;
-      --palette-purple: #a285bb;
-      --palette-blue: #a9afe9;
-      --palette-black: #191c25;
-      
-      --protein-color: #24d9c4;
-      --fat-color: #f484c7eb;
-      --carbs-color: #ca96f8eb;
-      --calories-color: #707bde;
+  :root {
+    --palette-grey: #a19fa2;
+    --palette-green: #4fb9ad;
+    --palette-purple: #a285bb;
+    --palette-blue: #a9afe9;
+    --palette-black: #191c25;
 
-      --counter-border-width: 2px;
+    --protein-color: #24d9c4;
+    --fat-color: #f484c7eb;
+    --carbs-color: #ca96f8eb;
+    --calories-color: #707bde;
 
-      /* Semantic Variables - Light Mode Default */
-      --background-color: #fff;
-      --text-color: #191c25;
+    --counter-border-width: 2px;
 
-      --card-background: #fff;
-      --card-text: #191c25;
-      --card-border: var(--palette-green);
+    /* Semantic Variables - Light Mode Default */
+    --background-color: #fff;
+    --text-color: #191c25;
 
-      --input-background: transparent;
-      --input-text: #191c25;
-      --input-border: #a19fa2;
-      /* palette-grey */
-      --input-placeholder: #757575;
+    --card-background: #fff;
+    --card-text: #191c25;
+    --card-border: var(--palette-green);
 
-      --button-icon-color: #fff;
-      --section-background: #f5f5f5;
+    --input-background: transparent;
+    --input-text: #191c25;
+    --input-border: #a19fa2;
+    /* palette-grey */
+    --input-placeholder: #757575;
 
-      --spinner-track-color: rgba(0, 0, 0, 0.1);
-      --spinner-active-color: #a285bb;
+    --button-icon-color: #fff;
+    --section-background: #f5f5f5;
 
-      --group-button-active-bg: var(--palette-green);
-      --group-button-active-text: #fff;
-      --group-button-hover-bg: rgba(0, 0, 0, 0.05);
+    --spinner-track-color: rgba(0, 0, 0, 0.1);
+    --spinner-active-color: #a285bb;
 
-      --favorite-color: var(--palette-green);
-    }
+    --group-button-active-bg: var(--palette-green);
+    --chart-line-color: var(--palette-green);
+    --group-button-active-text: #fff;
+    --group-button-hover-bg: rgba(0, 0, 0, 0.05);
+  }
 
-    [data-theme="dark"] {
-      /* Semantic Variables - Dark Mode Override */
-      --background-color: #191c25;
-      --text-color: #fff;
+  [data-theme="dark"] {
+    /* Semantic Variables - Dark Mode Override */
+    --background-color: #191c25;
+    --text-color: #fff;
 
-      --card-background: #191c25;
-      /* palette-black */
-      --card-text: #fff;
-      --card-border: #a285bb;
-      /* palette-purple */
+    --card-background: #191c25;
+    /* palette-black */
+    --card-text: #fff;
+    --card-border: #a285bb;
+    /* palette-purple */
 
-      --input-background: rgba(255, 255, 255, 0.1);
-      --input-text: #fff;
-      --input-border: #a285bb;
-      /* palette-purple */
-      --input-placeholder: #ccc;
-      --section-background: rgba(255, 255, 255, 0.05);
+    --input-background: rgba(255, 255, 255, 0.1);
+    --input-text: #fff;
+    --input-border: #a285bb;
+    /* palette-purple */
+    --input-placeholder: #ccc;
+    --section-background: rgba(255, 255, 255, 0.05);
 
-      --spinner-track-color: rgba(255, 255, 255, 0.1);
-      --spinner-active-color: #a9afe9;
-      /* using palette-blue for better visibility in dark mode */
+    --spinner-track-color: rgba(255, 255, 255, 0.1);
+    --spinner-active-color: #a9afe9;
+    /* using palette-blue for better visibility in dark mode */
 
-      --group-button-active-bg: var(--palette-purple);
-      --group-button-active-text: #fff;
-      --group-button-hover-bg: rgba(255, 255, 255, 0.1);
+    --group-button-active-bg: var(--palette-purple);
+    --chart-line-color: var(--palette-purple);
+    --group-button-active-text: #fff;
+    --group-button-hover-bg: rgba(255, 255, 255, 0.1);
+  }
 
-      --favorite-color: var(--palette-purple);
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--background-color);
-      color: var(--text-color);
-    }
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+  }
     `;
 
   // src/components/pageOpenCal/pageOpenCal.ts
@@ -33875,7 +33873,7 @@
       return b2`
       <div class="category-section">
         <div class="category-header">
-           ${title}
+           ${title} (${items.reduce((acc, item) => acc + (item.product.nutriments["energy-kcal"] || 0) * (item.unit === "meal" ? item.quantity : item.quantity / 100), 0).toFixed(0)} kcal)
         </div>
         ${items.map((item, index) => b2`
             <component-search-result
