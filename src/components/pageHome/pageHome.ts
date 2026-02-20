@@ -329,7 +329,7 @@ export default class PageHome extends Page {
     return html`
       <div class="category-section">
         <div class="category-header">
-           ${title}
+           ${title} (${items.reduce((acc, item) => acc + ((item.product.nutriments['energy-kcal'] || 0) * (item.unit === 'meal' ? item.quantity : item.quantity / 100)), 0).toFixed(0)} kcal)
         </div>
         ${items.map((item, index) => html`
             <component-search-result
