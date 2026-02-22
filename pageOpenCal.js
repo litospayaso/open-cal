@@ -201,7 +201,7 @@
           toString() {
             try {
               return this.getBlackMatrix().toString();
-            } catch (e5) {
+            } catch (e6) {
               return "";
             }
           }
@@ -1053,8 +1053,8 @@
           // SHIFT_JIS.equalsIgnoreCase(PLATFORM_DEFAULT_ENCODING) ||
           // EUC_JP.equalsIgnoreCase(PLATFORM_DEFAULT_ENCODING);
           static castAsNonUtf8Char(code, encoding = null) {
-            const e5 = encoding ? encoding.getName() : this.ISO88591;
-            return StringEncoding.decode(new Uint8Array([code]), e5);
+            const e6 = encoding ? encoding.getName() : this.ISO88591;
+            return StringEncoding.decode(new Uint8Array([code]), e6);
           }
           /**
            * @param bytes bytes encoding a string, whose encoding should be guessed
@@ -2307,15 +2307,15 @@
             function fulfilled(value) {
               try {
                 step(generator.next(value));
-              } catch (e5) {
-                reject(e5);
+              } catch (e6) {
+                reject(e6);
               }
             }
             function rejected(value) {
               try {
                 step(generator["throw"](value));
-              } catch (e5) {
-                reject(e5);
+              } catch (e6) {
+                reject(e6);
               }
             }
             function step(result) {
@@ -2882,14 +2882,14 @@
               try {
                 const result = this.decode(element);
                 resolve(result);
-              } catch (e5) {
-                const ifNotFound = retryIfNotFound && e5 instanceof NotFoundException;
-                const isChecksumOrFormatError = e5 instanceof ChecksumException || e5 instanceof FormatException;
+              } catch (e6) {
+                const ifNotFound = retryIfNotFound && e6 instanceof NotFoundException;
+                const isChecksumOrFormatError = e6 instanceof ChecksumException || e6 instanceof FormatException;
                 const ifChecksumOrFormat = isChecksumOrFormatError && retryIfChecksumOrFormatError;
                 if (ifNotFound || ifChecksumOrFormat) {
                   return setTimeout(loop, this._timeBetweenDecodingAttempts, resolve, reject);
                 }
-                reject(e5);
+                reject(e6);
               }
             };
             return new Promise((resolve, reject) => loop(resolve, reject));
@@ -2908,10 +2908,10 @@
                 const result = this.decode(element);
                 callbackFn(result, null);
                 setTimeout(loop, this.timeBetweenScansMillis);
-              } catch (e5) {
-                callbackFn(null, e5);
-                const isChecksumOrFormatError = e5 instanceof ChecksumException || e5 instanceof FormatException;
-                const isNotFound = e5 instanceof NotFoundException;
+              } catch (e6) {
+                callbackFn(null, e6);
+                const isChecksumOrFormatError = e6 instanceof ChecksumException || e6 instanceof FormatException;
+                const isNotFound = e6 instanceof NotFoundException;
                 if (isChecksumOrFormatError || isNotFound) {
                   setTimeout(loop, this._timeBetweenDecodingAttempts);
                 }
@@ -3824,15 +3824,15 @@
               return Int32Array.from([errorLocator.getCoefficient(1)]);
             }
             const result = new Int32Array(numErrors);
-            let e5 = 0;
+            let e6 = 0;
             const field = this.field;
-            for (let i5 = 1; i5 < field.getSize() && e5 < numErrors; i5++) {
+            for (let i5 = 1; i5 < field.getSize() && e6 < numErrors; i5++) {
               if (errorLocator.evaluateAt(i5) === 0) {
-                result[e5] = field.inverse(i5);
-                e5++;
+                result[e6] = field.inverse(i5);
+                e6++;
               }
             }
-            if (e5 !== numErrors) {
+            if (e6 !== numErrors) {
               throw new ReedSolomonException("Error locator degree does not match number of roots");
             }
             return result;
@@ -5107,7 +5107,7 @@
               pointB = cornerPoints[1];
               pointC = cornerPoints[2];
               pointD = cornerPoints[3];
-            } catch (e5) {
+            } catch (e6) {
               let cx2 = this.image.getWidth() / 2;
               let cy2 = this.image.getHeight() / 2;
               pointA = this.getFirstDifferent(new Point(cx2 + 7, cy2 - 7), false, 1, -1).toResultPoint();
@@ -5123,7 +5123,7 @@
               pointB = cornerPoints[1];
               pointC = cornerPoints[2];
               pointD = cornerPoints[3];
-            } catch (e5) {
+            } catch (e6) {
               pointA = this.getFirstDifferent(new Point(cx + 7, cy - 7), false, 1, -1).toResultPoint();
               pointB = this.getFirstDifferent(new Point(cx + 7, cy + 7), false, 1, 1).toResultPoint();
               pointC = this.getFirstDifferent(new Point(cx - 7, cy + 7), false, -1, 1).toResultPoint();
@@ -5342,8 +5342,8 @@
               points = detectorResult.getPoints();
               this.reportFoundResultPoints(hints, points);
               decoderResult = new Decoder().decode(detectorResult);
-            } catch (e5) {
-              exception = e5;
+            } catch (e6) {
+              exception = e6;
             }
             if (decoderResult == null) {
               try {
@@ -5351,11 +5351,11 @@
                 points = detectorResult.getPoints();
                 this.reportFoundResultPoints(hints, points);
                 decoderResult = new Decoder().decode(detectorResult);
-              } catch (e5) {
+              } catch (e6) {
                 if (exception != null) {
                   throw exception;
                 }
-                throw e5;
+                throw e6;
               }
             }
             let result = new Result(decoderResult.getText(), decoderResult.getRawBytes(), decoderResult.getNumBits(), points, BarcodeFormat$1.AZTEC, System.currentTimeMillis());
@@ -8519,8 +8519,8 @@
               case 63:
                 return new AI013x0x1xDecoder(information, "320", "17");
             }
-          } catch (e5) {
-            console.log(e5);
+          } catch (e6) {
+            console.log(e6);
             throw new IllegalStateException("unknown decoder: " + information);
           }
         }
@@ -8624,9 +8624,9 @@
             this.startFromEven = false;
             try {
               return RSSExpandedReader.constructResult(this.decodeRow2pairs(rowNumber, row));
-            } catch (e5) {
+            } catch (e6) {
               if (this.verbose) {
-                console.log(e5);
+                console.log(e6);
               }
             }
             this.pairs.length = 0;
@@ -8687,9 +8687,9 @@
             let ps = null;
             try {
               ps = this.checkRows(new Array(), 0);
-            } catch (e5) {
+            } catch (e6) {
               if (this.verbose) {
-                console.log(e5);
+                console.log(e6);
               }
             }
             if (reverse) {
@@ -8717,9 +8717,9 @@
               rs.push(row);
               try {
                 return this.checkRows(rs, i5 + 1);
-              } catch (e5) {
+              } catch (e6) {
                 if (this.verbose) {
-                  console.log(e5);
+                  console.log(e6);
                 }
               }
             }
@@ -8878,10 +8878,10 @@
             let rightChar;
             try {
               rightChar = this.decodeDataCharacter(row, pattern, isOddPattern, false);
-            } catch (e5) {
+            } catch (e6) {
               rightChar = null;
               if (this.verbose) {
-                console.log(e5);
+                console.log(e6);
               }
             }
             return new ExpandedPair(leftChar, rightChar, pattern, true);
@@ -8985,7 +8985,7 @@
             let value;
             try {
               value = this.parseFinderValue(counters, RSSExpandedReader.FINDER_PATTERNS);
-            } catch (e5) {
+            } catch (e6) {
               return null;
             }
             return new FinderPattern(value, [start, end], start, end, rowNumber);
@@ -12331,8 +12331,8 @@
             let ex = null;
             try {
               return this.decodeBitMatrixParser(parser, hints);
-            } catch (e5) {
-              ex = e5;
+            } catch (e6) {
+              ex = e6;
             }
             try {
               parser.remask();
@@ -12343,11 +12343,11 @@
               const result = this.decodeBitMatrixParser(parser, hints);
               result.setOther(new QRCodeDecoderMetaData(true));
               return result;
-            } catch (e5) {
+            } catch (e6) {
               if (ex !== null) {
                 throw ex;
               }
-              throw e5;
+              throw e6;
             }
           }
           decodeBitMatrixParser(parser, hints) {
@@ -19965,14 +19965,14 @@
           findErrorLocations(errorLocator) {
             let numErrors = errorLocator.getDegree();
             let result = new Int32Array(numErrors);
-            let e5 = 0;
-            for (let i5 = 1; i5 < this.field.getSize() && e5 < numErrors; i5++) {
+            let e6 = 0;
+            for (let i5 = 1; i5 < this.field.getSize() && e6 < numErrors; i5++) {
               if (errorLocator.evaluateAt(i5) === 0) {
-                result[e5] = this.field.inverse(i5);
-                e5++;
+                result[e6] = this.field.inverse(i5);
+                e6++;
               }
             }
-            if (e5 !== numErrors) {
+            if (e6 !== numErrors) {
               throw ChecksumException.getChecksumInstance();
             }
             return result;
@@ -25483,16 +25483,16 @@
   var s = /* @__PURE__ */ Symbol();
   var o = /* @__PURE__ */ new WeakMap();
   var n = class {
-    constructor(t4, e5, o6) {
+    constructor(t4, e6, o6) {
       if (this._$cssResult$ = true, o6 !== s) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
-      this.cssText = t4, this.t = e5;
+      this.cssText = t4, this.t = e6;
     }
     get styleSheet() {
       let t4 = this.o;
       const s4 = this.t;
       if (e && void 0 === t4) {
-        const e5 = void 0 !== s4 && 1 === s4.length;
-        e5 && (t4 = o.get(s4)), void 0 === t4 && ((this.o = t4 = new CSSStyleSheet()).replaceSync(this.cssText), e5 && o.set(s4, t4));
+        const e6 = void 0 !== s4 && 1 === s4.length;
+        e6 && (t4 = o.get(s4)), void 0 === t4 && ((this.o = t4 = new CSSStyleSheet()).replaceSync(this.cssText), e6 && o.set(s4, t4));
       }
       return t4;
     }
@@ -25501,8 +25501,8 @@
     }
   };
   var r = (t4) => new n("string" == typeof t4 ? t4 : t4 + "", void 0, s);
-  var i = (t4, ...e5) => {
-    const o6 = 1 === t4.length ? t4[0] : e5.reduce((e6, s4, o7) => e6 + ((t5) => {
+  var i = (t4, ...e6) => {
+    const o6 = 1 === t4.length ? t4[0] : e6.reduce((e7, s4, o7) => e7 + ((t5) => {
       if (true === t5._$cssResult$) return t5.cssText;
       if ("number" == typeof t5) return t5;
       throw Error("Value passed to 'css' function must be a 'css' function result: " + t5 + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
@@ -25511,15 +25511,15 @@
   };
   var S = (s4, o6) => {
     if (e) s4.adoptedStyleSheets = o6.map((t4) => t4 instanceof CSSStyleSheet ? t4 : t4.styleSheet);
-    else for (const e5 of o6) {
+    else for (const e6 of o6) {
       const o7 = document.createElement("style"), n5 = t.litNonce;
-      void 0 !== n5 && o7.setAttribute("nonce", n5), o7.textContent = e5.cssText, s4.appendChild(o7);
+      void 0 !== n5 && o7.setAttribute("nonce", n5), o7.textContent = e6.cssText, s4.appendChild(o7);
     }
   };
   var c = e ? (t4) => t4 : (t4) => t4 instanceof CSSStyleSheet ? ((t5) => {
-    let e5 = "";
-    for (const s4 of t5.cssRules) e5 += s4.cssText;
-    return r(e5);
+    let e6 = "";
+    for (const s4 of t5.cssRules) e6 += s4.cssText;
+    return r(e6);
   })(t4) : t4;
 
   // node_modules/@lit/reactive-element/reactive-element.js
@@ -25575,13 +25575,13 @@
       }
     }
     static getPropertyDescriptor(t4, s4, i5) {
-      const { get: e5, set: r6 } = h(this.prototype, t4) ?? { get() {
+      const { get: e6, set: r6 } = h(this.prototype, t4) ?? { get() {
         return this[s4];
       }, set(t5) {
         this[s4] = t5;
       } };
-      return { get: e5, set(s5) {
-        const h3 = e5?.call(this);
+      return { get: e6, set(s5) {
+        const h3 = e6?.call(this);
         r6?.call(this, s5), this.requestUpdate(t4, h3, i5);
       }, configurable: true, enumerable: true };
     }
@@ -25614,8 +25614,8 @@
     static finalizeStyles(s4) {
       const i5 = [];
       if (Array.isArray(s4)) {
-        const e5 = new Set(s4.flat(1 / 0).reverse());
-        for (const s5 of e5) i5.unshift(c(s5));
+        const e6 = new Set(s4.flat(1 / 0).reverse());
+        for (const s5 of e6) i5.unshift(c(s5));
       } else void 0 !== s4 && i5.push(c(s4));
       return i5;
     }
@@ -25656,31 +25656,31 @@
       this._$AK(t4, i5);
     }
     _$ET(t4, s4) {
-      const i5 = this.constructor.elementProperties.get(t4), e5 = this.constructor._$Eu(t4, i5);
-      if (void 0 !== e5 && true === i5.reflect) {
+      const i5 = this.constructor.elementProperties.get(t4), e6 = this.constructor._$Eu(t4, i5);
+      if (void 0 !== e6 && true === i5.reflect) {
         const h3 = (void 0 !== i5.converter?.toAttribute ? i5.converter : u).toAttribute(s4, i5.type);
-        this._$Em = t4, null == h3 ? this.removeAttribute(e5) : this.setAttribute(e5, h3), this._$Em = null;
+        this._$Em = t4, null == h3 ? this.removeAttribute(e6) : this.setAttribute(e6, h3), this._$Em = null;
       }
     }
     _$AK(t4, s4) {
-      const i5 = this.constructor, e5 = i5._$Eh.get(t4);
-      if (void 0 !== e5 && this._$Em !== e5) {
-        const t5 = i5.getPropertyOptions(e5), h3 = "function" == typeof t5.converter ? { fromAttribute: t5.converter } : void 0 !== t5.converter?.fromAttribute ? t5.converter : u;
-        this._$Em = e5;
+      const i5 = this.constructor, e6 = i5._$Eh.get(t4);
+      if (void 0 !== e6 && this._$Em !== e6) {
+        const t5 = i5.getPropertyOptions(e6), h3 = "function" == typeof t5.converter ? { fromAttribute: t5.converter } : void 0 !== t5.converter?.fromAttribute ? t5.converter : u;
+        this._$Em = e6;
         const r6 = h3.fromAttribute(s4, t5.type);
-        this[e5] = r6 ?? this._$Ej?.get(e5) ?? r6, this._$Em = null;
+        this[e6] = r6 ?? this._$Ej?.get(e6) ?? r6, this._$Em = null;
       }
     }
-    requestUpdate(t4, s4, i5, e5 = false, h3) {
+    requestUpdate(t4, s4, i5, e6 = false, h3) {
       if (void 0 !== t4) {
         const r6 = this.constructor;
-        if (false === e5 && (h3 = this[t4]), i5 ??= r6.getPropertyOptions(t4), !((i5.hasChanged ?? f)(h3, s4) || i5.useDefault && i5.reflect && h3 === this._$Ej?.get(t4) && !this.hasAttribute(r6._$Eu(t4, i5)))) return;
+        if (false === e6 && (h3 = this[t4]), i5 ??= r6.getPropertyOptions(t4), !((i5.hasChanged ?? f)(h3, s4) || i5.useDefault && i5.reflect && h3 === this._$Ej?.get(t4) && !this.hasAttribute(r6._$Eu(t4, i5)))) return;
         this.C(t4, s4, i5);
       }
       false === this.isUpdatePending && (this._$ES = this._$EP());
     }
-    C(t4, s4, { useDefault: i5, reflect: e5, wrapped: h3 }, r6) {
-      i5 && !(this._$Ej ??= /* @__PURE__ */ new Map()).has(t4) && (this._$Ej.set(t4, r6 ?? s4 ?? this[t4]), true !== h3 || void 0 !== r6) || (this._$AL.has(t4) || (this.hasUpdated || i5 || (s4 = void 0), this._$AL.set(t4, s4)), true === e5 && this._$Em !== t4 && (this._$Eq ??= /* @__PURE__ */ new Set()).add(t4));
+    C(t4, s4, { useDefault: i5, reflect: e6, wrapped: h3 }, r6) {
+      i5 && !(this._$Ej ??= /* @__PURE__ */ new Map()).has(t4) && (this._$Ej.set(t4, r6 ?? s4 ?? this[t4]), true !== h3 || void 0 !== r6) || (this._$AL.has(t4) || (this.hasUpdated || i5 || (s4 = void 0), this._$AL.set(t4, s4)), true === e6 && this._$Em !== t4 && (this._$Eq ??= /* @__PURE__ */ new Set()).add(t4));
     }
     async _$EP() {
       this.isUpdatePending = true;
@@ -25704,8 +25704,8 @@
         }
         const t5 = this.constructor.elementProperties;
         if (t5.size > 0) for (const [s5, i5] of t5) {
-          const { wrapped: t6 } = i5, e5 = this[s5];
-          true !== t6 || this._$AL.has(s5) || void 0 === e5 || this.C(s5, void 0, i5, e5);
+          const { wrapped: t6 } = i5, e6 = this[s5];
+          true !== t6 || this._$AL.has(s5) || void 0 === e6 || this.C(s5, void 0, i5, e6);
         }
       }
       let t4 = false;
@@ -25780,32 +25780,32 @@
     return void 0 !== e3 ? e3.createHTML(i5) : i5;
   }
   var N = (t4, i5) => {
-    const s4 = t4.length - 1, e5 = [];
+    const s4 = t4.length - 1, e6 = [];
     let n5, l3 = 2 === i5 ? "<svg>" : 3 === i5 ? "<math>" : "", c4 = v;
     for (let i6 = 0; i6 < s4; i6++) {
       const s5 = t4[i6];
       let a3, u3, d3 = -1, f3 = 0;
       for (; f3 < s5.length && (c4.lastIndex = f3, u3 = c4.exec(s5), null !== u3); ) f3 = c4.lastIndex, c4 === v ? "!--" === u3[1] ? c4 = _ : void 0 !== u3[1] ? c4 = m : void 0 !== u3[2] ? (y2.test(u3[2]) && (n5 = RegExp("</" + u3[2], "g")), c4 = p2) : void 0 !== u3[3] && (c4 = p2) : c4 === p2 ? ">" === u3[0] ? (c4 = n5 ?? v, d3 = -1) : void 0 === u3[1] ? d3 = -2 : (d3 = c4.lastIndex - u3[2].length, a3 = u3[1], c4 = void 0 === u3[3] ? p2 : '"' === u3[3] ? $ : g) : c4 === $ || c4 === g ? c4 = p2 : c4 === _ || c4 === m ? c4 = v : (c4 = p2, n5 = void 0);
       const x2 = c4 === p2 && t4[i6 + 1].startsWith("/>") ? " " : "";
-      l3 += c4 === v ? s5 + r3 : d3 >= 0 ? (e5.push(a3), s5.slice(0, d3) + h2 + s5.slice(d3) + o3 + x2) : s5 + o3 + (-2 === d3 ? i6 : x2);
+      l3 += c4 === v ? s5 + r3 : d3 >= 0 ? (e6.push(a3), s5.slice(0, d3) + h2 + s5.slice(d3) + o3 + x2) : s5 + o3 + (-2 === d3 ? i6 : x2);
     }
-    return [V(t4, l3 + (t4[s4] || "<?>") + (2 === i5 ? "</svg>" : 3 === i5 ? "</math>" : "")), e5];
+    return [V(t4, l3 + (t4[s4] || "<?>") + (2 === i5 ? "</svg>" : 3 === i5 ? "</math>" : "")), e6];
   };
   var S2 = class _S {
-    constructor({ strings: t4, _$litType$: i5 }, e5) {
+    constructor({ strings: t4, _$litType$: i5 }, e6) {
       let r6;
       this.parts = [];
       let l3 = 0, a3 = 0;
       const u3 = t4.length - 1, d3 = this.parts, [f3, v2] = N(t4, i5);
-      if (this.el = _S.createElement(f3, e5), P.currentNode = this.el.content, 2 === i5 || 3 === i5) {
+      if (this.el = _S.createElement(f3, e6), P.currentNode = this.el.content, 2 === i5 || 3 === i5) {
         const t5 = this.el.content.firstChild;
         t5.replaceWith(...t5.childNodes);
       }
       for (; null !== (r6 = P.nextNode()) && d3.length < u3; ) {
         if (1 === r6.nodeType) {
           if (r6.hasAttributes()) for (const t5 of r6.getAttributeNames()) if (t5.endsWith(h2)) {
-            const i6 = v2[a3++], s4 = r6.getAttribute(t5).split(o3), e6 = /([.?@])?(.*)/.exec(i6);
-            d3.push({ type: 1, index: l3, name: e6[2], strings: s4, ctor: "." === e6[1] ? I : "?" === e6[1] ? L : "@" === e6[1] ? z : H }), r6.removeAttribute(t5);
+            const i6 = v2[a3++], s4 = r6.getAttribute(t5).split(o3), e7 = /([.?@])?(.*)/.exec(i6);
+            d3.push({ type: 1, index: l3, name: e7[2], strings: s4, ctor: "." === e7[1] ? I : "?" === e7[1] ? L : "@" === e7[1] ? z : H }), r6.removeAttribute(t5);
           } else t5.startsWith(o3) && (d3.push({ type: 6, index: l3 }), r6.removeAttribute(t5));
           if (y2.test(r6.tagName)) {
             const t5 = r6.textContent.split(o3), i6 = t5.length - 1;
@@ -25828,11 +25828,11 @@
       return s4.innerHTML = t4, s4;
     }
   };
-  function M(t4, i5, s4 = t4, e5) {
+  function M(t4, i5, s4 = t4, e6) {
     if (i5 === E) return i5;
-    let h3 = void 0 !== e5 ? s4._$Co?.[e5] : s4._$Cl;
+    let h3 = void 0 !== e6 ? s4._$Co?.[e6] : s4._$Cl;
     const o6 = a2(i5) ? void 0 : i5._$litDirective$;
-    return h3?.constructor !== o6 && (h3?._$AO?.(false), void 0 === o6 ? h3 = void 0 : (h3 = new o6(t4), h3._$AT(t4, s4, e5)), void 0 !== e5 ? (s4._$Co ??= [])[e5] = h3 : s4._$Cl = h3), void 0 !== h3 && (i5 = M(t4, h3._$AS(t4, i5.values), h3, e5)), i5;
+    return h3?.constructor !== o6 && (h3?._$AO?.(false), void 0 === o6 ? h3 = void 0 : (h3 = new o6(t4), h3._$AT(t4, s4, e6)), void 0 !== e6 ? (s4._$Co ??= [])[e6] = h3 : s4._$Cl = h3), void 0 !== h3 && (i5 = M(t4, h3._$AS(t4, i5.values), h3, e6)), i5;
   }
   var R = class {
     constructor(t4, i5) {
@@ -25845,8 +25845,8 @@
       return this._$AM._$AU;
     }
     u(t4) {
-      const { el: { content: i5 }, parts: s4 } = this._$AD, e5 = (t4?.creationScope ?? l2).importNode(i5, true);
-      P.currentNode = e5;
+      const { el: { content: i5 }, parts: s4 } = this._$AD, e6 = (t4?.creationScope ?? l2).importNode(i5, true);
+      P.currentNode = e6;
       let h3 = P.nextNode(), o6 = 0, n5 = 0, r6 = s4[0];
       for (; void 0 !== r6; ) {
         if (o6 === r6.index) {
@@ -25855,7 +25855,7 @@
         }
         o6 !== r6?.index && (h3 = P.nextNode(), o6++);
       }
-      return P.currentNode = l2, e5;
+      return P.currentNode = l2, e6;
     }
     p(t4) {
       let i5 = 0;
@@ -25866,8 +25866,8 @@
     get _$AU() {
       return this._$AM?._$AU ?? this._$Cv;
     }
-    constructor(t4, i5, s4, e5) {
-      this.type = 2, this._$AH = A, this._$AN = void 0, this._$AA = t4, this._$AB = i5, this._$AM = s4, this.options = e5, this._$Cv = e5?.isConnected ?? true;
+    constructor(t4, i5, s4, e6) {
+      this.type = 2, this._$AH = A, this._$AN = void 0, this._$AA = t4, this._$AB = i5, this._$AM = s4, this.options = e6, this._$Cv = e6?.isConnected ?? true;
     }
     get parentNode() {
       let t4 = this._$AA.parentNode;
@@ -25893,10 +25893,10 @@
       this._$AH !== A && a2(this._$AH) ? this._$AA.nextSibling.data = t4 : this.T(l2.createTextNode(t4)), this._$AH = t4;
     }
     $(t4) {
-      const { values: i5, _$litType$: s4 } = t4, e5 = "number" == typeof s4 ? this._$AC(t4) : (void 0 === s4.el && (s4.el = S2.createElement(V(s4.h, s4.h[0]), this.options)), s4);
-      if (this._$AH?._$AD === e5) this._$AH.p(i5);
+      const { values: i5, _$litType$: s4 } = t4, e6 = "number" == typeof s4 ? this._$AC(t4) : (void 0 === s4.el && (s4.el = S2.createElement(V(s4.h, s4.h[0]), this.options)), s4);
+      if (this._$AH?._$AD === e6) this._$AH.p(i5);
       else {
-        const t5 = new R(e5, this), s5 = t5.u(this.options);
+        const t5 = new R(e6, this), s5 = t5.u(this.options);
         t5.p(i5), this.T(s5), this._$AH = t5;
       }
     }
@@ -25907,9 +25907,9 @@
     k(t4) {
       u2(this._$AH) || (this._$AH = [], this._$AR());
       const i5 = this._$AH;
-      let s4, e5 = 0;
-      for (const h3 of t4) e5 === i5.length ? i5.push(s4 = new _k(this.O(c3()), this.O(c3()), this, this.options)) : s4 = i5[e5], s4._$AI(h3), e5++;
-      e5 < i5.length && (this._$AR(s4 && s4._$AB.nextSibling, e5), i5.length = e5);
+      let s4, e6 = 0;
+      for (const h3 of t4) e6 === i5.length ? i5.push(s4 = new _k(this.O(c3()), this.O(c3()), this, this.options)) : s4 = i5[e6], s4._$AI(h3), e6++;
+      e6 < i5.length && (this._$AR(s4 && s4._$AB.nextSibling, e6), i5.length = e6);
     }
     _$AR(t4 = this._$AA.nextSibling, s4) {
       for (this._$AP?.(false, true, s4); t4 !== this._$AB; ) {
@@ -25928,19 +25928,19 @@
     get _$AU() {
       return this._$AM._$AU;
     }
-    constructor(t4, i5, s4, e5, h3) {
-      this.type = 1, this._$AH = A, this._$AN = void 0, this.element = t4, this.name = i5, this._$AM = e5, this.options = h3, s4.length > 2 || "" !== s4[0] || "" !== s4[1] ? (this._$AH = Array(s4.length - 1).fill(new String()), this.strings = s4) : this._$AH = A;
+    constructor(t4, i5, s4, e6, h3) {
+      this.type = 1, this._$AH = A, this._$AN = void 0, this.element = t4, this.name = i5, this._$AM = e6, this.options = h3, s4.length > 2 || "" !== s4[0] || "" !== s4[1] ? (this._$AH = Array(s4.length - 1).fill(new String()), this.strings = s4) : this._$AH = A;
     }
-    _$AI(t4, i5 = this, s4, e5) {
+    _$AI(t4, i5 = this, s4, e6) {
       const h3 = this.strings;
       let o6 = false;
       if (void 0 === h3) t4 = M(this, t4, i5, 0), o6 = !a2(t4) || t4 !== this._$AH && t4 !== E, o6 && (this._$AH = t4);
       else {
-        const e6 = t4;
+        const e7 = t4;
         let n5, r6;
-        for (t4 = h3[0], n5 = 0; n5 < h3.length - 1; n5++) r6 = M(this, e6[s4 + n5], i5, n5), r6 === E && (r6 = this._$AH[n5]), o6 ||= !a2(r6) || r6 !== this._$AH[n5], r6 === A ? t4 = A : t4 !== A && (t4 += (r6 ?? "") + h3[n5 + 1]), this._$AH[n5] = r6;
+        for (t4 = h3[0], n5 = 0; n5 < h3.length - 1; n5++) r6 = M(this, e7[s4 + n5], i5, n5), r6 === E && (r6 = this._$AH[n5]), o6 ||= !a2(r6) || r6 !== this._$AH[n5], r6 === A ? t4 = A : t4 !== A && (t4 += (r6 ?? "") + h3[n5 + 1]), this._$AH[n5] = r6;
       }
-      o6 && !e5 && this.j(t4);
+      o6 && !e6 && this.j(t4);
     }
     j(t4) {
       t4 === A ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, t4 ?? "");
@@ -25963,13 +25963,13 @@
     }
   };
   var z = class extends H {
-    constructor(t4, i5, s4, e5, h3) {
-      super(t4, i5, s4, e5, h3), this.type = 5;
+    constructor(t4, i5, s4, e6, h3) {
+      super(t4, i5, s4, e6, h3), this.type = 5;
     }
     _$AI(t4, i5 = this) {
       if ((t4 = M(this, t4, i5, 0) ?? A) === E) return;
-      const s4 = this._$AH, e5 = t4 === A && s4 !== A || t4.capture !== s4.capture || t4.once !== s4.once || t4.passive !== s4.passive, h3 = t4 !== A && (s4 === A || e5);
-      e5 && this.element.removeEventListener(this.name, this, s4), h3 && this.element.addEventListener(this.name, this, t4), this._$AH = t4;
+      const s4 = this._$AH, e6 = t4 === A && s4 !== A || t4.capture !== s4.capture || t4.once !== s4.once || t4.passive !== s4.passive, h3 = t4 !== A && (s4 === A || e6);
+      e6 && this.element.removeEventListener(this.name, this, s4), h3 && this.element.addEventListener(this.name, this, t4), this._$AH = t4;
     }
     handleEvent(t4) {
       "function" == typeof this._$AH ? this._$AH.call(this.options?.host ?? this.element, t4) : this._$AH.handleEvent(t4);
@@ -25989,11 +25989,11 @@
   var B = t2.litHtmlPolyfillSupport;
   B?.(S2, k), (t2.litHtmlVersions ??= []).push("3.3.2");
   var D = (t4, i5, s4) => {
-    const e5 = s4?.renderBefore ?? i5;
-    let h3 = e5._$litPart$;
+    const e6 = s4?.renderBefore ?? i5;
+    let h3 = e6._$litPart$;
     if (void 0 === h3) {
       const t5 = s4?.renderBefore ?? null;
-      e5._$litPart$ = h3 = new k(i5.insertBefore(c3(), t5), t5, void 0, s4 ?? {});
+      e6._$litPart$ = h3 = new k(i5.insertBefore(c3(), t5), t5, void 0, s4 ?? {});
     }
     return h3._$AI(t4), h3;
   };
@@ -26113,7 +26113,12 @@
       confirm: "Confirmar",
       kcalEated: "kcal consumidas",
       remainingCals: "Todav\xEDa puedes tomar {cal} calorias",
-      remainingCalsOver: "Has excedido tu ingesta diaria de calor\xEDas en {cal} calorias"
+      remainingCalsOver: "Has excedido tu ingesta diaria de calor\xEDas en {cal} calorias",
+      updateHistoricalWeight: "Actualizar historial de peso",
+      deleteEntry: "Eliminar entrada",
+      saveEntry: "Guardar entrada",
+      weightHistory: "Historial de peso",
+      addPastWeight: "A\xF1adir peso pasado"
     },
     en: {
       search: "Search",
@@ -26199,7 +26204,12 @@
       confirm: "Confirm",
       kcalEated: "kcal eated",
       remainingCals: "You can still eat {cal} calories",
-      remainingCalsOver: "You have exceeded your daily calorie intake by {cal} calories"
+      remainingCalsOver: "You have exceeded your daily calorie intake by {cal} calories",
+      updateHistoricalWeight: "Update historical weight",
+      deleteEntry: "Delete entry",
+      saveEntry: "Save entry",
+      weightHistory: "Weight History",
+      addPastWeight: "Add past weight"
     },
     fr: {
       search: "Rechercher",
@@ -26463,11 +26473,12 @@
 
   // src/shared/db.ts
   var DB_NAME = "OpenCalDB";
-  var DB_VERSION = 3;
+  var DB_VERSION = 4;
   var STORE_NAME = "daily_consumption";
   var STORE_PRODUCTS = "products";
   var STORE_FAVORITES = "favorites";
   var STORE_MEALS = "meals";
+  var STORE_WEIGHT_HISTORY = "weight_history";
   var DBService = class {
     constructor() {
       this.db = null;
@@ -26497,7 +26508,44 @@
           if (!db.objectStoreNames.contains(STORE_MEALS)) {
             db.createObjectStore(STORE_MEALS, { keyPath: "id" });
           }
+          if (!db.objectStoreNames.contains(STORE_WEIGHT_HISTORY)) {
+            db.createObjectStore(STORE_WEIGHT_HISTORY, { keyPath: "date" });
+          }
         };
+      });
+    }
+    async saveWeightEntry(date, weight) {
+      await this.ensureInit();
+      return new Promise((resolve, reject) => {
+        const transaction = this.db.transaction([STORE_WEIGHT_HISTORY], "readwrite");
+        const store = transaction.objectStore(STORE_WEIGHT_HISTORY);
+        const request2 = store.put({ date, weight });
+        request2.onsuccess = () => resolve();
+        request2.onerror = () => reject(request2.error);
+      });
+    }
+    async getWeightHistory() {
+      await this.ensureInit();
+      return new Promise((resolve, reject) => {
+        const transaction = this.db.transaction([STORE_WEIGHT_HISTORY], "readonly");
+        const store = transaction.objectStore(STORE_WEIGHT_HISTORY);
+        const request2 = store.getAll();
+        request2.onsuccess = () => {
+          const result = request2.result || [];
+          result.sort((a3, b3) => a3.date.localeCompare(b3.date));
+          resolve(result);
+        };
+        request2.onerror = () => reject(request2.error);
+      });
+    }
+    async deleteWeightEntry(date) {
+      await this.ensureInit();
+      return new Promise((resolve, reject) => {
+        const transaction = this.db.transaction([STORE_WEIGHT_HISTORY], "readwrite");
+        const store = transaction.objectStore(STORE_WEIGHT_HISTORY);
+        const request2 = store.delete(date);
+        request2.onsuccess = () => resolve();
+        request2.onerror = () => reject(request2.error);
       });
     }
     async getDailyLog(date) {
@@ -27051,45 +27099,72 @@
   };
 
   // node_modules/@lit/reactive-element/decorators/custom-element.js
-  var t3 = (t4) => (e5, o6) => {
+  var t3 = (t4) => (e6, o6) => {
     void 0 !== o6 ? o6.addInitializer(() => {
-      customElements.define(t4, e5);
-    }) : customElements.define(t4, e5);
+      customElements.define(t4, e6);
+    }) : customElements.define(t4, e6);
   };
 
   // node_modules/@lit/reactive-element/decorators/property.js
   var o5 = { attribute: true, type: String, converter: u, reflect: false, hasChanged: f };
-  var r4 = (t4 = o5, e5, r6) => {
+  var r4 = (t4 = o5, e6, r6) => {
     const { kind: n5, metadata: i5 } = r6;
     let s4 = globalThis.litPropertyMetadata.get(i5);
     if (void 0 === s4 && globalThis.litPropertyMetadata.set(i5, s4 = /* @__PURE__ */ new Map()), "setter" === n5 && ((t4 = Object.create(t4)).wrapped = true), s4.set(r6.name, t4), "accessor" === n5) {
       const { name: o6 } = r6;
       return { set(r7) {
-        const n6 = e5.get.call(this);
-        e5.set.call(this, r7), this.requestUpdate(o6, n6, t4, true, r7);
-      }, init(e6) {
-        return void 0 !== e6 && this.C(o6, void 0, t4, e6), e6;
+        const n6 = e6.get.call(this);
+        e6.set.call(this, r7), this.requestUpdate(o6, n6, t4, true, r7);
+      }, init(e7) {
+        return void 0 !== e7 && this.C(o6, void 0, t4, e7), e7;
       } };
     }
     if ("setter" === n5) {
       const { name: o6 } = r6;
       return function(r7) {
         const n6 = this[o6];
-        e5.call(this, r7), this.requestUpdate(o6, n6, t4, true, r7);
+        e6.call(this, r7), this.requestUpdate(o6, n6, t4, true, r7);
       };
     }
     throw Error("Unsupported decorator location: " + n5);
   };
   function n4(t4) {
-    return (e5, o6) => "object" == typeof o6 ? r4(t4, e5, o6) : ((t5, e6, o7) => {
-      const r6 = e6.hasOwnProperty(o7);
-      return e6.constructor.createProperty(o7, t5), r6 ? Object.getOwnPropertyDescriptor(e6, o7) : void 0;
-    })(t4, e5, o6);
+    return (e6, o6) => "object" == typeof o6 ? r4(t4, e6, o6) : ((t5, e7, o7) => {
+      const r6 = e7.hasOwnProperty(o7);
+      return e7.constructor.createProperty(o7, t5), r6 ? Object.getOwnPropertyDescriptor(e7, o7) : void 0;
+    })(t4, e6, o6);
   }
 
   // node_modules/@lit/reactive-element/decorators/state.js
   function r5(r6) {
     return n4({ ...r6, state: true, attribute: false });
+  }
+
+  // node_modules/@lit/reactive-element/decorators/base.js
+  var e4 = (e6, t4, c4) => (c4.configurable = true, c4.enumerable = true, Reflect.decorate && "object" != typeof t4 && Object.defineProperty(e6, t4, c4), c4);
+
+  // node_modules/@lit/reactive-element/decorators/query.js
+  function e5(e6, r6) {
+    return (n5, s4, i5) => {
+      const o6 = (t4) => t4.renderRoot?.querySelector(e6) ?? null;
+      if (r6) {
+        const { get: e7, set: r7 } = "object" == typeof s4 ? n5 : i5 ?? /* @__PURE__ */ (() => {
+          const t4 = /* @__PURE__ */ Symbol();
+          return { get() {
+            return this[t4];
+          }, set(e8) {
+            this[t4] = e8;
+          } };
+        })();
+        return e4(n5, s4, { get() {
+          let t4 = e7.call(this);
+          return void 0 === t4 && (t4 = o6(this), (null !== t4 || this.hasUpdated) && r7.call(this, t4)), t4;
+        } });
+      }
+      return e4(n5, s4, { get() {
+        return o6(this);
+      } });
+    };
   }
 
   // src/shared/functions.ts
@@ -27836,15 +27911,15 @@
       function fulfilled(value) {
         try {
           step(generator.next(value));
-        } catch (e5) {
-          reject(e5);
+        } catch (e6) {
+          reject(e6);
         }
       }
       function rejected(value) {
         try {
           step(generator["throw"](value));
-        } catch (e5) {
-          reject(e5);
+        } catch (e6) {
+          reject(e6);
         }
       }
       function step(result) {
@@ -27912,8 +27987,8 @@
             continue;
         }
         op = body.call(thisArg, _2);
-      } catch (e5) {
-        op = [6, e5];
+      } catch (e6) {
+        op = [6, e6];
         y3 = 0;
       } finally {
         f3 = t4 = 0;
@@ -28038,15 +28113,15 @@
       function fulfilled(value) {
         try {
           step(generator.next(value));
-        } catch (e5) {
-          reject(e5);
+        } catch (e6) {
+          reject(e6);
         }
       }
       function rejected(value) {
         try {
           step(generator["throw"](value));
-        } catch (e5) {
-          reject(e5);
+        } catch (e6) {
+          reject(e6);
         }
       }
       function step(result) {
@@ -28114,8 +28189,8 @@
             continue;
         }
         op = body.call(thisArg, _2);
-      } catch (e5) {
-        op = [6, e5];
+      } catch (e6) {
+        op = [6, e6];
         y3 = 0;
       } finally {
         f3 = t4 = 0;
@@ -28255,15 +28330,15 @@
       function fulfilled(value) {
         try {
           step(generator.next(value));
-        } catch (e5) {
-          reject(e5);
+        } catch (e6) {
+          reject(e6);
         }
       }
       function rejected(value) {
         try {
           step(generator["throw"](value));
-        } catch (e5) {
-          reject(e5);
+        } catch (e6) {
+          reject(e6);
         }
       }
       function step(result) {
@@ -28331,8 +28406,8 @@
             continue;
         }
         op = body.call(thisArg, _2);
-      } catch (e5) {
-        op = [6, e5];
+      } catch (e6) {
+        op = [6, e6];
         y3 = 0;
       } finally {
         f3 = t4 = 0;
@@ -28611,15 +28686,15 @@
       function fulfilled(value) {
         try {
           step(generator.next(value));
-        } catch (e5) {
-          reject(e5);
+        } catch (e6) {
+          reject(e6);
         }
       }
       function rejected(value) {
         try {
           step(generator["throw"](value));
-        } catch (e5) {
-          reject(e5);
+        } catch (e6) {
+          reject(e6);
         }
       }
       function step(result) {
@@ -28687,8 +28762,8 @@
             continue;
         }
         op = body.call(thisArg, _2);
-      } catch (e5) {
-        op = [6, e5];
+      } catch (e6) {
+        op = [6, e6];
         y3 = 0;
       } finally {
         f3 = t4 = 0;
@@ -28731,15 +28806,15 @@
       function fulfilled(value) {
         try {
           step(generator.next(value));
-        } catch (e5) {
-          reject(e5);
+        } catch (e6) {
+          reject(e6);
         }
       }
       function rejected(value) {
         try {
           step(generator["throw"](value));
-        } catch (e5) {
-          reject(e5);
+        } catch (e6) {
+          reject(e6);
         }
       }
       function step(result) {
@@ -28807,8 +28882,8 @@
             continue;
         }
         op = body.call(thisArg, _2);
-      } catch (e5) {
-        op = [6, e5];
+      } catch (e6) {
+        op = [6, e6];
         y3 = 0;
       } finally {
         f3 = t4 = 0;
@@ -29964,15 +30039,15 @@
       function fulfilled(value) {
         try {
           step(generator.next(value));
-        } catch (e5) {
-          reject(e5);
+        } catch (e6) {
+          reject(e6);
         }
       }
       function rejected(value) {
         try {
           step(generator["throw"](value));
-        } catch (e5) {
-          reject(e5);
+        } catch (e6) {
+          reject(e6);
         }
       }
       function step(result) {
@@ -30040,8 +30115,8 @@
             continue;
         }
         op = body.call(thisArg, _2);
-      } catch (e5) {
-        op = [6, e5];
+      } catch (e6) {
+        op = [6, e6];
         y3 = 0;
       } finally {
         f3 = t4 = 0;
@@ -30164,15 +30239,15 @@
       function fulfilled(value) {
         try {
           step(generator.next(value));
-        } catch (e5) {
-          reject(e5);
+        } catch (e6) {
+          reject(e6);
         }
       }
       function rejected(value) {
         try {
           step(generator["throw"](value));
-        } catch (e5) {
-          reject(e5);
+        } catch (e6) {
+          reject(e6);
         }
       }
       function step(result) {
@@ -30240,8 +30315,8 @@
             continue;
         }
         op = body.call(thisArg, _2);
-      } catch (e5) {
-        op = [6, e5];
+      } catch (e6) {
+        op = [6, e6];
         y3 = 0;
       } finally {
         f3 = t4 = 0;
@@ -30397,11 +30472,11 @@
       this.fileScanInput.style.display = "none";
       fileScanLabel.appendChild(this.fileScanInput);
       var $this = this;
-      this.fileScanInput.addEventListener("change", function(e5) {
-        if (e5 == null || e5.target == null) {
+      this.fileScanInput.addEventListener("change", function(e6) {
+        if (e6 == null || e6.target == null) {
           return;
         }
-        var target = e5.target;
+        var target = e6.target;
         if (target.files && target.files.length === 0) {
           return;
         }
@@ -31494,7 +31569,7 @@
   var isJsonString = (input) => {
     try {
       JSON.parse(input);
-    } catch (e5) {
+    } catch (e6) {
       return false;
     }
     return true;
@@ -31684,8 +31759,8 @@
           }
           return normalized;
         }));
-      } catch (e5) {
-        console.error("Error loading data", e5);
+      } catch (e6) {
+        console.error("Error loading data", e6);
         this.searchResult = [];
       } finally {
         this.loading = false;
@@ -31694,8 +31769,8 @@
     _generateId() {
       return Date.now().toString(36) + Math.random().toString(36).substr(2);
     }
-    async _handleSearchInit(e5) {
-      const { query, isButtonClick } = e5.detail;
+    async _handleSearchInit(e6) {
+      const { query, isButtonClick } = e6.detail;
       this.query = query;
       if (isButtonClick) {
         this._switchMode("search");
@@ -31703,12 +31778,12 @@
         this._loadData();
       }
     }
-    _handleSearchBlur(e5) {
-      this.query = e5.detail.query;
+    _handleSearchBlur(e6) {
+      this.query = e6.detail.query;
       this._loadData();
     }
-    _handleModeSwitch(e5) {
-      this._switchMode(e5.detail.id);
+    _handleModeSwitch(e6) {
+      this._switchMode(e6.detail.id);
     }
     _switchMode(mode) {
       this.viewMode = mode;
@@ -31718,36 +31793,36 @@
       }));
       this._loadData();
     }
-    async _handleFavoriteClick(e5) {
-      if (e5.detail?.code) {
-        const product = this.searchResult.find((product2) => product2.code === e5.detail.code);
+    async _handleFavoriteClick(e6) {
+      if (e6.detail?.code) {
+        const product = this.searchResult.find((product2) => product2.code === e6.detail.code);
         if (product) {
-          product.isFavorite = e5.detail.value === "true";
+          product.isFavorite = e6.detail.value === "true";
           this.requestUpdate();
           if (product.isFavorite) {
             try {
-              const fullProduct = await this.api.getProduct(e5.detail.code);
+              const fullProduct = await this.api.getProduct(e6.detail.code);
               if (fullProduct) {
                 await this.db.cacheProduct(fullProduct);
-                await this.db.addFavorite(e5.detail.code);
+                await this.db.addFavorite(e6.detail.code);
               }
             } catch (err) {
               console.error("Error adding favorite", err);
             }
           } else {
-            await this.db.removeFavorite(e5.detail.code);
+            await this.db.removeFavorite(e6.detail.code);
           }
         }
       }
     }
-    _handleElementClick(e5) {
-      if (e5.detail?.code) {
+    _handleElementClick(e6) {
+      if (e6.detail?.code) {
         if (this.viewMode === "meals") {
-          this.triggerPageNavigation({ page: "meal", mealId: e5.detail.code });
+          this.triggerPageNavigation({ page: "meal", mealId: e6.detail.code });
         } else {
           const params = this.getQueryParamsURL();
           const mealId = params.get("mealId");
-          const navParams = { page: "food", code: e5.detail.code };
+          const navParams = { page: "food", code: e6.detail.code };
           if (mealId) {
             navParams.mealId = mealId;
           }
@@ -31994,8 +32069,8 @@
       </div>
     `;
     }
-    _handleInput(e5) {
-      const target = e5.target;
+    _handleInput(e6) {
+      const target = e6.target;
       this.value = target.value;
     }
     _handleBlur() {
@@ -32012,8 +32087,8 @@
         composed: true
       }));
     }
-    _handleKeyDown(e5) {
-      if (e5.key === "Enter") {
+    _handleKeyDown(e6) {
+      if (e6.key === "Enter") {
         this.dispatchEvent(new CustomEvent("search-init", {
           detail: { query: this.value, isButtonClick: false },
           bubbles: true,
@@ -32198,8 +32273,8 @@
         composed: true
       }));
     }
-    _handleRemoveClick(e5) {
-      e5.stopPropagation();
+    _handleRemoveClick(e6) {
+      e6.stopPropagation();
       this.dispatchEvent(new CustomEvent("remove-click", {
         detail: { code: this.code },
         bubbles: true,
@@ -32573,8 +32648,8 @@
         this.isFavoriteState = true;
       }
     }
-    _handleGramsChange(e5) {
-      const input = e5.target;
+    _handleGramsChange(e6) {
+      const input = e6.target;
       const val = Number(input.value);
       if (val >= 0) {
         this.grams = val;
@@ -32595,9 +32670,9 @@
         }
       }
     }
-    _handleNutrientChange(e5, key) {
+    _handleNutrientChange(e6, key) {
       if (!this.editedProduct || !this.editedProduct.product) return;
-      const input = e5.target;
+      const input = e6.target;
       const val = Number(input.value);
       if (!this.editedProduct.product.nutriments) {
         this.editedProduct.product.nutriments = {};
@@ -32608,15 +32683,15 @@
       }
       this.requestUpdate();
     }
-    _handleNameChange(e5) {
+    _handleNameChange(e6) {
       if (!this.editedProduct || !this.editedProduct.product) return;
-      const input = e5.target;
+      const input = e6.target;
       this.editedProduct.product.product_name = input.value;
       this.requestUpdate();
     }
-    _handleBrandChange(e5) {
+    _handleBrandChange(e6) {
       if (!this.editedProduct || !this.editedProduct.product) return;
-      const input = e5.target;
+      const input = e6.target;
       this.editedProduct.product.brands = input.value;
       this.requestUpdate();
     }
@@ -32657,8 +32732,8 @@
         };
         await this.db.addFoodItem(this.selectedDate, this.selectedCategory, foodItem);
         this.triggerPageNavigation({ page: "home" });
-      } catch (e5) {
-        console.error("Error adding to diary", e5);
+      } catch (e6) {
+        console.error("Error adding to diary", e6);
         this.error = "Failed to add to diary";
       }
     }
@@ -32692,8 +32767,8 @@
         } else {
           this.error = "Meal not found in database";
         }
-      } catch (e5) {
-        console.error("Error adding to meal", e5);
+      } catch (e6) {
+        console.error("Error adding to meal", e6);
         this.error = "Failed to add to meal";
       }
     }
@@ -32790,7 +32865,7 @@
                     id="date" 
                     type="date" 
                     .value="${this.selectedDate}" 
-                    @change="${(e5) => this.selectedDate = e5.target.value}"
+                    @change="${(e6) => this.selectedDate = e6.target.value}"
                   />
                 </div>
 
@@ -32799,7 +32874,7 @@
                   <select 
                     id="category" 
                     .value="${this.selectedCategory}" 
-                    @change="${(e5) => this.selectedCategory = e5.target.value}"
+                    @change="${(e6) => this.selectedCategory = e6.target.value}"
                     style="padding: 8px; background: var(--input-background); color: var(--input-text); border: 1px solid var(--input-border, #ccc); border-radius: 4px; width: 100%; box-sizing: border-box;"
                   >
                     <option value="breakfast">${this.translations.breakfast}</option>
@@ -32832,25 +32907,25 @@
             <div class="nutrients-grid">
                 <div class="nutrient-item calories">
                     <div class="nutrient-value">
-                      ${this.isEditing ? b2`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.["energy-kcal_100g"] || 0).toString()}" @input="${(e5) => this._handleNutrientChange(e5, "energy-kcal_100g")}">` : this._calculateNutrient(this.product.product?.nutriments?.["energy-kcal_100g"])}
+                      ${this.isEditing ? b2`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.["energy-kcal_100g"] || 0).toString()}" @input="${(e6) => this._handleNutrientChange(e6, "energy-kcal_100g")}">` : this._calculateNutrient(this.product.product?.nutriments?.["energy-kcal_100g"])}
                     </div>
                     <div class="nutrient-label">${this.isEditing ? this.translations.calories + " (kcal / 100g)" : this.translations.calories + " (kcal)"}</div>
                 </div>
                 <div class="nutrient-item carbs">
                     <div class="nutrient-value">
-                      ${this.isEditing ? b2`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.carbohydrates_100g || 0).toString()}" @input="${(e5) => this._handleNutrientChange(e5, "carbohydrates_100g")}">` : this._calculateNutrient(this.product.product?.nutriments?.carbohydrates_100g)}
+                      ${this.isEditing ? b2`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.carbohydrates_100g || 0).toString()}" @input="${(e6) => this._handleNutrientChange(e6, "carbohydrates_100g")}">` : this._calculateNutrient(this.product.product?.nutriments?.carbohydrates_100g)}
                     </div>
                     <div class="nutrient-label">${this.isEditing ? this.translations.carbs + " (g / 100g)" : this.translations.carbs + " (g)"}</div>
                 </div>
                 <div class="nutrient-item protein">
                     <div class="nutrient-value">
-                      ${this.isEditing ? b2`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.proteins_100g || 0).toString()}" @input="${(e5) => this._handleNutrientChange(e5, "proteins_100g")}">` : this._calculateNutrient(this.product.product?.nutriments?.proteins_100g)}
+                      ${this.isEditing ? b2`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.proteins_100g || 0).toString()}" @input="${(e6) => this._handleNutrientChange(e6, "proteins_100g")}">` : this._calculateNutrient(this.product.product?.nutriments?.proteins_100g)}
                     </div>
                     <div class="nutrient-label">${this.isEditing ? this.translations.protein + " (g / 100g)" : this.translations.protein + " (g)"}</div>
                 </div>
                 <div class="nutrient-item fat">
                     <div class="nutrient-value">
-                      ${this.isEditing ? b2`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.fat_100g || 0).toString()}" @input="${(e5) => this._handleNutrientChange(e5, "fat_100g")}">` : this._calculateNutrient(this.product.product?.nutriments?.fat_100g)}
+                      ${this.isEditing ? b2`<input type="number" .value="${(this.editedProduct?.product?.nutriments?.fat_100g || 0).toString()}" @input="${(e6) => this._handleNutrientChange(e6, "fat_100g")}">` : this._calculateNutrient(this.product.product?.nutriments?.fat_100g)}
                     </div>
                     <div class="nutrient-label">${this.isEditing ? this.translations.fat + " (g / 100g)" : this.translations.fat + " (g)"}</div>
                 </div>
@@ -33254,6 +33329,10 @@
       this.theme = "light";
       this.language = "en";
       this.showClearModal = false;
+      this.showWeightModal = false;
+      this.weightHistory = [];
+      this.newWeightDate = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+      this.newWeightValue = 0;
     }
     static {
       this.styles = [
@@ -33364,6 +33443,65 @@
         cursor: pointer;
         font-weight: bold;
       }
+      .weight-history-list {
+        max-height: 250px;
+        overflow-y: auto;
+        margin-bottom: 1rem;
+        text-align: left;
+      }
+      .weight-history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0 8px 8px;
+        border: 1px solid var(--card-border);
+        border-radius: 8px;
+        margin-bottom: 8px;
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .modal-header h3 {
+        margin: 0;
+      }
+      .close-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--card-text);
+        padding: 0;
+        line-height: 1;
+        width: auto;
+      }
+      .weight-history-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 2px solid var(--palette-green);
+      }
+      .chart-wrapper {
+        height: 200px;
+        margin: 15px 0;
+      }
+      .favorite-icon {
+        width: 24px;
+        height: 24px;
+        fill: none;
+        stroke: var(--fat-color);
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: fill 0.3s ease, stroke 0.3s ease;
+        padding: 5px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
     `
       ];
     }
@@ -33381,8 +33519,8 @@
           this.proteinRatio = profile.goals?.macros?.protein || 30;
           this.carbsRatio = profile.goals?.macros?.carbs || 40;
           this.fatRatio = profile.goals?.macros?.fat || 30;
-        } catch (e5) {
-          console.error("Failed to parse user profile", e5);
+        } catch (e6) {
+          console.error("Failed to parse user profile", e6);
         }
       } else {
         const legacyHeight = localStorage.getItem("userHs");
@@ -33390,6 +33528,13 @@
         if (legacyHeight) this.height = Number(legacyHeight);
         if (legacyWeight) this.weight = Number(legacyWeight);
         this._saveProfile();
+      }
+      this._loadWeightHistory();
+    }
+    async _loadWeightHistory() {
+      this.weightHistory = await this.db.getWeightHistory();
+      if (this.weight) {
+        this.newWeightValue = this.weight;
       }
     }
     updated(changedProperties) {
@@ -33413,20 +33558,25 @@
       };
       localStorage.setItem("user_profile", JSON.stringify(profile));
     }
-    _handleNumberInput(field, e5) {
-      const value = Number(e5.target.value);
+    async _handleNumberInput(field, e6) {
+      const value = Number(e6.target.value);
       this[field] = value;
       this._saveProfile();
+      if (field === "weight") {
+        const today = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+        await this.db.saveWeightEntry(today, value);
+        await this._loadWeightHistory();
+      }
     }
-    _handleGenderChange(e5) {
-      this.gender = e5.target.value;
+    _handleGenderChange(e6) {
+      this.gender = e6.target.value;
       this._saveProfile();
     }
     _handleThemeChange(theme) {
       this.setTheme(theme);
     }
-    _handleLanguageChange(e5) {
-      this.language = e5.target.value;
+    _handleLanguageChange(e6) {
+      this.language = e6.target.value;
       this.setLanguage(this.language);
     }
     async _clearAllData() {
@@ -33434,10 +33584,41 @@
         localStorage.clear();
         await this.db.clearAllData();
         window.location.reload();
-      } catch (e5) {
-        console.error("Failed to clear data", e5);
+      } catch (e6) {
+        console.error("Failed to clear data", e6);
         alert("Failed to clear data");
       }
+    }
+    async _deleteWeightEntry(date) {
+      await this.db.deleteWeightEntry(date);
+      await this._loadWeightHistory();
+    }
+    async _saveNewWeightEntry() {
+      if (this.newWeightDate && this.newWeightValue > 0) {
+        await this.db.saveWeightEntry(this.newWeightDate, this.newWeightValue);
+        await this._loadWeightHistory();
+        const today = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+        if (this.newWeightDate === today) {
+          this.weight = this.newWeightValue;
+          this._saveProfile();
+        }
+      }
+    }
+    _formatDate(dateStr) {
+      const [year, month, day] = dateStr.split("-");
+      return `${day}/${month}/${year}`;
+    }
+    _renderTrashIcon(entry) {
+      return b2`
+      <svg
+        class="favorite-icon"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+        @click="${() => this._deleteWeightEntry(entry.date)}"
+      >
+        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+      </svg>
+    `;
     }
     render() {
       return b2`
@@ -33455,12 +33636,20 @@
 
         <div class="form-group">
           <label>${this.translations.height || "Height"} (cm)</label>
-          <input type="number" .value="${this.height}" @input="${(e5) => this._handleNumberInput("height", e5)}" placeholder="e.g. 175" />
+          <input type="number" .value="${this.height}" @input="${(e6) => this._handleNumberInput("height", e6)}" placeholder="e.g. 175" />
         </div>
         <div class="form-group">
           <label>${this.translations.weight || "Weight"} (kg)</label>
-          <input type="number" step="0.1" .value="${this.weight}" @input="${(e5) => this._handleNumberInput("weight", e5)}" placeholder="e.g. 70.5" />
+          <input type="number" step="0.1" .value="${this.weight}" @input="${(e6) => this._handleNumberInput("weight", e6)}" placeholder="e.g. 70.5" />
         </div>
+
+        <div class="chart-wrapper">
+          <component-line-chart .data="${this.weightHistory.map((h3) => ({ tag: h3.date, value: h3.weight }))}"></component-line-chart>
+        </div>
+
+        <button class="btn" @click="${() => this.showWeightModal = true}">
+          ${this.translations.updateHistoricalWeight || "Update historical user weight data"}
+        </button>
       </div>
 
       <div class="card">
@@ -33468,22 +33657,22 @@
         
         <div class="form-group">
           <label>${this.translations.dailyCalories || "Daily Calories"}</label>
-          <input class="input-calories" type="number" .value="${this.dailyCalories}" @input="${(e5) => this._handleNumberInput("dailyCalories", e5)}" placeholder="e.g. 2000" />
+          <input class="input-calories" type="number" .value="${this.dailyCalories}" @input="${(e6) => this._handleNumberInput("dailyCalories", e6)}" placeholder="e.g. 2000" />
         </div>
 
         <label>${this.translations.macroRatio || "Macronutrient Ratio"} (%)</label>
         <div class="macro-inputs">
           <div class="form-group">
             <label>${this.translations.protein || "Protein"}</label>
-            <input class="input-protein" type="number" .value="${this.proteinRatio}" @input="${(e5) => this._handleNumberInput("proteinRatio", e5)}" />
+            <input class="input-protein" type="number" .value="${this.proteinRatio}" @input="${(e6) => this._handleNumberInput("proteinRatio", e6)}" />
           </div>
           <div class="form-group">
             <label>${this.translations.carbs || "Carbs"}</label>
-            <input class="input-carbs" type="number" .value="${this.carbsRatio}" @input="${(e5) => this._handleNumberInput("carbsRatio", e5)}" />
+            <input class="input-carbs" type="number" .value="${this.carbsRatio}" @input="${(e6) => this._handleNumberInput("carbsRatio", e6)}" />
           </div>
           <div class="form-group">
             <label>${this.translations.fat || "Fat"}</label>
-            <input class="input-fat" type="number" .value="${this.fatRatio}" @input="${(e5) => this._handleNumberInput("fatRatio", e5)}" />
+            <input class="input-fat" type="number" .value="${this.fatRatio}" @input="${(e6) => this._handleNumberInput("fatRatio", e6)}" />
           </div>
         </div>
         <div style="font-size: 0.8rem; color: #666; margin-top: 5px; text-align: right;">
@@ -33532,6 +33721,48 @@
           </div>
         </div>
       ` : ""}
+
+      ${this.showWeightModal ? b2`
+        <div class="modal-overlay">
+          <div class="modal" style="width: 400px; max-width: 95%;">
+            <div class="modal-header">
+              <h3>${this.translations.weightHistory || "Weight History"}</h3>
+              <button class="close-btn" @click="${() => this.showWeightModal = false}">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            
+            <div class="weight-history-list">
+              ${this.weightHistory.length === 0 ? b2`<p style="text-align: center;">${this.translations.noResultsFound || "No history found"}</p>` : ""}
+              ${this.weightHistory.map((entry) => b2`
+                <div class="weight-history-item">
+                  <span>${this._formatDate(entry.date)}</span>
+                  <div style="display: flex; align-items: center; gap: 12px; padding-right: 8px;">
+                    <strong>${entry.weight} kg</strong>
+                    ${this._renderTrashIcon(entry)}
+                  </div>
+                </div>
+              `)}
+            </div>
+
+            <div class="weight-history-form">
+              <div class="form-group" style="text-align: left;">
+                <label>${this.translations.date || "Date"}</label>
+                <input type="date" .value="${this.newWeightDate}" @change="${(e6) => this.newWeightDate = e6.target.value}" />
+              </div>
+              <div class="form-group" style="text-align: left;">
+                <label>${this.translations.weight || "Weight"} (kg)</label>
+                <input type="number" step="0.1" .value="${this.newWeightValue}" @input="${(e6) => this.newWeightValue = Number(e6.target.value)}" />
+              </div>
+              <button class="btn" @click="${this._saveNewWeightEntry}">
+                ${this.translations.saveEntry || "Save Entry"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ` : ""}
     `;
     }
   };
@@ -33565,6 +33796,275 @@
   __decorateClass([
     r5()
   ], PageUser.prototype, "showClearModal", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "showWeightModal", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "weightHistory", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "newWeightDate", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "newWeightValue", 2);
+
+  // src/components/componentLineChart/componentLineChart.ts
+  var ComponentLineChart = class extends i4 {
+    constructor() {
+      super(...arguments);
+      this.data = [];
+      this._hoveredText = null;
+      this._hoveredX = 0;
+      this._hoveredY = 0;
+      this._width = 0;
+      this._height = 0;
+      this._padding = 40;
+    }
+    static {
+      this.styles = i`
+    :host {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 200px;
+      font-family: sans-serif;
+    }
+
+    .chart-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .line {
+      fill: none;
+      stroke: var(--chart-line-color, var(--palette-green, #4caf50));
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: stroke-dashoffset 1s ease-in-out;
+    }
+
+    .axis {
+      stroke: var(--chart-axis-color, var(--palette-grey, #ccc));
+      stroke-width: 1;
+    }
+
+    .tooltip {
+      position: absolute;
+      background: var(--card-background, #fff);
+      border: 1px solid var(--card-border, #ccc);
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      color: var(--card-text, #333);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transform: translate(-50%, -100%);
+      margin-top: -10px;
+    }
+
+    .point {
+      fill: var(--chart-line-color, #fff);
+      stroke: var(--chart-line-color, var(--palette-green, #4caf50));
+      stroke-width: 2;
+      cursor: pointer;
+      transition: r 0.2s;
+    }
+
+    .point:hover {
+      r: 6;
+    }
+  `;
+    }
+    connectedCallback() {
+      super.connectedCallback();
+      this.requestUpdate();
+    }
+    firstUpdated() {
+      this._updateDimensions();
+    }
+    _updateDimensions() {
+      const rect = this.getBoundingClientRect();
+      this._width = rect.width || this.offsetWidth;
+      this._height = rect.height || this.offsetHeight;
+      this.requestUpdate();
+    }
+    disconnectedCallback() {
+      super.disconnectedCallback();
+    }
+    updated(changedProperties) {
+      if (changedProperties.has("data") || changedProperties.has("_width") || changedProperties.has("_height")) {
+        this._generateChartSvg();
+      }
+    }
+    _handleMouseEnter(tag, val, x2, y3) {
+      this._hoveredText = `${tag}(${val})`;
+      this._hoveredX = x2;
+      this._hoveredY = y3;
+    }
+    _handleMouseLeave() {
+      this._hoveredText = null;
+    }
+    _generateChartSvg() {
+      if (!this._chartContainer) return;
+      this._chartContainer.innerHTML = "";
+      const width = this._width || this.offsetWidth || 300;
+      const height = this._height || this.offsetHeight || 200;
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+      svg.setAttribute("preserveAspectRatio", "none");
+      svg.style.width = "100%";
+      svg.style.height = "100%";
+      svg.style.overflow = "visible";
+      this._chartContainer.appendChild(svg);
+      if (!this.data || this.data.length === 0) return;
+      const safeData = this.data.map((item) => ({ tag: item.tag, value: Number(item.value) }));
+      const maxVal = Math.max(...safeData.map((d3) => d3.value), 1);
+      const availableWidth = width - this._padding * 2;
+      const availableHeight = height - this._padding * 2;
+      const stepX = availableWidth / Math.max(safeData.length - 1, 1);
+      const xAxis = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      xAxis.setAttribute("x1", this._padding.toString());
+      xAxis.setAttribute("y1", (height - this._padding).toString());
+      xAxis.setAttribute("x2", (width - this._padding).toString());
+      xAxis.setAttribute("y2", (height - this._padding).toString());
+      xAxis.setAttribute("class", "axis");
+      svg.appendChild(xAxis);
+      const yAxis = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      yAxis.setAttribute("x1", (width - this._padding).toString());
+      yAxis.setAttribute("y1", this._padding.toString());
+      yAxis.setAttribute("x2", (width - this._padding).toString());
+      yAxis.setAttribute("y2", (height - this._padding).toString());
+      yAxis.setAttribute("class", "axis");
+      svg.appendChild(yAxis);
+      const numLabels = 5;
+      for (let i5 = 0; i5 < numLabels; i5++) {
+        const val = maxVal - i5 * (maxVal / (numLabels - 1));
+        const y3 = this._padding + i5 * (availableHeight / (numLabels - 1));
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", (width - this._padding + 8).toString());
+        text.setAttribute("y", y3.toString());
+        text.setAttribute("text-anchor", "start");
+        text.setAttribute("alignment-baseline", "middle");
+        text.setAttribute("dominant-baseline", "central");
+        text.setAttribute("font-size", "11px");
+        text.setAttribute("fill", "var(--card-text, #333)");
+        text.textContent = Math.round(val).toString();
+        svg.appendChild(text);
+        if (i5 < numLabels - 1) {
+          const gridLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          gridLine.setAttribute("x1", this._padding.toString());
+          gridLine.setAttribute("y1", y3.toString());
+          gridLine.setAttribute("x2", (width - this._padding).toString());
+          gridLine.setAttribute("y2", y3.toString());
+          gridLine.setAttribute("stroke", "var(--chart-axis-color, var(--palette-grey, #ccc))");
+          gridLine.setAttribute("stroke-width", "0.5");
+          gridLine.setAttribute("stroke-dasharray", "4,4");
+          svg.appendChild(gridLine);
+        }
+      }
+      if (safeData.length > 0) {
+        const firstText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        firstText.setAttribute("x", this._padding.toString());
+        firstText.setAttribute("y", (height - this._padding + 15).toString());
+        firstText.setAttribute("text-anchor", "start");
+        firstText.setAttribute("font-size", "11px");
+        firstText.setAttribute("fill", "var(--card-text, #333)");
+        firstText.textContent = safeData[0].tag;
+        svg.appendChild(firstText);
+        if (safeData.length > 1) {
+          const lastText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          lastText.setAttribute("x", (width - this._padding).toString());
+          lastText.setAttribute("y", (height - this._padding + 15).toString());
+          lastText.setAttribute("text-anchor", "end");
+          lastText.setAttribute("font-size", "11px");
+          lastText.setAttribute("fill", "var(--card-text, #333)");
+          lastText.textContent = safeData[safeData.length - 1].tag;
+          svg.appendChild(lastText);
+        }
+      }
+      const coords = safeData.map((item, index) => {
+        const x2 = this._padding + index * stepX;
+        const y3 = height - this._padding - item.value / maxVal * availableHeight;
+        return { x: x2, y: y3 };
+      });
+      let pathData = "";
+      if (coords.length > 0) {
+        pathData += `M ${coords[0].x} ${coords[0].y}`;
+        for (let i5 = 0; i5 < coords.length - 1; i5++) {
+          const current = coords[i5];
+          const next = coords[i5 + 1];
+          const midX = (current.x + next.x) / 2;
+          pathData += ` C ${midX} ${current.y}, ${midX} ${next.y}, ${next.x} ${next.y}`;
+        }
+      }
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", pathData);
+      path.setAttribute("class", "line");
+      svg.appendChild(path);
+      safeData.forEach((item, index) => {
+        const x2 = this._padding + index * stepX;
+        const y3 = height - this._padding - item.value / maxVal * availableHeight;
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", x2.toString());
+        circle.setAttribute("cy", y3.toString());
+        circle.setAttribute("r", "1.5");
+        circle.setAttribute("class", "point");
+        circle.addEventListener("mouseenter", () => this._handleMouseEnter(item.tag, item.value, x2, y3));
+        circle.addEventListener("mouseleave", () => this._handleMouseLeave());
+        svg.appendChild(circle);
+      });
+    }
+    render() {
+      return b2`
+        <div style="position: relative; width: 100%; height: 100%;">
+            <div class="chart-container"></div>
+            ${this._hoveredText !== null ? b2`
+                <div class="tooltip" style="left: ${this._hoveredX}px; top: ${this._hoveredY}px; opacity: 1;">
+                    ${this._hoveredText}
+                </div>
+            ` : ""}
+        </div>
+      `;
+    }
+  };
+  __decorateClass([
+    n4({ type: Array })
+  ], ComponentLineChart.prototype, "data", 2);
+  __decorateClass([
+    r5()
+  ], ComponentLineChart.prototype, "_hoveredText", 2);
+  __decorateClass([
+    r5()
+  ], ComponentLineChart.prototype, "_hoveredX", 2);
+  __decorateClass([
+    r5()
+  ], ComponentLineChart.prototype, "_hoveredY", 2);
+  __decorateClass([
+    r5()
+  ], ComponentLineChart.prototype, "_width", 2);
+  __decorateClass([
+    r5()
+  ], ComponentLineChart.prototype, "_height", 2);
+  __decorateClass([
+    r5()
+  ], ComponentLineChart.prototype, "_padding", 2);
+  __decorateClass([
+    e5(".chart-container")
+  ], ComponentLineChart.prototype, "_chartContainer", 2);
+
+  // src/components/componentLineChart/index.ts
+  register("component-line-chart", ComponentLineChart);
 
   // src/components/pageUser/index.ts
   register("page-user", PageUser);
@@ -33722,8 +34222,8 @@
           if (profile.goals) {
             this.userGoals = profile.goals;
           }
-        } catch (e5) {
-          console.error("Failed to parse user profile", e5);
+        } catch (e6) {
+          console.error("Failed to parse user profile", e6);
         }
       }
     }
@@ -33732,8 +34232,8 @@
       try {
         this.dailyLog = await this.db.getDailyLog(this.currentDate);
         this.calculateTotals();
-      } catch (e5) {
-        console.error("Failed to load daily log", e5);
+      } catch (e6) {
+        console.error("Failed to load daily log", e6);
       } finally {
         this.loading = false;
       }
@@ -33767,8 +34267,8 @@
       this.currentDate = date.toISOString().split("T")[0];
       this.loadData();
     }
-    _handleDateChange(e5) {
-      const input = e5.target;
+    _handleDateChange(e6) {
+      const input = e6.target;
       if (input.value) {
         this.currentDate = input.value;
         this.loadData();
@@ -33856,8 +34356,8 @@
       try {
         await this.db.removeFoodItem(this.currentDate, category, index);
         this.loadData();
-      } catch (e5) {
-        console.error("Failed to remove item", e5);
+      } catch (e6) {
+        console.error("Failed to remove item", e6);
       }
     }
     _handleElementClick(item) {
@@ -34351,8 +34851,8 @@
       super.disconnectedCallback();
       window.removeEventListener("click", this._handleOutsideClick);
     }
-    _handleDateChange(e5) {
-      this.selectedDate = e5.target.value;
+    _handleDateChange(e6) {
+      this.selectedDate = e6.target.value;
     }
     async onPageInit() {
       await this.db.init();
@@ -34408,8 +34908,8 @@
       try {
         await this.db.addFoodItem(date, this.selectedCategory, mealItem);
         this.triggerPageNavigation({ page: "home" });
-      } catch (e5) {
-        console.error("Error adding meal to diary", e5);
+      } catch (e6) {
+        console.error("Error adding meal to diary", e6);
         this.error = "Failed to add to diary";
       }
     }
@@ -34433,18 +34933,18 @@
       this.isNew = true;
       try {
         await this.db.saveMeal(this.meal);
-      } catch (e5) {
-        console.error("Error creating new meal", e5);
+      } catch (e6) {
+        console.error("Error creating new meal", e6);
         this.error = "Failed to create new meal";
       }
     }
     // private _initNewDraft() ... _loadDraft ... _saveDraft REMOVED
-    async _handleNameChange(e5) {
-      this.meal = { ...this.meal, name: e5.target.value };
+    async _handleNameChange(e6) {
+      this.meal = { ...this.meal, name: e6.target.value };
       await this.db.saveMeal(this.meal);
     }
-    async _handleDescriptionChange(e5) {
-      this.meal = { ...this.meal, description: e5.target.value };
+    async _handleDescriptionChange(e6) {
+      this.meal = { ...this.meal, description: e6.target.value };
       await this.db.saveMeal(this.meal);
     }
     async _handleAddFood() {
@@ -34452,8 +34952,8 @@
       await this.db.saveMeal(this.meal);
       this.triggerPageNavigation({ page: "search", mealId: this.meal.id });
     }
-    _toggleMenu(e5) {
-      e5.stopPropagation();
+    _toggleMenu(e6) {
+      e6.stopPropagation();
       this.showMenu = !this.showMenu;
       if (this.showMenu) {
         window.addEventListener("click", this._handleOutsideClick);
@@ -34473,8 +34973,8 @@
         await this.db.saveMeal(newMeal);
         this.triggerPageNavigation({ page: "meal", mealId: newId });
         this.onPageInit();
-      } catch (e5) {
-        console.error("Error duplicating meal", e5);
+      } catch (e6) {
+        console.error("Error duplicating meal", e6);
         this.error = "Failed to duplicate meal";
       }
     }
@@ -34489,8 +34989,8 @@
           await this.db.deleteMealReference(this.meal.id);
           this.triggerPageNavigation({ page: "home" });
         }
-      } catch (e5) {
-        console.error("Error deleting meal", e5);
+      } catch (e6) {
+        console.error("Error deleting meal", e6);
         this.error = "Failed to delete meal";
       } finally {
         this.showDeleteModal = false;
@@ -34606,7 +35106,7 @@
                  <select 
                    id="category" 
                    .value="${this.selectedCategory}" 
-                   @change="${(e5) => this.selectedCategory = e5.target.value}"
+                   @change="${(e6) => this.selectedCategory = e6.target.value}"
                    style="padding: 8px; background: var(--input-background); color: var(--input-text); border: 1px solid var(--input-border, #ccc); border-radius: 4px; width: 100%; box-sizing: border-box;"
                  >
                    <option value="breakfast">${this.translations.breakfast}</option>
