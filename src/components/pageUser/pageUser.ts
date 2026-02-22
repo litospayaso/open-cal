@@ -125,6 +125,65 @@ export default class PageUser extends Page {
         cursor: pointer;
         font-weight: bold;
       }
+      .weight-history-list {
+        max-height: 250px;
+        overflow-y: auto;
+        margin-bottom: 1rem;
+        text-align: left;
+      }
+      .weight-history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0 8px 8px;
+        border: 1px solid var(--card-border);
+        border-radius: 8px;
+        margin-bottom: 8px;
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .modal-header h3 {
+        margin: 0;
+      }
+      .close-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--card-text);
+        padding: 0;
+        line-height: 1;
+        width: auto;
+      }
+      .weight-history-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 2px solid var(--palette-green);
+      }
+      .chart-wrapper {
+        height: 200px;
+        margin: 15px 0;
+      }
+      .favorite-icon {
+        width: 24px;
+        height: 24px;
+        fill: none;
+        stroke: var(--fat-color);
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: fill 0.3s ease, stroke 0.3s ease;
+        padding: 5px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
     `
   ];
 
@@ -139,6 +198,10 @@ export default class PageUser extends Page {
   @state() theme: 'light' | 'dark' = 'light';
   @state() language: string = 'en';
   @state() showClearModal: boolean = false;
+  @state() showWeightModal: boolean = false;
+  @state() weightHistory: { date: string, weight: number }[] = [];
+  @state() newWeightDate: string = new Date().toISOString().split('T')[0];
+  @state() newWeightValue: number = 0;
 
   onPageInit(): void {
     const savedProfile = localStorage.getItem('user_profile');
@@ -171,6 +234,15 @@ export default class PageUser extends Page {
       // Save immediatly to create the new structure
       this._saveProfile();
     }
+
+    this._loadWeightHistory();
+  }
+
+  private async _loadWeightHistory() {
+    this.weightHistory = await this.db.getWeightHistory();
+    if (this.weight) {
+      this.newWeightValue = this.weight;
+    }
   }
 
   updated(changedProperties: PropertyValues) {
@@ -196,11 +268,17 @@ export default class PageUser extends Page {
     localStorage.setItem('user_profile', JSON.stringify(profile));
   }
 
-  private _handleNumberInput(field: 'height' | 'weight' | 'dailyCalories' | 'proteinRatio' | 'carbsRatio' | 'fatRatio', e: Event) {
+  private async _handleNumberInput(field: 'height' | 'weight' | 'dailyCalories' | 'proteinRatio' | 'carbsRatio' | 'fatRatio', e: Event) {
     const value = Number((e.target as HTMLInputElement).value);
     // @ts-ignore
     this[field] = value;
     this._saveProfile();
+
+    if (field === 'weight') {
+      const today = new Date().toISOString().split('T')[0];
+      await this.db.saveWeightEntry(today, value);
+      await this._loadWeightHistory();
+    }
   }
 
   private _handleGenderChange(e: Event) {
@@ -228,6 +306,43 @@ export default class PageUser extends Page {
     }
   }
 
+  private async _deleteWeightEntry(date: string) {
+    await this.db.deleteWeightEntry(date);
+    await this._loadWeightHistory();
+  }
+
+  private async _saveNewWeightEntry() {
+    if (this.newWeightDate && this.newWeightValue > 0) {
+      await this.db.saveWeightEntry(this.newWeightDate, this.newWeightValue);
+      await this._loadWeightHistory();
+
+      // If we saved for today, update the current weight
+      const today = new Date().toISOString().split('T')[0];
+      if (this.newWeightDate === today) {
+        this.weight = this.newWeightValue;
+        this._saveProfile();
+      }
+    }
+  }
+
+  private _formatDate(dateStr: string): string {
+    const [year, month, day] = dateStr.split('-');
+    return `${day}/${month}/${year}`;
+  }
+
+  private _renderTrashIcon(entry: { date: string, weight: number }) {
+    return html`
+      <svg
+        class="favorite-icon"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+        @click="${() => this._deleteWeightEntry(entry.date)}"
+      >
+        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+      </svg>
+    `;
+  }
+
   render() {
     return html`
       <div class="card">
@@ -250,6 +365,14 @@ export default class PageUser extends Page {
           <label>${this.translations.weight || 'Weight'} (kg)</label>
           <input type="number" step="0.1" .value="${this.weight}" @input="${(e: Event) => this._handleNumberInput('weight', e)}" placeholder="e.g. 70.5" />
         </div>
+
+        <div class="chart-wrapper">
+          <component-line-chart .data="${this.weightHistory.map(h => ({ tag: h.date, value: h.weight }))}"></component-line-chart>
+        </div>
+
+        <button class="btn" @click="${() => this.showWeightModal = true}">
+          ${this.translations.updateHistoricalWeight || 'Update historical user weight data'}
+        </button>
       </div>
 
       <div class="card">
@@ -317,6 +440,48 @@ export default class PageUser extends Page {
             <div class="modal-buttons">
               <button class="btn" @click="${() => this.showClearModal = false}">${this.translations.cancel || 'Cancel'}</button>
               <button class="btn-danger" @click="${this._clearAllData}">${this.translations.confirm || 'Confirm'}</button>
+            </div>
+          </div>
+        </div>
+      ` : ''}
+
+      ${this.showWeightModal ? html`
+        <div class="modal-overlay">
+          <div class="modal" style="width: 400px; max-width: 95%;">
+            <div class="modal-header">
+              <h3>${this.translations.weightHistory || 'Weight History'}</h3>
+              <button class="close-btn" @click="${() => this.showWeightModal = false}">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            
+            <div class="weight-history-list">
+              ${this.weightHistory.length === 0 ? html`<p style="text-align: center;">${this.translations.noResultsFound || 'No history found'}</p>` : ''}
+              ${this.weightHistory.map(entry => html`
+                <div class="weight-history-item">
+                  <span>${this._formatDate(entry.date)}</span>
+                  <div style="display: flex; align-items: center; gap: 12px; padding-right: 8px;">
+                    <strong>${entry.weight} kg</strong>
+                    ${this._renderTrashIcon(entry)}
+                  </div>
+                </div>
+              `)}
+            </div>
+
+            <div class="weight-history-form">
+              <div class="form-group" style="text-align: left;">
+                <label>${this.translations.date || 'Date'}</label>
+                <input type="date" .value="${this.newWeightDate}" @change="${(e: any) => this.newWeightDate = e.target.value}" />
+              </div>
+              <div class="form-group" style="text-align: left;">
+                <label>${this.translations.weight || 'Weight'} (kg)</label>
+                <input type="number" step="0.1" .value="${this.newWeightValue}" @input="${(e: any) => this.newWeightValue = Number(e.target.value)}" />
+              </div>
+              <button class="btn" @click="${this._saveNewWeightEntry}">
+                ${this.translations.saveEntry || 'Save Entry'}
+              </button>
             </div>
           </div>
         </div>

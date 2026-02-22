@@ -1,3 +1,4 @@
 import ComponentLineChart from './componentLineChart.js';
+import { register } from '../../shared/functions';
 
-export { ComponentLineChart };
+register('component-line-chart', ComponentLineChart);

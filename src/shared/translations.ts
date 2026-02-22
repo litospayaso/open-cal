@@ -83,7 +83,12 @@ export const translations = {
     confirm: 'Confirmar',
     kcalEated: 'kcal consumidas',
     remainingCals: 'Todavía puedes tomar {cal} calorias',
-    remainingCalsOver: 'Has excedido tu ingesta diaria de calorías en {cal} calorias'
+    remainingCalsOver: 'Has excedido tu ingesta diaria de calorías en {cal} calorias',
+    updateHistoricalWeight: 'Actualizar historial de peso',
+    deleteEntry: 'Eliminar entrada',
+    saveEntry: 'Guardar entrada',
+    weightHistory: 'Historial de peso',
+    addPastWeight: 'Añadir peso pasado'
   },
   en: {
     search: 'Search',
@@ -169,7 +174,12 @@ export const translations = {
     confirm: 'Confirm',
     kcalEated: 'kcal eated',
     remainingCals: 'You can still eat {cal} calories',
-    remainingCalsOver: 'You have exceeded your daily calorie intake by {cal} calories'
+    remainingCalsOver: 'You have exceeded your daily calorie intake by {cal} calories',
+    updateHistoricalWeight: 'Update historical weight',
+    deleteEntry: 'Delete entry',
+    saveEntry: 'Save entry',
+    weightHistory: 'Weight History',
+    addPastWeight: 'Add past weight'
   },
   fr: {
     search: 'Rechercher',

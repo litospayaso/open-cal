@@ -26,11 +26,12 @@ export interface Meal {
 }
 
 const DB_NAME = 'OpenCalDB';
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 const STORE_NAME = 'daily_consumption';
 const STORE_PRODUCTS = 'products';
 const STORE_FAVORITES = 'favorites';
 const STORE_MEALS = 'meals';
+const STORE_WEIGHT_HISTORY = 'weight_history';
 
 export class DBService {
   private db: IDBDatabase | null = null;
@@ -63,7 +64,51 @@ export class DBService {
         if (!db.objectStoreNames.contains(STORE_MEALS)) {
           db.createObjectStore(STORE_MEALS, { keyPath: 'id' });
         }
+        if (!db.objectStoreNames.contains(STORE_WEIGHT_HISTORY)) {
+          db.createObjectStore(STORE_WEIGHT_HISTORY, { keyPath: 'date' });
+        }
       };
+    });
+  }
+
+  async saveWeightEntry(date: string, weight: number): Promise<void> {
+    await this.ensureInit();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([STORE_WEIGHT_HISTORY], 'readwrite');
+      const store = transaction.objectStore(STORE_WEIGHT_HISTORY);
+      const request = store.put({ date, weight });
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async getWeightHistory(): Promise<{ date: string, weight: number }[]> {
+    await this.ensureInit();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([STORE_WEIGHT_HISTORY], 'readonly');
+      const store = transaction.objectStore(STORE_WEIGHT_HISTORY);
+      const request = store.getAll();
+
+      request.onsuccess = () => {
+        const result = request.result || [];
+        // Sort by date
+        result.sort((a: any, b: any) => a.date.localeCompare(b.date));
+        resolve(result);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async deleteWeightEntry(date: string): Promise<void> {
+    await this.ensureInit();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([STORE_WEIGHT_HISTORY], 'readwrite');
+      const store = transaction.objectStore(STORE_WEIGHT_HISTORY);
+      const request = store.delete(date);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
     });
   }
 
