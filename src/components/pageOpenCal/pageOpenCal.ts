@@ -14,12 +14,13 @@ export default class PageOpenCal extends Page {
       .group-button-container {
         position: fixed;
         bottom: 0;
-        left: 0;
-        right: 0;
+        left: 50%;
+        transform: translateX(-50%);
         z-index: 1000;
-        padding: 1rem;
+        padding: 0 0 1rem 0;
         display: flex;
         justify-content: center;
+        width: fit-content;
       }
       .app-container {
        padding-bottom: 60px; 

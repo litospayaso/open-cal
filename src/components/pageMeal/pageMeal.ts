@@ -439,13 +439,14 @@ export default class PageMeal extends Page {
         <div class="input-group">
           <label>${this.translations.mealDescription}</label>
           <textarea 
+            rows="${Math.min(Math.max((this.meal.description || '').split('\n').length, 2), 5)}"
             .value="${this.meal.description}" 
             placeholder="${this.translations.enterMealDescription}"
             @input="${this._handleDescriptionChange}"
           ></textarea>
         </div>
 
-                <div class="summary-cards">
+        <div class="summary-cards">
              ${(() => {
         const totals = this.meal.foods.reduce((acc, f) => {
           const ratio = f.quantity / 100;

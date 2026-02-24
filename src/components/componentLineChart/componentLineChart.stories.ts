@@ -26,12 +26,12 @@ export const Default = Template.bind({});
 // @ts-ignore
 Default.args = {
   data: [
-    { tag: 'Mon', value: 10 },
-    { tag: 'Tue', value: 20 },
-    { tag: 'Wed', value: 15 },
-    { tag: 'Thu', value: 25 },
-    { tag: 'Fri', value: 30 },
-    { tag: 'Sat', value: 5 },
-    { tag: 'Sun', value: 40 }
+    { tag: 'Mon', value: 60 },
+    { tag: 'Tue', value: 61 },
+    { tag: 'Wed', value: 65 },
+    { tag: 'Thu', value: 63 },
+    { tag: 'Fri', value: 62.5 },
+    { tag: 'Sat', value: 62 },
+    { tag: 'Sun', value: 61.5 }
   ],
 };

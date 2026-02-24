@@ -126,7 +126,9 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
         if (products && products.length > 0 && this.query) {
           products = products.filter(p => {
             const name = p.product_name || p.product?.product_name || '';
-            return name.toLowerCase().includes(this.query.toLowerCase());
+            const brands = p.brands || p.product?.brands || '';
+            const lowerQuery = this.query.toLowerCase();
+            return name.toLowerCase().includes(lowerQuery) || brands.toLowerCase().includes(lowerQuery);
           });
         }
       } else if (this.viewMode === 'favorites') {
@@ -140,7 +142,9 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
         if (products && products.length > 0 && this.query) {
           products = products.filter(p => {
             const name = p.product_name || p.product?.product_name || '';
-            return name.toLowerCase().includes(this.query.toLowerCase());
+            const brands = p.brands || p.product?.brands || '';
+            const lowerQuery = this.query.toLowerCase();
+            return name.toLowerCase().includes(lowerQuery) || brands.toLowerCase().includes(lowerQuery);
           });
         }
       } else if (this.viewMode === 'search') {

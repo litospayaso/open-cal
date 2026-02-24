@@ -116,6 +116,7 @@ export default class ComponentLineChart extends LitElement {
   }
 
   private _generateChartSvg() {
+    const yMargin = 1;
     if (!this._chartContainer) return;
 
     this._chartContainer.innerHTML = '';
@@ -135,7 +136,18 @@ export default class ComponentLineChart extends LitElement {
     if (!this.data || this.data.length === 0) return;
 
     const safeData = this.data.map(item => ({ tag: item.tag, value: Number(item.value) }));
-    const maxVal = Math.max(...safeData.map(d => d.value), 1);
+    const rawMin = Math.min(...safeData.map(d => d.value));
+    const rawMax = Math.max(...safeData.map(d => d.value));
+
+    let yAxisMin = Math.floor(rawMin - yMargin);
+    let yAxisMax = Math.ceil(rawMax + yMargin);
+
+    if (yAxisMax === yAxisMin) {
+      yAxisMax += yMargin;
+      yAxisMin -= yMargin;
+    }
+
+    const valRange = yAxisMax - yAxisMin;
 
     const availableWidth = width - (this._padding * 2);
     const availableHeight = height - (this._padding * 2);
@@ -162,7 +174,7 @@ export default class ComponentLineChart extends LitElement {
     // Y-Axis Labels & Grid lines
     const numLabels = 5;
     for (let i = 0; i < numLabels; i++) {
-      const val = maxVal - (i * (maxVal / (numLabels - 1)));
+      const val = yAxisMax - (i * (valRange / (numLabels - 1)));
       const y = this._padding + (i * (availableHeight / (numLabels - 1)));
 
       const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -218,7 +230,7 @@ export default class ComponentLineChart extends LitElement {
     // Smooth Path
     const coords = safeData.map((item, index) => {
       const x = this._padding + (index * stepX);
-      const y = height - this._padding - ((item.value / maxVal) * availableHeight);
+      const y = height - this._padding - (((item.value - yAxisMin) / valRange) * availableHeight);
       return { x, y };
     });
 
@@ -242,7 +254,7 @@ export default class ComponentLineChart extends LitElement {
     // Circles
     safeData.forEach((item, index) => {
       const x = this._padding + (index * stepX);
-      const y = height - this._padding - ((item.value / maxVal) * availableHeight);
+      const y = height - this._padding - (((item.value - yAxisMin) / valRange) * availableHeight);
 
       const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       circle.setAttribute('cx', x.toString());
