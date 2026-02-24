@@ -1,5 +1,11 @@
 # page-opencal
 
+## 0.0.3
+
+### Patch Changes
+
+- 7024749: fixing error on clicking behind navigation bar
+
 ## 0.0.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # page-meal
 
+## 0.0.3
+
+### Patch Changes
+
+- 7024749: adapting page description to text legnth
+
 ## 0.0.2
 
 ### Patch Changes

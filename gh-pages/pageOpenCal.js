@@ -27283,12 +27283,13 @@
       .group-button-container {
         position: fixed;
         bottom: 0;
-        left: 0;
-        right: 0;
+        left: 50%;
+        transform: translateX(-50%);
         z-index: 1000;
-        padding: 1rem;
+        padding: 0 0 1rem 0;
         display: flex;
         justify-content: center;
+        width: fit-content;
       }
       .app-container {
        padding-bottom: 60px; 
@@ -31707,7 +31708,9 @@
           if (products && products.length > 0 && this.query) {
             products = products.filter((p3) => {
               const name = p3.product_name || p3.product?.product_name || "";
-              return name.toLowerCase().includes(this.query.toLowerCase());
+              const brands = p3.brands || p3.product?.brands || "";
+              const lowerQuery = this.query.toLowerCase();
+              return name.toLowerCase().includes(lowerQuery) || brands.toLowerCase().includes(lowerQuery);
             });
           }
         } else if (this.viewMode === "favorites") {
@@ -31720,7 +31723,9 @@
           if (products && products.length > 0 && this.query) {
             products = products.filter((p3) => {
               const name = p3.product_name || p3.product?.product_name || "";
-              return name.toLowerCase().includes(this.query.toLowerCase());
+              const brands = p3.brands || p3.product?.brands || "";
+              const lowerQuery = this.query.toLowerCase();
+              return name.toLowerCase().includes(lowerQuery) || brands.toLowerCase().includes(lowerQuery);
             });
           }
         } else if (this.viewMode === "search") {
@@ -33916,6 +33921,7 @@
       this._hoveredText = null;
     }
     _generateChartSvg() {
+      const yMargin = 1;
       if (!this._chartContainer) return;
       this._chartContainer.innerHTML = "";
       const width = this._width || this.offsetWidth || 300;
@@ -33929,7 +33935,15 @@
       this._chartContainer.appendChild(svg);
       if (!this.data || this.data.length === 0) return;
       const safeData = this.data.map((item) => ({ tag: item.tag, value: Number(item.value) }));
-      const maxVal = Math.max(...safeData.map((d3) => d3.value), 1);
+      const rawMin = Math.min(...safeData.map((d3) => d3.value));
+      const rawMax = Math.max(...safeData.map((d3) => d3.value));
+      let yAxisMin = Math.floor(rawMin - yMargin);
+      let yAxisMax = Math.ceil(rawMax + yMargin);
+      if (yAxisMax === yAxisMin) {
+        yAxisMax += yMargin;
+        yAxisMin -= yMargin;
+      }
+      const valRange = yAxisMax - yAxisMin;
       const availableWidth = width - this._padding * 2;
       const availableHeight = height - this._padding * 2;
       const stepX = availableWidth / Math.max(safeData.length - 1, 1);
@@ -33949,7 +33963,7 @@
       svg.appendChild(yAxis);
       const numLabels = 5;
       for (let i5 = 0; i5 < numLabels; i5++) {
-        const val = maxVal - i5 * (maxVal / (numLabels - 1));
+        const val = yAxisMax - i5 * (valRange / (numLabels - 1));
         const y3 = this._padding + i5 * (availableHeight / (numLabels - 1));
         const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
         text.setAttribute("x", (width - this._padding + 8).toString());
@@ -33995,7 +34009,7 @@
       }
       const coords = safeData.map((item, index) => {
         const x2 = this._padding + index * stepX;
-        const y3 = height - this._padding - item.value / maxVal * availableHeight;
+        const y3 = height - this._padding - (item.value - yAxisMin) / valRange * availableHeight;
         return { x: x2, y: y3 };
       });
       let pathData = "";
@@ -34014,7 +34028,7 @@
       svg.appendChild(path);
       safeData.forEach((item, index) => {
         const x2 = this._padding + index * stepX;
-        const y3 = height - this._padding - item.value / maxVal * availableHeight;
+        const y3 = height - this._padding - (item.value - yAxisMin) / valRange * availableHeight;
         const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         circle.setAttribute("cx", x2.toString());
         circle.setAttribute("cy", y3.toString());
@@ -35027,13 +35041,14 @@
         <div class="input-group">
           <label>${this.translations.mealDescription}</label>
           <textarea 
+            rows="${Math.min(Math.max((this.meal.description || "").split("\n").length, 2), 5)}"
             .value="${this.meal.description}" 
             placeholder="${this.translations.enterMealDescription}"
             @input="${this._handleDescriptionChange}"
           ></textarea>
         </div>
 
-                <div class="summary-cards">
+        <div class="summary-cards">
              ${(() => {
         const totals = this.meal.foods.reduce((acc, f3) => {
           const ratio = f3.quantity / 100;

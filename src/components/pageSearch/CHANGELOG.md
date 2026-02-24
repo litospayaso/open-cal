@@ -1,5 +1,11 @@
 # search-page
 
+## 0.0.2
+
+### Patch Changes
+
+- 7024749: now the search is able to filter by brand name
+
 ## 0.0.1
 
 ### Patch Changes

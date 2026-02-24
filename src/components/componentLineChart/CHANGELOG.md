@@ -1,5 +1,11 @@
 # component-line-chart
 
+## 0.0.3
+
+### Patch Changes
+
+- 7024749: updating graph display to zoom in data
+
 ## 0.0.2
 
 ### Patch Changes
