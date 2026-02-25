@@ -14,9 +14,16 @@
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "cap:sync": "npx cap sync",
+    "cap:open:android": "npx cap open android",
+    "cap:copy:android": "npx cap copy android",
+    "cap:add:android": "npx cap add android"
   },
   "dependencies": {
+    "@capacitor/android": "^8.1.0",
+    "@capacitor/cli": "^8.1.0",
+    "@capacitor/core": "^8.1.0",
     "html5-qrcode": "^2.3.8",
     "lit": "^3.3.1"
   },

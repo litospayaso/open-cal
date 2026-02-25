@@ -1,0 +1,138 @@
+# Brote (Open Cal)
+
+Brote is a modern, privacy-focused calorie and macronutrient tracking application built with Web Components and Lit. It allows users to track their daily food intake, manage personal meals, and monitor their progress against nutritional goals.
+
+## Core Technology Stack
+
+- **[Lit](https://lit.dev/)**: Lightweight base class for creating fast, lightweight Web Components.
+- **[Vite](https://vitejs.dev/)**: Next-generation frontend tooling for a fast development experience.
+- **[Esbuild](https://esbuild.github.io/)**: An extremely fast JavaScript bundler used for component distribution.
+- **[Web Test Runner](https://modern-web.dev/docs/test-runner/overview/)**: Modern testing environment for web components.
+- **[Storybook](https://storybook.js.org/)**: Development environment for UI components.
+- **IndexedDB**: Local client-side storage for offline capability and data privacy.
+
+## Project Structure
+
+The project follows a workspace-based architecture:
+
+- `src/components/`: Contains all UI components and pages.
+  - `component*`: Reusable UI elements (e.g., Progress Bar, Charts, Search Input).
+  - `page*`: Top-level application pages (e.g., Home, Search, Food details, User profile).
+- `src/shared/`: Core services and base classes shared across the application.
+  - `db.ts`: `DBService` for IndexedDB management.
+  - `page.ts`: `Page` base class for common page functionality.
+  - `translations.ts`: Multilingual support.
+- `scripts/`: Utility scripts for deployment and commit hooks.
+
+### Prerequisites
+
+- Node.js (version specified in `.nvmrc`)
+- npm
+
+### Installation
+
+```bash
+npm install
+```
+
+### Development
+
+Run the development server:
+
+```bash
+npm run dev
+```
+
+Run Storybook to develop components in isolation:
+
+```bash
+npm run storybook
+```
+
+### Building
+
+Build the components for distribution using esbuild:
+
+```bash
+npm run build
+```
+
+### Deployment / Distribution
+
+The latest web version will be updated at `./gh-pages/` and can be deployed using gh-pages using the command:
+
+```bash
+npm run deploy:pages
+```
+
+## Mobile App (Android)
+
+Brote can be built as an Android application using Capacitor.js.
+
+### Build Instructions
+
+1.  **Generate Web Assets**: Ensure the latest web version is built in the `gh-pages` directory:
+    ```bash
+    npm run build
+    ```
+2.  **Sync with Capacitor**: Sync the web assets to the Android platform:
+    ```bash
+    npm run cap:sync
+    ```
+3.  **Open in Android Studio**: Open the Android project to build the APK:
+    ```bash
+    npm run cap:open:android
+    ```
+
+Note: You need Android Studio installed and configured on your system.
+
+## Testing
+
+The project uses Web Test Runner for unit and integration testing.
+
+Run all tests:
+
+```bash
+npm test
+```
+
+Watch mode for development:
+
+```bash
+npm run test:watch
+```
+
+Coverage reports are generated in the `coverage/` directory after running tests with `--coverage`.
+
+## Application Logic
+
+### Base Page Class (`src/shared/page.ts`)
+
+Every page in the application extends the `Page` base class. This provides:
+
+- **Navigation**: Methods for internal and external navigation.
+- **Theming**: Integrated support for light and dark modes.
+- **Localization**: Automatic language detection and management.
+- **Database Access**: Direct access to the `DBService` instance.
+
+### Data Management (`src/shared/db.ts`)
+
+Data is persisted locally using IndexedDB through the `DBService`. Key data stores include:
+
+- `daily_consumption`: Stores daily food logs.
+- `products`: Cache for food products retrieved from external APIs.
+- `meals`: Custom user-defined meals.
+- `favorites`: User-bookmarked food items.
+- `weight_history`: Historical weight entries.
+
+### Component-Based Pages
+
+Pages are built by composing reusable components. For example, `PageHome` uses `component-progress-bar` to show nutritional goals and `component-search-result` to display logged items.
+
+## Deployment
+
+The application is configured for deployment to GitHub Pages via:
+
+```bash
+npm run deploy:pages
+```
