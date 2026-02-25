@@ -1,7 +1,7 @@
 import { css, html } from 'lit';
 import { state } from 'lit/decorators.js';
 import Page from '../../shared/page';
-import type { Meal } from '../../shared/db';
+import type { Meal, MealCategory } from '../../shared/db';
 
 export default class PageMeal extends Page {
   static styles = [
@@ -230,7 +230,7 @@ export default class PageMeal extends Page {
   };
   @state() isNew: boolean = true;
   @state() error: string = '';
-  @state() selectedCategory: 'breakfast' | 'snack1' | 'lunch' | 'snack2' | 'dinner' | 'snack3' = 'lunch';
+  @state() selectedCategory: MealCategory = 'lunch';
   @state() selectedDate: string = new Date().toISOString().split('T')[0];
   @state() showMenu: boolean = false;
   @state() showDeleteModal: boolean = false;
@@ -252,6 +252,7 @@ export default class PageMeal extends Page {
   async onPageInit(): Promise<void> {
     await this.db.init();
     const params = this.getQueryParamsURL();
+    this.selectedCategory = params.get('category') as MealCategory || 'breakfast';
     const id = params.get('mealId');
 
     if (id) {
@@ -340,8 +341,6 @@ export default class PageMeal extends Page {
       this.error = "Failed to create new meal";
     }
   }
-
-  // private _initNewDraft() ... _loadDraft ... _saveDraft REMOVED
 
   private async _handleNameChange(e: Event) {
     this.meal = { ...this.meal, name: (e.target as HTMLInputElement).value };

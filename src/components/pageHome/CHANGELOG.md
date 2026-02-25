@@ -1,5 +1,11 @@
 # home-page
 
+## 0.0.5
+
+### Patch Changes
+
+- adding direct access to add food category in home page
+
 ## 0.0.4
 
 ### Patch Changes

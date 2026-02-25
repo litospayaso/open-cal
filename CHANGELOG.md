@@ -1,5 +1,11 @@
 # brote
 
+## 1.0.5
+
+### Patch Changes
+
+- adding direct access to add food category in home page
+
 ## 1.0.4
 
 ### Patch Changes

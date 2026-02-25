@@ -263,6 +263,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
   async onPageInit(): Promise<void> {
     const params = this.getQueryParamsURL();
     const code = params.get('code');
+    this.selectedCategory = params.get('category') as MealCategory || 'breakfast';
     this.mealId = params.get('mealId');
 
     if (code) {
