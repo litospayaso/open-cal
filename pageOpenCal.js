@@ -34342,6 +34342,9 @@
             .fatGoalPercent=${this.userGoals.macros.fat}
             .carbsGoalPercent=${this.userGoals.macros.carbs}
             .proteinGoalPercent=${this.userGoals.macros.protein}
+            .fatEatenPercent=${this.totals.fat * 9 / (this.userGoals.calories || 1) * 100}
+            .carbsEatenPercent=${this.totals.carbs * 4 / (this.userGoals.calories || 1) * 100}
+            .proteinEatenPercent=${this.totals.protein * 4 / (this.userGoals.calories || 1) * 100}
             .translations=${JSON.stringify(this.translations)}
         ></component-progress-bar>
       </div>
@@ -34446,6 +34449,9 @@
       this.fatGoalPercent = 0;
       this.carbsGoalPercent = 0;
       this.proteinGoalPercent = 0;
+      this.fatEatenPercent = -1;
+      this.carbsEatenPercent = -1;
+      this.proteinEatenPercent = -1;
       this.translationsTexts = {};
     }
     set translations(translations2) {
@@ -34549,24 +34555,26 @@
       const fatCalories = this.fatEaten * 9;
       const carbsCalories = this.carbsEaten * 4;
       const proteinCalories = this.proteinEaten * 4;
+      const remaining = this.dailyCaloriesGoal - this.caloriesEaten;
       const totalGoal = this.dailyCaloriesGoal > 0 ? this.dailyCaloriesGoal : 1;
-      const totalCalories = this.caloriesEaten;
-      const usagePercent = Math.min(totalCalories / totalGoal * 100, 100);
+      let currentFatPercent = this.fatEatenPercent;
+      let currentCarbsPercent = this.carbsEatenPercent;
+      let currentProteinPercent = this.proteinEatenPercent;
+      if (currentFatPercent === -1 || currentCarbsPercent === -1 || currentProteinPercent === -1) {
+        currentFatPercent = fatCalories / totalGoal * 100;
+        currentCarbsPercent = carbsCalories / totalGoal * 100;
+        currentProteinPercent = proteinCalories / totalGoal * 100;
+      }
+      const totalEatenPercent = currentFatPercent + currentCarbsPercent + currentProteinPercent;
+      const usagePercent = Math.min(this.caloriesEaten / totalGoal * 100, 100);
       let renderedFatWidth = 0;
       let renderedCarbsWidth = 0;
       let renderedProteinWidth = 0;
-      if (totalCalories > 0) {
-        const measuredTotal = fatCalories + carbsCalories + proteinCalories;
-        if (measuredTotal > 0) {
-          renderedFatWidth = fatCalories / measuredTotal * usagePercent;
-          renderedCarbsWidth = carbsCalories / measuredTotal * usagePercent;
-          renderedProteinWidth = proteinCalories / measuredTotal * usagePercent;
-        }
+      if (totalEatenPercent > 0) {
+        renderedFatWidth = currentFatPercent / totalEatenPercent * usagePercent;
+        renderedCarbsWidth = currentCarbsPercent / totalEatenPercent * usagePercent;
+        renderedProteinWidth = currentProteinPercent / totalEatenPercent * usagePercent;
       }
-      const currentFatPercent = totalCalories > 0 ? fatCalories / totalCalories * 100 : 0;
-      const currentCarbsPercent = totalCalories > 0 ? carbsCalories / totalCalories * 100 : 0;
-      const currentProteinPercent = totalCalories > 0 ? proteinCalories / totalCalories * 100 : 0;
-      const remaining = this.dailyCaloriesGoal - this.caloriesEaten;
       let statusText = "";
       if (this.caloriesEaten <= this.dailyCaloriesGoal) {
         statusText = this.translationsTexts["remainingCals"]?.replace("{cal}", remaining.toString());
@@ -34621,6 +34629,15 @@
   __decorateClass([
     n4({ type: Number })
   ], ComponentProgressBar.prototype, "proteinGoalPercent", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentProgressBar.prototype, "fatEatenPercent", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentProgressBar.prototype, "carbsEatenPercent", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentProgressBar.prototype, "proteinEatenPercent", 2);
   __decorateClass([
     n4({ type: String })
   ], ComponentProgressBar.prototype, "translations", 1);
