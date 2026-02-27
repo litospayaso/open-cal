@@ -77,4 +77,35 @@ describe('ComponentProgressBar Spec:', () => {
     const label = shadow?.querySelector('div.label');
     expect(label?.textContent).to.contain('200 / 2000');
   });
+
+  it('should calculate macro percentages relative to daily goal', async () => {
+    componentInstance.dailyCaloriesGoal = 2000;
+    componentInstance.caloriesEaten = 500;
+    componentInstance.fatEaten = 20; // 180 kcal -> 9% of 2000
+    componentInstance.carbsEaten = 50; // 200 kcal -> 10% of 2000
+    componentInstance.proteinEaten = 30; // 120 kcal -> 6% of 2000
+
+    await componentInstance.updateComplete;
+    const shadow = element.shadowRoot;
+    const macros = shadow?.querySelectorAll('.macros-label div');
+
+    expect(macros?.[0].textContent).to.contain('9 /'); // Fat
+    expect(macros?.[1].textContent).to.contain('10 /'); // Carbs
+    expect(macros?.[2].textContent).to.contain('6 /'); // Protein
+  });
+
+  it('should use provided eaten percentages if available', async () => {
+    componentInstance.dailyCaloriesGoal = 2000;
+    componentInstance.fatEatenPercent = 15;
+    componentInstance.carbsEatenPercent = 25;
+    componentInstance.proteinEatenPercent = 20;
+
+    await componentInstance.updateComplete;
+    const shadow = element.shadowRoot;
+    const macros = shadow?.querySelectorAll('.macros-label div');
+
+    expect(macros?.[0].textContent).to.contain('15 /');
+    expect(macros?.[1].textContent).to.contain('25 /');
+    expect(macros?.[2].textContent).to.contain('20 /');
+  });
 });

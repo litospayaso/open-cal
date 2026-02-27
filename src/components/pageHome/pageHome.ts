@@ -277,6 +277,9 @@ export default class PageHome extends Page {
             .fatGoalPercent=${this.userGoals.macros.fat}
             .carbsGoalPercent=${this.userGoals.macros.carbs}
             .proteinGoalPercent=${this.userGoals.macros.protein}
+            .fatEatenPercent=${(this.totals.fat * 9 / (this.userGoals.calories || 1)) * 100}
+            .carbsEatenPercent=${(this.totals.carbs * 4 / (this.userGoals.calories || 1)) * 100}
+            .proteinEatenPercent=${(this.totals.protein * 4 / (this.userGoals.calories || 1)) * 100}
             .translations=${JSON.stringify(this.translations)}
         ></component-progress-bar>
       </div>

@@ -10,6 +10,9 @@ export type ComponentProgressBarProps = {
   fatGoalPercent?: number;
   carbsGoalPercent?: number;
   proteinGoalPercent?: number;
+  fatEatenPercent?: number;
+  carbsEatenPercent?: number;
+  proteinEatenPercent?: number;
 }
 
 export class ComponentProgressBar extends LitElement {
@@ -22,6 +25,10 @@ export class ComponentProgressBar extends LitElement {
   @property({ type: Number }) fatGoalPercent = 0;
   @property({ type: Number }) carbsGoalPercent = 0;
   @property({ type: Number }) proteinGoalPercent = 0;
+
+  @property({ type: Number }) fatEatenPercent = -1;
+  @property({ type: Number }) carbsEatenPercent = -1;
+  @property({ type: Number }) proteinEatenPercent = -1;
 
   @property({ type: String }) set translations(translations: string) {
     this.translationsTexts = JSON.parse(translations);
@@ -126,28 +133,32 @@ export class ComponentProgressBar extends LitElement {
     const fatCalories = this.fatEaten * 9;
     const carbsCalories = this.carbsEaten * 4;
     const proteinCalories = this.proteinEaten * 4;
+    const remaining = this.dailyCaloriesGoal - this.caloriesEaten;
     const totalGoal = this.dailyCaloriesGoal > 0 ? this.dailyCaloriesGoal : 1;
-    const totalCalories = this.caloriesEaten;
-    const usagePercent = Math.min((totalCalories / totalGoal) * 100, 100);
+
+    let currentFatPercent = this.fatEatenPercent;
+    let currentCarbsPercent = this.carbsEatenPercent;
+    let currentProteinPercent = this.proteinEatenPercent;
+
+    if (currentFatPercent === -1 || currentCarbsPercent === -1 || currentProteinPercent === -1) {
+      currentFatPercent = (fatCalories / totalGoal) * 100;
+      currentCarbsPercent = (carbsCalories / totalGoal) * 100;
+      currentProteinPercent = (proteinCalories / totalGoal) * 100;
+    }
+
+    const totalEatenPercent = currentFatPercent + currentCarbsPercent + currentProteinPercent;
+    const usagePercent = Math.min((this.caloriesEaten / totalGoal) * 100, 100);
 
     let renderedFatWidth = 0;
     let renderedCarbsWidth = 0;
     let renderedProteinWidth = 0;
 
-    if (totalCalories > 0) {
-      const measuredTotal = fatCalories + carbsCalories + proteinCalories;
-      if (measuredTotal > 0) {
-        renderedFatWidth = (fatCalories / measuredTotal) * usagePercent;
-        renderedCarbsWidth = (carbsCalories / measuredTotal) * usagePercent;
-        renderedProteinWidth = (proteinCalories / measuredTotal) * usagePercent;
-      }
+    if (totalEatenPercent > 0) {
+      renderedFatWidth = (currentFatPercent / totalEatenPercent) * usagePercent;
+      renderedCarbsWidth = (currentCarbsPercent / totalEatenPercent) * usagePercent;
+      renderedProteinWidth = (currentProteinPercent / totalEatenPercent) * usagePercent;
     }
 
-    const currentFatPercent = totalCalories > 0 ? (fatCalories / totalCalories) * 100 : 0;
-    const currentCarbsPercent = totalCalories > 0 ? (carbsCalories / totalCalories) * 100 : 0;
-    const currentProteinPercent = totalCalories > 0 ? (proteinCalories / totalCalories) * 100 : 0;
-
-    const remaining = this.dailyCaloriesGoal - this.caloriesEaten;
     let statusText = '';
     if (this.caloriesEaten <= this.dailyCaloriesGoal) {
       statusText = this.translationsTexts['remainingCals']?.replace('{cal}', remaining.toString());
