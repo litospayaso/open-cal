@@ -4,7 +4,6 @@ export interface EmojiItem {
 }
 
 export const emojiList: EmojiItem[] = [
-  // --- Fruits ---
   { emoji: '🍇', keywords: ['grapes', 'fruit', 'uvas', 'fruta', 'raisins', 'trauben', 'obst', 'uva'] },
   { emoji: '🍈', keywords: ['melon', 'fruit', 'melón', 'fruta', 'melon', 'melone', 'melone'] },
   { emoji: '🍉', keywords: ['watermelon', 'fruit', 'sandía', 'fruta', 'pastèque', 'wassermelone', 'anguria'] },
@@ -24,7 +23,6 @@ export const emojiList: EmojiItem[] = [
   { emoji: '🫒', keywords: ['olive', 'oliva', 'aceituna', 'olive', 'olive', 'oliva'] },
   { emoji: '🥥', keywords: ['coconut', 'fruit', 'coco', 'fruta', 'noix de coco', 'kokosnuss', 'cocco'] },
 
-  // --- Vegetables ---
   { emoji: '🥑', keywords: ['avocado', 'vegetable', 'aguacate', 'palta', 'mod', 'avocat', 'avocado', 'avocado'] },
   { emoji: '🍆', keywords: ['eggplant', 'vegetable', 'berenjena', 'vegetal', 'aubergine', 'aubergine', 'melanzana'] },
   { emoji: '🥔', keywords: ['potato', 'vegetable', 'patata', 'papa', 'vegetal', 'pomme de terre', 'kartoffel', 'patata'] },
@@ -40,7 +38,6 @@ export const emojiList: EmojiItem[] = [
   { emoji: '🥜', keywords: ['peanuts', 'nut', 'cacahuetes', 'maní', 'cacahuètes', 'erdnüsse', 'arachidi'] },
   { emoji: '🌰', keywords: ['chestnut', 'nut', 'castaña', 'châtaigne', 'kastanie', 'castagna'] },
 
-  // --- Prepared Food ---
   { emoji: '🍞', keywords: ['bread', 'pan', 'pain', 'brot', 'pane'] },
   { emoji: '🥐', keywords: ['croissant', 'pastry', 'croissant', 'croissant', 'croissant', 'cornetto'] },
   { emoji: '🥖', keywords: ['baguette', 'bread', 'baguette', 'barra', 'baguette', 'baguette', 'baguette'] },
@@ -72,7 +69,6 @@ export const emojiList: EmojiItem[] = [
   { emoji: '🧂', keywords: ['salt', 'seasoning', 'sal', 'sel', 'salz', 'sale'] },
   { emoji: '🥫', keywords: ['canned food', 'can', 'comida en lata', 'lata', 'conserve', 'dose', 'cibo in scatola'] },
 
-  // --- Asian Food ---
   { emoji: '🍱', keywords: ['bento box', 'lunch', 'bento', 'caja de almuerzo', 'bento', 'bento', 'bento'] },
   { emoji: '🍙', keywords: ['rice ball', 'onigiri', 'bola de arroz', 'onigiri', 'boulette de riz', 'reisbällchen', 'palla di riso'] },
   { emoji: '🍚', keywords: ['cooked rice', 'rice', 'arroz cocido', 'arroz', 'riz cuit', 'riz', 'gekochter reis', 'reis', 'riso cotto', 'riso'] },
@@ -90,14 +86,12 @@ export const emojiList: EmojiItem[] = [
   { emoji: '🥠', keywords: ['fortune cookie', 'cookie', 'galleta de la fortuna', 'biscuit chinois', 'glückskeks', 'biscotto della fortuna'] },
   { emoji: '🥡', keywords: ['takeout box', 'food', 'caja de comida', 'para llevar', 'boîte à emporter', 'take-away-box', 'scatola da asporto'] },
 
-  // --- Seafood ---
   { emoji: '🦀', keywords: ['crab', 'seafood', 'cangrejo', 'marisco', 'crabe', 'krabbe', 'granchio'] },
   { emoji: '🦞', keywords: ['lobster', 'seafood', 'langosta', 'bogavante', 'homard', 'hummer', 'aragosta'] },
   { emoji: '🦐', keywords: ['shrimp', 'seafood', 'camarón', 'gamba', 'crevette', 'garnele', 'gambero'] },
   { emoji: '🦑', keywords: ['squid', 'seafood', 'calamar', 'calmar', 'tintenfisch', 'calamaro'] },
   { emoji: '🦪', keywords: ['oyster', 'ostras', 'huître', 'auster', 'ostrica'] },
 
-  // --- Sweets ---
   { emoji: '🍦', keywords: ['soft ice cream', 'ice cream', 'helado suave', 'glace à l\'italienne', 'softeis', 'gelato soft'] },
   { emoji: '🍧', keywords: ['shaved ice', 'dessert', 'granizado', 'raspado', 'glace pilée', 'wassereis', 'granita'] },
   { emoji: '🍨', keywords: ['ice cream', 'dessert', 'helado', 'copa de helado', 'glace', 'eiscreme', 'gelato'] },
@@ -113,9 +107,8 @@ export const emojiList: EmojiItem[] = [
   { emoji: '🍮', keywords: ['custard', 'flan', 'pudding', 'flan', 'crème caramel', 'pudding', 'budino'] },
   { emoji: '🍯', keywords: ['honey pot', 'honey', 'miel', 'tarro', 'miel', 'honig', 'miele'] },
 
-  // --- Drinks ---
-  { emoji: '🍼', keywords: ['baby bottle', 'milk', 'biberón', 'leche', 'biberon', 'babyflasche', 'biberon'] },
   { emoji: '🥛', keywords: ['glass of milk', 'milk', 'vaso de leche', 'leche', 'verre de lait', 'milch', 'bicchiere di latte'] },
+  { emoji: '🍼', keywords: ['baby bottle', 'milk', 'biberón', 'leche', 'biberon', 'babyflasche', 'biberon'] },
   { emoji: '☕', keywords: ['hot beverage', 'coffee', 'tea', 'bebida caliente', 'café', 'té', 'boisson chaude', 'heißgetränk', 'bevanda calda'] },
   { emoji: '🫖', keywords: ['teapot', 'tea', 'tetera', 'théière', 'teekanne', 'teiera'] },
   { emoji: '🍵', keywords: ['teacup without handle', 'tea', 'matcha', 'taza de té', 'té', 'tasse de thé', 'teetasse', 'tazza di tè'] },
@@ -136,7 +129,6 @@ export const emojiList: EmojiItem[] = [
   { emoji: '🧊', keywords: ['ice', 'cube', 'hielo', 'cubito', 'glace', 'eisunrfel', 'ghiaccio'] },
   { emoji: '🫙', keywords: ['jar', 'container', 'food', 'tarro', 'bote', 'bocal', 'glas', 'barattolo'] },
 
-  // --- Dishware ---
   { emoji: '🥢', keywords: ['chopsticks', 'utensils', 'palillos', 'baguettes', 'essstäbchen', 'bacchette'] },
   { emoji: '🍽️', keywords: ['fork and knife with plate', 'dining', 'plato', 'cubiertos', 'assiette', 'teller', 'piatto'] },
   { emoji: '🍴', keywords: ['fork and knife', 'cutlery', 'tenedor y cuchillo', 'cubiertos', 'fourchette et couteau', 'besteck', 'forchetta e coltello'] },
@@ -144,7 +136,6 @@ export const emojiList: EmojiItem[] = [
   { emoji: '🔪', keywords: ['kitchen knife', 'knife', 'cuchillo', 'couteau', 'messer', 'coltello'] },
   { emoji: '🏺', keywords: ['amphora', 'jar', 'anfora', 'ánfora', 'amphore', 'amphore', 'anfora'] },
 
-  // --- Animals as Food ---
   { emoji: '🐮', keywords: ['cow', 'beef', 'animal', 'vaca', 'ternera', 'vache', 'bœuf', 'kuh', 'rind', 'mucca', 'manzo'] },
   { emoji: '🐷', keywords: ['pig', 'pork', 'animal', 'cerdo', 'puerco', 'cochon', 'porc', 'schwein', 'maiale'] },
   { emoji: '🐑', keywords: ['sheep', 'lamb', 'animal', 'oveja', 'cordero', 'mouton', 'agneau', 'schaf', 'lamm', 'pecora', 'agnello'] },

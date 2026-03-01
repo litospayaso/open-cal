@@ -92,7 +92,6 @@ export class DBService {
 
       request.onsuccess = () => {
         const result = request.result || [];
-        // Sort by date
         result.sort((a: any, b: any) => a.date.localeCompare(b.date));
         resolve(result);
       };
@@ -124,7 +123,6 @@ export class DBService {
         if (result) {
           resolve(result);
         } else {
-          // Return empty log if not exists
           resolve({
             date,
             breakfast: [],
@@ -270,12 +268,10 @@ export class DBService {
       request.onerror = () => reject(request.error);
     });
 
-    // Then propagate changes to diary logs
     await this._updateMealInLogs(meal);
   }
 
   private async _updateMealInLogs(meal: Meal): Promise<void> {
-    // Calculate new totals for the meal
     const totals = meal.foods.reduce((acc, f) => {
       const ratio = f.quantity / 100;
       return {
@@ -376,7 +372,7 @@ export class DBService {
   }
 
   async updateProductInMeals(product: any): Promise<void> {
-    await this.ensureInit(); // Ensure DB is initialized
+    await this.ensureInit();
 
     const meals = await this.getAllMeals();
     const mealsToUpdate: Meal[] = [];
@@ -480,7 +476,6 @@ export class DBService {
 
           categories.forEach(cat => {
             if (log[cat]) {
-              // Filter out the meal by ID
               const originalLength = log[cat].length;
               log[cat] = log[cat].filter(item => !(item.unit === 'meal' && item.product.code === mealId));
               if (log[cat].length !== originalLength) {
@@ -505,7 +500,6 @@ export class DBService {
     await this.ensureInit();
     const exportData: any = {};
 
-    // 1. Collect Data
     if (selectedStores.includes('user_data')) {
       const profile = localStorage.getItem('user_profile');
       exportData.user_profile = profile ? JSON.parse(profile) : null;
@@ -525,14 +519,12 @@ export class DBService {
       exportData.meals = await this._getAllFromStore(STORE_MEALS);
     }
 
-    // 2. Format Data
     if (format === 'json') {
       return {
         content: JSON.stringify(exportData, null, 2),
         extension: 'json'
       };
     } else {
-      // CSV Logic
       let csvContent = '';
 
       if (exportData.user_profile) {

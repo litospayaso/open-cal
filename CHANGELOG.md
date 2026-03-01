@@ -1,5 +1,12 @@
 # brote
 
+## 1.0.8
+
+### Patch Changes
+
+- fixing error on calculating daily percent fat, carbs and proteins
+- Updating translations and fixing theme errors
+
 ## 1.0.7
 
 ### Patch Changes

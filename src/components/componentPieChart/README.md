@@ -7,7 +7,6 @@ A reusable component that displays a macronutrient distribution pie chart using 
 ```typescript
 import '../componentPieChart/index';
 
-// In your render method:
 html`
   <component-pie-chart
     .protein="${30}"

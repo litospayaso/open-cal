@@ -103,7 +103,6 @@ export class PageCodeScanner extends Page {
     PageCodeScanner.styles.forEach((style, i) => {
       loadCss(String(style), `page-code-scanner-styles-${i}`);
     });
-    // Give a moment for the DOM to be ready for html5-qrcode
     setTimeout(() => this.startScanning(), 100);
   }
 
@@ -148,7 +147,7 @@ export class PageCodeScanner extends Page {
     } catch (err) {
       console.error("Error starting scanner:", err);
       this.hasPermission = false;
-      this.error = "Camera access denied or error starting scanner. Please check permissions.";
+      this.error = this.translations.cameraError || "Camera access denied or error starting scanner. Please check permissions.";
     }
   }
 
@@ -179,11 +178,11 @@ export class PageCodeScanner extends Page {
       
       ${this.hasPermission === false ? html`
         <div class="permission-request">
-          <h2>Camera Permission Required</h2>
-          <p>${this.error || "Please allow camera access to scan barcodes."}</p>
-          <button class="back-btn" @click="${() => this.startScanning()}">Retry</button>
+          <h2>${this.translations.cameraPermissionRequired}</h2>
+          <p>${this.error || this.translations.cameraPermissionDesc}</p>
+          <button class="back-btn" @click="${() => this.startScanning()}">${this.translations.retry}</button>
           <br><br>
-          <button class="back-btn" @click="${this.handleBack}">Go Back</button>
+          <button class="back-btn" @click="${this.handleBack}">${this.translations.goBack}</button>
         </div>
       ` : ''}
 
@@ -194,7 +193,7 @@ export class PageCodeScanner extends Page {
       </div>
 
       <div class="controls">
-        <button class="back-btn" @click="${this.handleBack}">Cancel</button>
+        <button class="back-btn" @click="${this.handleBack}">${this.translations.cancel}</button>
       </div>
     `;
   }

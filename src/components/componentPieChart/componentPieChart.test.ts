@@ -40,7 +40,6 @@ describe('ComponentPieChart Spec:', () => {
     const pieChart = shadow.querySelector('.pie-chart') as HTMLElement;
     expect(pieChart).to.exist;
 
-    // Check if style attribute contains the variables
     const style = pieChart.getAttribute('style');
     expect(style).to.include('--protein-deg');
     expect(style).to.include('--carbs-deg');
@@ -52,9 +51,6 @@ describe('ComponentPieChart Spec:', () => {
     const slot = centerHole?.querySelector('slot');
     expect(slot).to.exist;
 
-    // Testing slot content distribution in shadow DOM is tricky with simple queries
-    // We assume if slot exists and we passed content, it works.
-    // Ideally we check assignedNodes if testing strictly
     expect(centerHole).to.exist;
   });
 });

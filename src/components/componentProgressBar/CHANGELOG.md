@@ -1,5 +1,11 @@
 # component-progress-bar
 
+## 0.0.4
+
+### Patch Changes
+
+- Updating translations and fixing theme errors
+
 ## 0.0.3
 
 ### Patch Changes

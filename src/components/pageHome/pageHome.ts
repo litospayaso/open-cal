@@ -197,7 +197,6 @@ export default class PageHome extends Page {
 
     categories.forEach(cat => {
       this.dailyLog![cat].forEach(item => {
-        // Calculate based on quantity (assuming 100g base for nutrients)
         const ratio = item.unit === 'meal' ? item.quantity : item.quantity / 100;
 
         calories += (item.product.nutriments['energy-kcal'] || 0) * ratio;
@@ -245,7 +244,6 @@ export default class PageHome extends Page {
     const today = new Date();
     const date = new Date(this.currentDate);
 
-    // Reset time parts for accurate comparison
     const resetTime = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
 
     const dToday = resetTime(today);
@@ -284,9 +282,9 @@ export default class PageHome extends Page {
             .fatGoalPercent=${this.userGoals.macros.fat}
             .carbsGoalPercent=${this.userGoals.macros.carbs}
             .proteinGoalPercent=${this.userGoals.macros.protein}
-            .fatEatenPercent=${(this.totals.fat * 9 / (this.userGoals.calories || 1)) * 100}
-            .carbsEatenPercent=${(this.totals.carbs * 4 / (this.userGoals.calories || 1)) * 100}
-            .proteinEatenPercent=${(this.totals.protein * 4 / (this.userGoals.calories || 1)) * 100}
+            .fatEatenPercent=${((this.totals.fat * 9) / ((this.totals.fat * 9 + this.totals.carbs * 4 + this.totals.protein * 4) || 1)) * 100}
+            .carbsEatenPercent=${((this.totals.carbs * 4) / ((this.totals.fat * 9 + this.totals.carbs * 4 + this.totals.protein * 4) || 1)) * 100}
+            .proteinEatenPercent=${((this.totals.protein * 4) / ((this.totals.fat * 9 + this.totals.carbs * 4 + this.totals.protein * 4) || 1)) * 100}
             .translations=${JSON.stringify(this.translations)}
         ></component-progress-bar>
       </div>

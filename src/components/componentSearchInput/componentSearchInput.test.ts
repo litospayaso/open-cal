@@ -61,8 +61,6 @@ describe('SearchInput Component Spec:', () => {
     element.setAttribute('value', 'Test Value');
     element.setAttribute('placeholder', 'Search here...');
 
-    // waiting for lit update
-
     defer(() => {
       const input = shadow.querySelector('input');
       expect(input?.value).to.equal('Test Value');

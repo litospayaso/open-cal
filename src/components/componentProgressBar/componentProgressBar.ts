@@ -141,9 +141,17 @@ export class ComponentProgressBar extends LitElement {
     let currentProteinPercent = this.proteinEatenPercent;
 
     if (currentFatPercent === -1 || currentCarbsPercent === -1 || currentProteinPercent === -1) {
-      currentFatPercent = (fatCalories / totalGoal) * 100;
-      currentCarbsPercent = (carbsCalories / totalGoal) * 100;
-      currentProteinPercent = (proteinCalories / totalGoal) * 100;
+      const macroTotal = (fatCalories + carbsCalories + proteinCalories) || 1;
+      currentFatPercent = (fatCalories / macroTotal) * 100;
+      currentCarbsPercent = (carbsCalories / macroTotal) * 100;
+      currentProteinPercent = (proteinCalories / macroTotal) * 100;
+
+      // If no calories are eaten, set all to 0 instead of 0/1/0 etc.
+      if ((fatCalories + carbsCalories + proteinCalories) === 0) {
+        currentFatPercent = 0;
+        currentCarbsPercent = 0;
+        currentProteinPercent = 0;
+      }
     }
 
     const totalEatenPercent = currentFatPercent + currentCarbsPercent + currentProteinPercent;
@@ -172,15 +180,15 @@ export class ComponentProgressBar extends LitElement {
             ${statusText}
         </div>
         <div class="progress-bar-track" role="progressbar" aria-valuenow="${this.caloriesEaten}" aria-valuemin="0" aria-valuemax="${this.dailyCaloriesGoal}" aria-label="Daily calories progress">
-           <div class="segment fat" style="width: ${renderedFatWidth}%" title="Fat: ${this.fatEaten}g"></div>
            <div class="segment carbs" style="width: ${renderedCarbsWidth}%" title="Carbs: ${this.carbsEaten}g"></div>
+           <div class="segment fat" style="width: ${renderedFatWidth}%" title="Fat: ${this.fatEaten}g"></div>
            <div class="segment protein" style="width: ${renderedProteinWidth}%" title="Protein: ${this.proteinEaten}g"></div>
         </div>
         <div class="label-container">
           <div class="macros-label">
-             <div><span class="label fat">${this.translationsTexts['fat']}</span> <span>${Math.round(currentFatPercent)}</span> / ${this.fatGoalPercent}%</div>
-             <div><span class="label carbs">${this.translationsTexts['carbs']}</span> <span>${Math.round(currentCarbsPercent)}</span> / ${this.carbsGoalPercent}%</div>
-             <div><span class="label protein">${this.translationsTexts['protein']}</span> <span>${Math.round(currentProteinPercent)}</span> / ${this.proteinGoalPercent}%</div>
+            <div><span class="label carbs">${this.translationsTexts['carbs']}</span> <span>${Math.round(currentCarbsPercent)}</span> / ${this.carbsGoalPercent}%</div>
+            <div><span class="label fat">${this.translationsTexts['fat']}</span> <span>${Math.round(currentFatPercent)}</span> / ${this.fatGoalPercent}%</div>
+            <div><span class="label protein">${this.translationsTexts['protein']}</span> <span>${Math.round(currentProteinPercent)}</span> / ${this.proteinGoalPercent}%</div>
           </div>
           <div class="label">
              <span>${this.caloriesEaten}</span> / ${this.dailyCaloriesGoal} ${this.translationsTexts['kcalEated']}

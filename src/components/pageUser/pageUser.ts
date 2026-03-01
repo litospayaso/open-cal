@@ -88,35 +88,6 @@ export default class PageUser extends Page {
         border: 1px solid var(--palette-red, #f44336);
         background: rgba(244, 67, 54, 0.1);
       }
-      .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        color: var(--app-text-color-primary, #333);
-      }
-      .modal {
-        background: var(--card-background, #fff);
-        color: var(--card-text);
-        padding: 20px;
-        border-radius: 8px;
-        max-width: 90%;
-        width: 300px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        text-align: center;
-      }
-      .modal-buttons {
-        display: flex;
-        gap: 10px;
-        margin-top: 20px;
-        justify-content: center;
-      }
       .btn-secondary {
         background: #ccc;
         color: #fff;
@@ -140,25 +111,6 @@ export default class PageUser extends Page {
         border: 1px solid var(--card-border);
         border-radius: 8px;
         margin-bottom: 8px;
-      }
-      .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-      }
-      .modal-header h3 {
-        margin: 0;
-      }
-      .close-btn {
-        background: none;
-        border: none;
-        font-size: 24px;
-        cursor: pointer;
-        color: var(--card-text);
-        padding: 0;
-        line-height: 1;
-        width: auto;
       }
       .weight-history-form {
         display: flex;
@@ -235,7 +187,6 @@ export default class PageUser extends Page {
   onPageInit(): void {
     const savedProfile = localStorage.getItem('user_profile');
 
-    // Theme and Language are global app settings, handled separately often, but synced here
     this.language = this.getLanguage();
     this.theme = (localStorage.getItem('theme') || 'light') as 'light' | 'dark';
 
@@ -253,14 +204,12 @@ export default class PageUser extends Page {
         console.error('Failed to parse user profile', e);
       }
     } else {
-      // Migration logic for legacy data
       const legacyHeight = localStorage.getItem('userHs');
       const legacyWeight = localStorage.getItem('userWs');
 
       if (legacyHeight) this.height = Number(legacyHeight);
       if (legacyWeight) this.weight = Number(legacyWeight);
 
-      // Save immediatly to create the new structure
       this._saveProfile();
     }
 
@@ -345,7 +294,6 @@ export default class PageUser extends Page {
       await this.db.saveWeightEntry(this.newWeightDate, this.newWeightValue);
       await this._loadWeightHistory();
 
-      // If we saved for today, update the current weight
       const today = new Date().toISOString().split('T')[0];
       if (this.newWeightDate === today) {
         this.weight = this.newWeightValue;
@@ -409,8 +357,7 @@ export default class PageUser extends Page {
         this.importMessage = { text: this.translations.fileCannotBeParsed || 'File can not be parsed', type: 'error' };
         this.importData = null;
       }
-      // Reset input
-      (e.target as HTMLInputElement).value = '';
+      // (e.target as HTMLInputElement).value = '';
     };
     reader.readAsText(file);
   }
@@ -439,7 +386,6 @@ export default class PageUser extends Page {
             row[h] = parts[i];
           });
 
-          // Reconstruct nested structures if necessary
           if (currentStore === 'daily_consumption') {
             if (!data.daily_consumption) data.daily_consumption = [];
             let log = data.daily_consumption.find((l: any) => l.date === row.Date);
@@ -506,17 +452,19 @@ export default class PageUser extends Page {
 
     try {
       const count = await this.db.importData(this.importData, this.importOverride);
+      const successMsg = this.translations.dataImportedCorrectly || 'Data imported correctly.';
+      const countMsg = (this.translations.importedNewValues || 'Imported {count} new values.').replace('{count}', count.toString());
+
       this.importMessage = {
-        text: `${this.translations.dataImportedCorrecty || 'Data imported correctly.'}\n Imported ${count} new values.`,
+        text: `${successMsg}\n${countMsg}`,
         type: 'success'
       };
       this.showImportModal = false;
       this.importData = null;
-      // Refresh local state if profile was updated
       this.onPageInit();
     } catch (err) {
       console.error('Final import error:', err);
-      this.importMessage = { text: 'Error importing data', type: 'error' };
+      this.importMessage = { text: this.translations.errorImporting || 'Error importing data', type: 'error' };
     }
   }
 
@@ -541,23 +489,23 @@ export default class PageUser extends Page {
   render() {
     return html`
       <div class="card">
-        <h2>${this.translations.personalDetails || 'Personal Details'}</h2>
+        <h2>${this.translations.personalDetails}</h2>
         
         <div class="form-group">
-          <label>${this.translations.gender || 'Gender'}</label>
+          <label>${this.translations.gender}</label>
           <select .value="${this.gender}" @change="${this._handleGenderChange}">
-            <option value="male" ?selected="${this.gender === 'male'}">${this.translations.male || 'Male'}</option>
-            <option value="female" ?selected="${this.gender === 'female'}">${this.translations.female || 'Female'}</option>
-            <option value="non-binary" ?selected="${this.gender === 'non-binary'}">${this.translations.nonBinary || 'Non-binary'}</option>
+            <option value="male" ?selected="${this.gender === 'male'}">${this.translations.male}</option>
+            <option value="female" ?selected="${this.gender === 'female'}">${this.translations.female}</option>
+            <option value="non-binary" ?selected="${this.gender === 'non-binary'}">${this.translations.nonBinary}</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label>${this.translations.height || 'Height'} (cm)</label>
+          <label>${this.translations.height} (cm)</label>
           <input type="number" .value="${this.height}" @input="${(e: Event) => this._handleNumberInput('height', e)}" placeholder="e.g. 175" />
         </div>
         <div class="form-group">
-          <label>${this.translations.weight || 'Weight'} (kg)</label>
+          <label>${this.translations.weight} (kg)</label>
           <input type="number" step="0.1" .value="${this.weight}" @input="${(e: Event) => this._handleNumberInput('weight', e)}" placeholder="e.g. 70.5" />
         </div>
 
@@ -566,49 +514,49 @@ export default class PageUser extends Page {
         </div>
 
         <button class="btn" @click="${() => this.showWeightModal = true}">
-          ${this.translations.updateHistoricalWeight || 'Update historical user weight data'}
+          ${this.translations.updateHistoricalWeight}
         </button>
       </div>
 
       <div class="card">
-        <h2>${this.translations.nutritionalGoals || 'Nutritional Goals'}</h2>
+        <h2>${this.translations.nutritionalGoals}</h2>
         
         <div class="form-group">
-          <label>${this.translations.dailyCalories || 'Daily Calories'}</label>
+          <label>${this.translations.dailyCalories}</label>
           <input class="input-calories" type="number" .value="${this.dailyCalories}" @input="${(e: Event) => this._handleNumberInput('dailyCalories', e)}" placeholder="e.g. 2000" />
         </div>
 
-        <label>${this.translations.macroRatio || 'Macronutrient Ratio'} (%)</label>
+        <label>${this.translations.macroRatio} (%)</label>
         <div class="macro-inputs">
           <div class="form-group">
-            <label>${this.translations.protein || 'Protein'}</label>
+            <label>${this.translations.protein}</label>
             <input class="input-protein" type="number" .value="${this.proteinRatio}" @input="${(e: Event) => this._handleNumberInput('proteinRatio', e)}" />
           </div>
           <div class="form-group">
-            <label>${this.translations.carbs || 'Carbs'}</label>
+            <label>${this.translations.carbs}</label>
             <input class="input-carbs" type="number" .value="${this.carbsRatio}" @input="${(e: Event) => this._handleNumberInput('carbsRatio', e)}" />
           </div>
           <div class="form-group">
-            <label>${this.translations.fat || 'Fat'}</label>
+            <label>${this.translations.fat}</label>
             <input class="input-fat" type="number" .value="${this.fatRatio}" @input="${(e: Event) => this._handleNumberInput('fatRatio', e)}" />
           </div>
         </div>
         <div style="font-size: 0.8rem; color: #666; margin-top: 5px; text-align: right;">
-          Total: ${this.proteinRatio + this.carbsRatio + this.fatRatio}%
+          ${this.translations.total}: ${this.proteinRatio + this.carbsRatio + this.fatRatio}%
         </div>
       </div>
 
       <div class="card">
-        <h2>${this.translations.settings || 'Settings'}</h2>
+        <h2>${this.translations.settings}</h2>
         <div class="form-group">
-          <label>${this.translations.theme || 'Theme'}</label>
+          <label>${this.translations.theme}</label>
           <div class="theme-toggles">
-            <button class="btn" style="color: white; background-color:var(--palette-green)" @click="${() => this._handleThemeChange('light')}">${this.translations.light || 'Light'}</button>
-            <button class="btn" style="color: white; background-color:var(--palette-purple)" @click="${() => this._handleThemeChange('dark')}">${this.translations.dark || 'Dark'}</button>
+            <button class="btn" style="color: white; background-color:var(--palette-green)" @click="${() => this._handleThemeChange('light')}">${this.translations.light}</button>
+            <button class="btn" style="color: white; background-color:var(--palette-purple)" @click="${() => this._handleThemeChange('dark')}">${this.translations.dark}</button>
           </div>
         </div>
         <div class="form-group">
-          <label>${this.translations.language || 'Language'}</label>
+          <label>${this.translations.language}</label>
           <select .value="${this.language}" @change="${this._handleLanguageChange}">
             <option value="en" ?selected="${this.language === 'en'}">English</option>
             <option value="es" ?selected="${this.language === 'es'}">Español</option>
@@ -620,15 +568,15 @@ export default class PageUser extends Page {
       </div>
 
       <div class="card">
-        <h2>${this.translations.dataManagement || 'Data Management'}</h2>
-        <p style="margin-bottom: 10px;">${this.translations.exportDataDesc || 'Backup your logs, account settings and weight history.'}</p>
+        <h2>${this.translations.dataManagement}</h2>
+        <p style="margin-bottom: 10px;">${this.translations.exportDataDesc}</p>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
           <button class="btn" @click="${() => this.showExportModal = true}">
-            ${this.translations.exportData || 'Export Data'}
+            ${this.translations.exportData}
           </button>
           
           <div class="file-input-wrapper">
-            <button class="btn">${this.translations.importData || 'Import Data'}</button>
+            <button class="btn">${this.translations.importData}</button>
             <input type="file" accept=".json,.csv" @change="${this._handleFileSelect}" />
           </div>
         </div>
@@ -641,21 +589,24 @@ export default class PageUser extends Page {
       </div>
 
       <div class="card danger-zone">
-        <h2>${this.translations.dangerZone || 'Danger Zone'}</h2>
-        <p style="margin-bottom: 10px;">${this.translations.clearDataWarning || 'Clear all your data permanently. This cannot be undone.'}</p>
+        <h2>${this.translations.dangerZone}</h2>
+        <p style="margin-bottom: 10px;">${this.translations.clearDataWarning}</p>
         <button class="btn-danger" @click="${() => this.showClearModal = true}">
-          ${this.translations.clearAllData || 'Clear All Data'}
+          ${this.translations.clearAllData}
         </button>
       </div>
 
       ${this.showClearModal ? html`
         <div class="modal-overlay">
           <div class="modal">
-            <h3>${this.translations.confirmClearData || 'Are you sure?'}</h3>
-            <p>${this.translations.confirmClearDataDesc || 'This will delete all your logs, meals, and settings permanently.'}</p>
+            <div class="modal-header">
+              <h3>${this.translations.confirmClearData || 'Confirm Clear Data'}</h3>
+              <button class="close-btn" @click="${() => this.showClearModal = false}">&times;</button>
+            </div>
+            <p>${this.translations.clearDataMsg || 'Are you sure you want to clear all app data? This action cannot be undone.'}</p>
             <div class="modal-buttons">
               <button class="btn" @click="${() => this.showClearModal = false}">${this.translations.cancel || 'Cancel'}</button>
-              <button class="btn-danger" @click="${this._clearAllData}">${this.translations.confirm || 'Confirm'}</button>
+              <button class="btn-danger" @click="${this._clearAllData}">${this.translations.clear || 'Clear'}</button>
             </div>
           </div>
         </div>
@@ -663,14 +614,10 @@ export default class PageUser extends Page {
 
       ${this.showWeightModal ? html`
         <div class="modal-overlay">
-          <div class="modal" style="width: 400px; max-width: 95%;">
+          <div class="modal" style="width: 500px; max-width: 95%;">
             <div class="modal-header">
               <h3>${this.translations.weightHistory || 'Weight History'}</h3>
-              <button class="close-btn" @click="${() => this.showWeightModal = false}">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </button>
+              <button class="close-btn" @click="${() => this.showWeightModal = false}">&times;</button>
             </div>
             
             <div class="weight-history-list">
@@ -705,52 +652,48 @@ export default class PageUser extends Page {
 
       ${this.showExportModal ? html`
         <div class="modal-overlay">
-          <div class="modal" style="width: 400px; max-width: 95%;">
+          <div class="modal" style="width: 450px; max-width: 95%;">
             <div class="modal-header">
-              <h3>${this.translations.exportData || 'Export Data'}</h3>
-              <button class="close-btn" @click="${() => this.showExportModal = false}">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </button>
+              <h3>${this.translations.exportData}</h3>
+              <button class="close-btn" @click="${() => this.showExportModal = false}">&times;</button>
             </div>
 
             <div style="text-align: left; margin-bottom: 20px;">
-              <p style="font-weight: bold; margin-bottom: 10px;">${this.translations.selectDataToExport || 'Select data to export'}:</p>
+              <p style="font-weight: bold; margin-bottom: 10px;">${this.translations.selectDataToExport}:</p>
               
-              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+              <label class="checkbox-label">
                 <input type="checkbox" ?checked="${this.exportStores.has('daily_consumption')}" @change="${() => this._toggleExportStore('daily_consumption')}">
-                ${this.translations.dailyConsumption || 'Daily Consumption'}
+                ${this.translations.dailyConsumption}
               </label>
               
-              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+              <label class="checkbox-label">
                 <input type="checkbox" ?checked="${this.exportStores.has('user_data')}" @change="${() => this._toggleExportStore('user_data')}">
-                ${this.translations.userData || 'User Profile & Weight History'}
+                ${this.translations.userData}
               </label>
 
-              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+              <label class="checkbox-label">
                 <input type="checkbox" ?checked="${this.exportStores.has('meals')}" @change="${() => this._toggleExportStore('meals')}">
-                ${this.translations.savedMeals || 'Saved Meals'}
+                ${this.translations.savedMeals}
               </label>
 
-              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+              <label class="checkbox-label">
                 <input type="checkbox" ?checked="${this.exportStores.has('products')}" @change="${() => this._toggleExportStore('products')}">
-                ${this.translations.cachedProducts || 'Cached Products'}
+                ${this.translations.cachedProducts}
               </label>
 
-              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+              <label class="checkbox-label">
                 <input type="checkbox" ?checked="${this.exportStores.has('favorites')}" @change="${() => this._toggleExportStore('favorites')}">
-                ${this.translations.favorites || 'Favorites'}
+                ${this.translations.favorites}
               </label>
 
-              <p style="font-weight: bold; margin: 20px 0 10px;">${this.translations.selectFormat || 'Select format'}:</p>
+              <p style="font-weight: bold; margin: 20px 0 10px;">${this.translations.selectExportFormat}:</p>
               
-              <div style="display: flex; gap: 20px;">
-                <label style="cursor: pointer;">
+              <div style="display: flex; gap: 20px; justify-content: center;">
+                <label class="radio-label">
                   <input type="radio" name="format" value="json" ?checked="${this.exportFormat === 'json'}" @change="${() => this.exportFormat = 'json'}">
                   JSON
                 </label>
-                <label style="cursor: pointer;">
+                <label class="radio-label">
                   <input type="radio" name="format" value="csv" ?checked="${this.exportFormat === 'csv'}" @change="${() => this.exportFormat = 'csv'}">
                   CSV
                 </label>
@@ -758,7 +701,7 @@ export default class PageUser extends Page {
             </div>
 
             <button class="btn" style="width: 100%;" ?disabled="${this.exportStores.size === 0}" @click="${this._handleExport}">
-              ${this.translations.exportConfirm || 'Export Now'}
+              ${this.translations.exportConfirm}
             </button>
           </div>
         </div>
@@ -767,17 +710,20 @@ export default class PageUser extends Page {
       ${this.showImportModal ? html`
         <div class="modal-overlay">
           <div class="modal" style="width: 400px; max-width: 95%;">
-            <h3>${this.translations.confirmImport || 'Confirm Import'}</h3>
-            <p>${this.translations.confirmOverrideMsg || 'Do you want to override the current app data?'}</p>
+            <div class="modal-header">
+              <h3>${this.translations.confirmImport}</h3>
+              <button class="close-btn" @click="${() => this.showImportModal = false}">&times;</button>
+            </div>
+            <p>${this.translations.confirmOverrideMsg}</p>
             
-            <label style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px 0; cursor: pointer;">
+            <label class="checkbox-label" style="justify-content: center; margin: 20px 0;">
               <input type="checkbox" .checked="${this.importOverride}" @change="${(e: any) => this.importOverride = e.target.checked}">
-              ${this.translations.overrideCurrentData || 'Override current data'}
+              ${this.translations.overrideCurrentData}
             </label>
 
             <div class="modal-buttons">
-              <button class="btn" @click="${() => this.showImportModal = false}">${this.translations.cancel || 'Cancel'}</button>
-              <button class="btn" @click="${this._proceedImport}">${this.translations.import || 'Import'}</button>
+              <button class="btn" @click="${() => this.showImportModal = false}">${this.translations.cancel}</button>
+              <button class="btn" @click="${this._proceedImport}">${this.translations.import}</button>
             </div>
           </div>
         </div>

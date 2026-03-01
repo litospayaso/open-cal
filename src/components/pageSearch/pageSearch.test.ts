@@ -18,7 +18,6 @@ describe('SearchPage Component Spec:', () => {
       api: mockApi
     });
 
-    // Mock db on component instance since we can't easily mock the import
     (component.element as any).db = {
       init: () => Promise.resolve(),
       getAllCachedProducts: () => Promise.resolve([]),
@@ -56,7 +55,6 @@ describe('SearchPage Component Spec:', () => {
       composed: true
     }));
 
-    // Wait for async operations
     await new Promise(resolve => setTimeout(resolve, 100));
 
     const resultItem = shadow.querySelector('component-search-result');
@@ -65,7 +63,6 @@ describe('SearchPage Component Spec:', () => {
   });
 
   it('should switch mode when group button is clicked', async () => {
-    // Mock db responses
     (element as any).db = {
       init: () => Promise.resolve(),
       getAllCachedProducts: () => Promise.resolve([{ product_name: 'Cached Product', code: '123' }]),
@@ -80,10 +77,8 @@ describe('SearchPage Component Spec:', () => {
     const groupButton = shadow.querySelector('component-group-button');
     expect(groupButton).to.exist;
 
-    // Simulate switching to favorites
     groupButton?.dispatchEvent(new CustomEvent('group-button-click', { detail: { id: 'favorites' } }));
     await (element as any).updateComplete;
-    // Wait for async load
     await new Promise(r => setTimeout(r, 0));
     await (element as any).updateComplete;
 
@@ -157,7 +152,6 @@ describe('SearchPage Component Spec:', () => {
     await (element as any).onPageInit();
     await (element as any).updateComplete;
 
-    // Trigger search
     const input = shadow.querySelector('component-search-input');
     input?.dispatchEvent(new CustomEvent('search-init', {
       detail: { query: 'New', isButtonClick: true },
@@ -165,23 +159,19 @@ describe('SearchPage Component Spec:', () => {
       composed: true
     }));
     await (element as any).updateComplete;
-    // Wait for search results
     await new Promise(r => setTimeout(r, 0));
     await (element as any).updateComplete;
 
     const result = shadow.querySelector('component-search-result');
     expect(result).to.exist;
 
-    // Click favorite
     result?.dispatchEvent(new CustomEvent('favorite-click', {
       detail: { code: '999', value: 'true' },
       bubbles: true,
       composed: true
     }));
 
-    // Wait for async operations in _handleFavoriteClick
     await new Promise(r => setTimeout(r, 0));
-    // Wait a bit more for the fetch and cache
     await new Promise(r => setTimeout(r, 50));
 
     expect(getProductCalled).to.be.true;

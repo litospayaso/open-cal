@@ -54,7 +54,7 @@ export default class ComponentPieChart extends LitElement {
     if (total > 0) {
       proteinDeg = (this.protein / total) * 360;
       carbsDeg = proteinDeg + (this.carbs / total) * 360;
-      fatDeg = carbsDeg + (this.fat / total) * 360; // Should be around 360
+      fatDeg = carbsDeg + (this.fat / total) * 360;
     }
 
     const style = `

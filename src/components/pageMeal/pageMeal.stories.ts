@@ -5,10 +5,6 @@ import { mockQueryParams } from '../../shared/test-helper';
 
 const render = (args: any) => {
   const element = document.createElement('page-meal');
-  // Mocking query params. 
-  // 'new' for creating a new meal
-  // or a uuid for editing (which would require mocking DB or localStorage state ideally, 
-  // but for storybook pure view 'new' is safest default unless we mock DB)
   mockQueryParams(element, { page: 'meal', id: args.id });
   return element;
 }
@@ -38,6 +34,6 @@ export const NewMeal: Story = {
 export const EditMeal: Story = {
   render,
   args: {
-    id: 'existing-id' // Takes 'new' logic if not found in DB/Validation
+    id: 'existing-id'
   }
 };

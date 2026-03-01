@@ -156,6 +156,7 @@ export default class PageMeal extends Page {
         margin-bottom: 0;
       }
       .menu-btn {
+        color: var(--text-color);
         background: none;
         border: none;
         font-size: 1.5rem;
@@ -185,39 +186,10 @@ export default class PageMeal extends Page {
         font-size: 1rem;
       }
       .dropdown-item:hover {
-        background-color: var(--input-background);
+        background-color: var(--group-button-active-bg);
       }
       .dropdown-item.delete {
         color: var(--palette-red, #f44336);
-      }
-      .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        color: var(--app-text-color-primary, #333);
-      }
-      .modal {
-        background: var(--card-background, #fff);
-        color: var(--card-text);
-        padding: 20px;
-        border-radius: 8px;
-        max-width: 90%;
-        width: 300px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        text-align: center;
-      }
-      .modal-buttons {
-        display: flex;
-        gap: 10px;
-        margin-top: 20px;
-        justify-content: center;
       }
     `
   ];
@@ -277,7 +249,6 @@ export default class PageMeal extends Page {
   private async _addToDiary() {
     const date = this.selectedDate;
 
-    // Calculate totals
     const totals = this.meal.foods.reduce((acc, f) => {
       const ratio = f.quantity / 100;
       return {
@@ -302,7 +273,7 @@ export default class PageMeal extends Page {
         nutrition_data_per: 'serving',
         nutrition_data_prepared_per: 'serving'
       },
-      quantity: 1, // 1 serv of the meal
+      quantity: 1,
       unit: 'meal'
     };
 
@@ -311,7 +282,7 @@ export default class PageMeal extends Page {
       this.triggerPageNavigation({ page: 'home', maintainParams: 'false' });
     } catch (e) {
       console.error("Error adding meal to diary", e);
-      this.error = "Failed to add to diary";
+      this.error = this.translations.errorAddingToDiary || "Failed to add to diary";
     }
   }
 
@@ -319,7 +290,7 @@ export default class PageMeal extends Page {
     const newFoods = [...this.meal.foods];
     newFoods.splice(index, 1);
     this.meal = { ...this.meal, foods: newFoods };
-    await this.db.saveMeal(this.meal); // Auto-save removal
+    await this.db.saveMeal(this.meal);
   }
 
   private _generateId(): string {
@@ -329,7 +300,7 @@ export default class PageMeal extends Page {
   private async _createNewMeal(id: string) {
     this.meal = {
       id: id,
-      name: this.translations.newMeal || 'New Meal', // default name
+      name: this.translations.newMeal || 'New Meal',
       description: '',
       foods: []
     };
@@ -338,7 +309,7 @@ export default class PageMeal extends Page {
       await this.db.saveMeal(this.meal);
     } catch (e) {
       console.error("Error creating new meal", e);
-      this.error = "Failed to create new meal";
+      this.error = this.translations.errorCreatingMeal || "Failed to create new meal";
     }
   }
 
@@ -374,7 +345,7 @@ export default class PageMeal extends Page {
     const newMeal: Meal = {
       ...this.meal,
       id: newId,
-      name: `${this.meal.name} - duplicated`,
+      name: (this.translations.duplicatedSuffix || '{name} - duplicated').replace('{name}', this.meal.name),
     };
 
     try {
@@ -383,7 +354,7 @@ export default class PageMeal extends Page {
       this.onPageInit()
     } catch (e) {
       console.error("Error duplicating meal", e);
-      this.error = "Failed to duplicate meal";
+      this.error = this.translations.errorDuplicatingMeal || "Failed to duplicate meal";
     }
   }
 
@@ -401,7 +372,7 @@ export default class PageMeal extends Page {
       }
     } catch (e) {
       console.error("Error deleting meal", e);
-      this.error = "Failed to delete meal";
+      this.error = this.translations.errorDeletingMeal || "Failed to delete meal";
     } finally {
       this.showDeleteModal = false;
     }
@@ -411,7 +382,7 @@ export default class PageMeal extends Page {
     return html`
       <div class="page-container">
         <div class="header-container">
-            <h1>${this.isNew ? this.translations.createNewMeal : this.translations.editProduct}</h1>
+            <h1>${this.isNew ? this.translations.createNewMeal : this.translations.editMeal}</h1>
             ${!this.isNew ? html`
             <div style="position: relative;">
                 <button class="menu-btn" @click="${this._toggleMenu}">&#8942;</button>
@@ -553,7 +524,10 @@ export default class PageMeal extends Page {
         ${this.showDeleteModal ? html`
         <div class="modal-overlay">
           <div class="modal">
-            <h3>${this.translations.confirmClearData}</h3>
+            <div class="modal-header">
+              <h3>${this.translations.confirmClearData}</h3>
+              <button class="close-btn" @click="${() => this.showDeleteModal = false}">&times;</button>
+            </div>
             <p>${this.translations.deleteMealMessage}</p>
             <div class="modal-buttons">
               <button class="btn" @click="${() => this.showDeleteModal = false}">${this.translations.cancel}</button>

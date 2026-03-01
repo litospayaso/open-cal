@@ -1,6 +1,6 @@
 import { html } from 'lit';
 import type { Meta, StoryObj } from '@storybook/web-components';
-import './index'; // Import the component
+import './index';
 
 const meta: Meta = {
   title: 'Pages/PageCodeScanner',
@@ -24,12 +24,8 @@ export const Default: Story = {
 
 export const WithoutPermission: Story = {
   render: () => {
-    // Mock navigator.mediaDevices.getUserMedia to fail
     const originalGetUserMedia = navigator.mediaDevices.getUserMedia;
     navigator.mediaDevices.getUserMedia = () => Promise.reject(new Error('Permission denied'));
-
-    // Restore after render (this is tricky in stories, might affect others if not careful)
-    // Ideally use a decorator or just let it fail naturally if the user blocks it.
 
     return html`
       <div style="width: 100%; height: 600px; position: relative;">
@@ -41,7 +37,6 @@ export const WithoutPermission: Story = {
 
 export const NotSupported: Story = {
   render: () => {
-    // Mock BarcodeDetector missing
     const originalBarcodeDetector = (window as any).BarcodeDetector;
     (window as any).BarcodeDetector = undefined;
 

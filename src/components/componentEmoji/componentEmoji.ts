@@ -50,7 +50,6 @@ export class ComponentEmoji extends LitElement {
   private _getRandomEmoji(input: string): string {
     let hash = 0;
 
-    // Hash the input string (normalized)
     for (let i = 0; i < input.length; i++) {
       hash = ((hash << 5) - hash) + input.charCodeAt(i);
       hash |= 0;

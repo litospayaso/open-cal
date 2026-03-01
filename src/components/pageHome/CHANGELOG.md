@@ -1,5 +1,11 @@
 # home-page
 
+## 0.0.8
+
+### Patch Changes
+
+- fixing error on calculating daily percent fat, carbs and proteins
+
 ## 0.0.7
 
 ### Patch Changes

@@ -152,7 +152,6 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
           const searchResponse = await this.api.searchProduct(this.query);
           const rawProducts = searchResponse.products || [];
 
-          // Check if any of these are cached/edited
           products = await Promise.all(rawProducts.map(async (p: any) => {
             const cached = await this.db.getCachedProduct(p.code);
             return cached || p;
@@ -237,11 +236,10 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
       const product = this.searchResult.find(product => product.code === e.detail.code);
       if (product) {
         product.isFavorite = e.detail.value === 'true';
-        this.requestUpdate(); // specific update to show UI change immediately
+        this.requestUpdate();
 
         if (product.isFavorite) {
           try {
-            // Fetch full product to cache it correctly
             const fullProduct = await this.api.getProduct(e.detail.code);
             if (fullProduct) {
               await this.db.cacheProduct(fullProduct);
@@ -249,7 +247,6 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
             }
           } catch (err) {
             console.error('Error adding favorite', err);
-            // Revert UI if failed? For now keep it simple
           }
         } else {
           await this.db.removeFavorite(e.detail.code);
@@ -263,7 +260,6 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
       if (this.viewMode === 'meals') {
         this.triggerPageNavigation({ page: 'meal', mealId: e.detail.code });
       } else {
-        // If we are in search (non-meal) but we have a mealId param, pass it
         const params = this.getQueryParamsURL();
         const mealId = params.get('mealId');
         const navParams: any = { page: 'food', code: e.detail.code };

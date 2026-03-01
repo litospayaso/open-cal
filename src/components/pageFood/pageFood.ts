@@ -308,7 +308,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
       status: 1,
       status_verbose: 'product found',
       product: {
-        product_name: queryName || 'New Product',
+        product_name: queryName || this.translations.unknownProduct || 'New Product',
         brands: '',
         nutriments: {
           'energy-kcal_100g': 0,
@@ -437,7 +437,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
 
     } catch (e) {
       console.error("Error adding to diary", e);
-      this.error = "Failed to add to diary";
+      this.error = this.translations.errorAddingToDiary || "Failed to add to diary";
     }
   }
 
@@ -466,17 +466,17 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
           unit: 'g'
         };
 
-        if (!meal.foods) meal.foods = []; // Safety check
+        if (!meal.foods) meal.foods = [];
         meal.foods.push(foodItem);
 
         await this.db.saveMeal(meal);
         this.triggerPageNavigation({ page: 'meal', mealId: this.mealId });
       } else {
-        this.error = "Meal not found in database";
+        this.error = this.translations.errorMealNotFound || "Meal not found in database";
       }
     } catch (e) {
       console.error("Error adding to meal", e);
-      this.error = "Failed to add to meal";
+      this.error = this.translations.errorAddingToMeal || "Failed to add to meal";
     }
   }
 
@@ -507,7 +507,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
       <div class="page-container">
         <div class="product-header">
           <div class="emoji-container">
-            <component-emoji text="${(this.product.product as any).product_name || 'Unknown Product'}" size="l"></component-emoji>
+            <component-emoji text="${(this.product.product as any).product_name || this.translations.unknownProduct}" size="l"></component-emoji>
           </div>
           </div>
           <div class="product-name">
@@ -519,20 +519,20 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
                 type="text" 
                 .value="${(this.editedProduct?.product as any).product_name || ''}" 
                 @input="${this._handleNameChange}"
-                placeholder="Product Name"
+                placeholder="${this.translations.productName}"
               />
               <input 
                 class="brand-input"
                 type="text" 
                 .value="${(this.editedProduct?.product as any).brands || ''}" 
                 @input="${this._handleBrandChange}"
-                placeholder="Brand"
+                placeholder="${this.translations.brand}"
               />
             </div>
           `
         : html`
             <div style="text-align: center;">
-              <h1 class="product-name-title">${(this.product.product as any).product_name || 'Unknown Product'}</h1>
+              <h1 class="product-name-title">${(this.product.product as any).product_name || this.translations.unknownProduct}</h1>
               ${(this.product.product as any).brands ? html`<div class="product-brand">${(this.product.product as any).brands}</div>` : ''}
             </div>
         `
@@ -541,7 +541,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         <button 
           @click="${this._toggleFavorite}" 
           class="favorite-btn"
-          aria-label="${this.isFavoriteState ? 'Remove from favorites' : 'Add to favorites'}"
+          aria-label="${this.isFavoriteState ? this.translations.removeFromFavorites : this.translations.addToFavorites}"
         >
           <svg
             class="favorite-icon ${this.isFavoriteState ? 'is-favorite' : ''}"

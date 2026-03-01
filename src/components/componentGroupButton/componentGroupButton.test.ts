@@ -22,7 +22,6 @@ describe('GroupButton Component Spec:', () => {
     shadow = component.shadow;
     element = component.element;
 
-    // Set initial options
     await (element as ComponentGroupButton).updateComplete;
   });
 
