@@ -26877,6 +26877,146 @@
         request2.onerror = () => reject(request2.error);
       });
     }
+    async getExportData(selectedStores, format) {
+      await this.ensureInit();
+      const exportData = {};
+      if (selectedStores.includes("user_data")) {
+        const profile = localStorage.getItem("user_profile");
+        exportData.user_profile = profile ? JSON.parse(profile) : null;
+        exportData.weight_history = await this.getWeightHistory();
+      }
+      if (selectedStores.includes("daily_consumption")) {
+        exportData.daily_consumption = await this._getAllFromStore(STORE_NAME);
+      }
+      if (selectedStores.includes("products")) {
+        exportData.products = await this._getAllFromStore(STORE_PRODUCTS);
+      }
+      if (selectedStores.includes("favorites")) {
+        exportData.favorites = await this._getAllFromStore(STORE_FAVORITES);
+      }
+      if (selectedStores.includes("meals")) {
+        exportData.meals = await this._getAllFromStore(STORE_MEALS);
+      }
+      if (format === "json") {
+        return {
+          content: JSON.stringify(exportData, null, 2),
+          extension: "json"
+        };
+      } else {
+        let csvContent = "";
+        if (exportData.user_profile) {
+          csvContent += "--- USER PROFILE ---\n";
+          csvContent += "Height,Weight,Gender,DailyCalories,ProteinRatio,CarbsRatio,FatRatio\n";
+          const p3 = exportData.user_profile;
+          csvContent += `${p3.height || ""},${p3.weight || ""},${p3.gender || ""},${p3.goals?.calories || ""},${p3.goals?.macros?.protein || ""},${p3.goals?.macros?.carbs || ""},${p3.goals?.macros?.fat || ""}
+
+`;
+        }
+        if (exportData.weight_history) {
+          csvContent += "--- WEIGHT HISTORY ---\n";
+          csvContent += "Date,Weight\n";
+          exportData.weight_history.forEach((h3) => {
+            csvContent += `${h3.date},${h3.weight}
+`;
+          });
+          csvContent += "\n";
+        }
+        if (exportData.daily_consumption) {
+          csvContent += "--- DAILY CONSUMPTION ---\n";
+          csvContent += "Date,Category,ProductName,Quantity,Unit,Calories,Carbs,Fat,Protein\n";
+          exportData.daily_consumption.forEach((log) => {
+            const categories = ["breakfast", "snack1", "lunch", "snack2", "dinner", "snack3"];
+            categories.forEach((cat) => {
+              log[cat]?.forEach((item) => {
+                csvContent += `${log.date},${cat},"${item.product.product_name || ""}",${item.quantity},${item.unit},${item.product.nutriments?.["energy-kcal"] || 0},${item.product.nutriments?.carbohydrates || 0},${item.product.nutriments?.fat || 0},${item.product.nutriments?.proteins || 0}
+`;
+              });
+            });
+          });
+          csvContent += "\n";
+        }
+        if (exportData.meals) {
+          csvContent += "--- SAVED MEALS ---\n";
+          csvContent += "MealID,MealName,FoodName,Quantity,Unit\n";
+          exportData.meals.forEach((meal) => {
+            meal.foods?.forEach((f3) => {
+              csvContent += `${meal.id},"${meal.name}","${f3.product.product_name || ""}",${f3.quantity},${f3.unit}
+`;
+            });
+          });
+          csvContent += "\n";
+        }
+        if (exportData.favorites) {
+          csvContent += "--- FAVORITES ---\n";
+          csvContent += "ProductCode\n";
+          exportData.favorites.forEach((f3) => {
+            csvContent += `${f3.code}
+`;
+          });
+        }
+        return {
+          content: csvContent,
+          extension: "csv"
+        };
+      }
+    }
+    async importData(data, override) {
+      await this.ensureInit();
+      let importedCount = 0;
+      const storesMap = {
+        "daily_consumption": STORE_NAME,
+        "products": STORE_PRODUCTS,
+        "favorites": STORE_FAVORITES,
+        "meals": STORE_MEALS,
+        "weight_history": STORE_WEIGHT_HISTORY
+      };
+      for (const [key, storeName] of Object.entries(storesMap)) {
+        if (data[key] && Array.isArray(data[key])) {
+          const transaction = this.db.transaction([storeName], "readwrite");
+          const store = transaction.objectStore(storeName);
+          for (const item of data[key]) {
+            let shouldPut = true;
+            if (!override) {
+              if (key === "products") {
+                const existing = await this.getCachedProduct(item.code);
+                if (existing) shouldPut = false;
+              } else if (key === "meals") {
+                const existing = await this.getMeal(item.id);
+                if (existing) shouldPut = false;
+              } else if (key === "weight_history") {
+                const history = await this.getWeightHistory();
+                const existing = history.find((h3) => h3.date === item.date);
+                if (existing) shouldPut = false;
+              }
+            }
+            if (shouldPut) {
+              await new Promise((resolve, reject) => {
+                const request2 = store.put(item);
+                request2.onsuccess = () => {
+                  importedCount++;
+                  resolve();
+                };
+                request2.onerror = () => reject(request2.error);
+              });
+            }
+          }
+        }
+      }
+      if (data.user_profile) {
+        localStorage.setItem("user_profile", JSON.stringify(data.user_profile));
+        importedCount++;
+      }
+      return importedCount;
+    }
+    async _getAllFromStore(storeName) {
+      return new Promise((resolve, reject) => {
+        const transaction = this.db.transaction([storeName], "readonly");
+        const store = transaction.objectStore(storeName);
+        const request2 = store.getAll();
+        request2.onsuccess = () => resolve(request2.result || []);
+        request2.onerror = () => reject(request2.error);
+      });
+    }
     async ensureInit() {
       if (!this.db) {
         await this.init();
@@ -27303,12 +27443,15 @@
     navigateToPage(params, maintainParams = true) {
       delete params.isTrusted;
       const currentParams = Object.fromEntries(this.getQueryParamsURL());
+      maintainParams = params.maintainParams === "false" ? false : maintainParams;
       if (params.page) {
         this.page = params.page || "home";
       }
       if (maintainParams) {
         params = { ...currentParams, ...params };
       }
+      delete params.maintainParams;
+      console.log("%c params", "background: #df03fc; color: #f8fc03", params);
       this.setQueryParamsURL(params);
       this.requestUpdate();
     }
@@ -32737,7 +32880,7 @@
           unit: "g"
         };
         await this.db.addFoodItem(this.selectedDate, this.selectedCategory, foodItem);
-        this.triggerPageNavigation({ page: "home" });
+        this.triggerPageNavigation({ page: "home", maintainParams: "false" });
       } catch (e6) {
         console.error("Error adding to diary", e6);
         this.error = "Failed to add to diary";
@@ -33339,6 +33482,13 @@
       this.weightHistory = [];
       this.newWeightDate = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
       this.newWeightValue = 0;
+      this.showExportModal = false;
+      this.exportFormat = "json";
+      this.exportStores = /* @__PURE__ */ new Set(["daily_consumption", "user_data", "meals", "products", "favorites"]);
+      this.showImportModal = false;
+      this.importData = null;
+      this.importOverride = false;
+      this.importMessage = null;
     }
     static {
       this.styles = [
@@ -33508,6 +33658,27 @@
         border-radius: 4px;
         cursor: pointer;
       }
+      .file-input-wrapper {
+        position: relative;
+        display: inline-block;
+        margin-top: 10px;
+        width: 100%;
+      }
+      .file-input-wrapper input[type="file"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+      }
+      .import-msg {
+        margin-top: 8px;
+        font-size: 0.9rem;
+      }
+      .import-msg.success { color: var(--palette-green, #4caf50); }
+      .import-msg.error { color: var(--palette-red, #f44336); }
     `
       ];
     }
@@ -33610,6 +33781,153 @@
         }
       }
     }
+    async _handleExport() {
+      const { content, extension } = await this.db.getExportData(Array.from(this.exportStores), this.exportFormat);
+      const now = /* @__PURE__ */ new Date();
+      const dateStr = now.toISOString().split("T")[0];
+      const timeStr = now.toTimeString().split(" ")[0].replace(/:/g, "-");
+      const filename = `BroteData_${dateStr}_${timeStr}.${extension}`;
+      const blob = new Blob([content], { type: extension === "json" ? "application/json" : "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a3 = document.createElement("a");
+      a3.href = url;
+      a3.download = filename;
+      a3.click();
+      URL.revokeObjectURL(url);
+      this.showExportModal = false;
+    }
+    _toggleExportStore(store) {
+      const newStores = new Set(this.exportStores);
+      if (newStores.has(store)) {
+        newStores.delete(store);
+      } else {
+        newStores.add(store);
+      }
+      this.exportStores = newStores;
+    }
+    _handleFileSelect(e6) {
+      const file = e6.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const content = event.target?.result;
+        const extension = file.name.split(".").pop()?.toLowerCase();
+        try {
+          if (extension === "json") {
+            this.importData = JSON.parse(content);
+          } else if (extension === "csv") {
+            this.importData = this._parseCSV(content);
+          } else {
+            throw new Error("Unsupported file format");
+          }
+          this.showImportModal = true;
+          this.importMessage = null;
+        } catch (err) {
+          console.error("Import error:", err);
+          this.importMessage = { text: this.translations.fileCannotBeParsed || "File can not be parsed", type: "error" };
+          this.importData = null;
+        }
+        e6.target.value = "";
+      };
+      reader.readAsText(file);
+    }
+    _parseCSV(content) {
+      const data = {};
+      const lines = content.split("\n");
+      let currentStore = "";
+      let headers = [];
+      lines.forEach((line) => {
+        line = line.trim();
+        if (!line) return;
+        if (line.startsWith("--- ")) {
+          const storeName = line.replace(/---/g, "").trim().toLowerCase().replace(/ /g, "_");
+          currentStore = storeName === "saved_meals" ? "meals" : storeName;
+          headers = [];
+        } else if (currentStore) {
+          const parts = line.split(",").map((p3) => p3.trim().replace(/^"|"$/g, ""));
+          if (headers.length === 0) {
+            headers = parts;
+          } else {
+            const row = {};
+            headers.forEach((h3, i5) => {
+              row[h3] = parts[i5];
+            });
+            if (currentStore === "daily_consumption") {
+              if (!data.daily_consumption) data.daily_consumption = [];
+              let log = data.daily_consumption.find((l3) => l3.date === row.Date);
+              if (!log) {
+                log = { date: row.Date, breakfast: [], snack1: [], lunch: [], snack2: [], dinner: [], snack3: [] };
+                data.daily_consumption.push(log);
+              }
+              const cat = row.Category;
+              log[cat].push({
+                product: {
+                  product_name: row.ProductName,
+                  nutriments: {
+                    "energy-kcal": Number(row.Calories),
+                    carbohydrates: Number(row.Carbs),
+                    fat: Number(row.Fat),
+                    proteins: Number(row.Protein)
+                  }
+                },
+                quantity: Number(row.Quantity),
+                unit: row.Unit
+              });
+            } else if (currentStore === "weight_history") {
+              if (!data.weight_history) data.weight_history = [];
+              data.weight_history.push({ date: row.Date, weight: Number(row.Weight) });
+            } else if (currentStore === "user_profile") {
+              data.user_profile = {
+                height: Number(row.Height),
+                weight: Number(row.Weight),
+                gender: row.Gender,
+                goals: {
+                  calories: Number(row.DailyCalories),
+                  macros: {
+                    protein: Number(row.ProteinRatio || 30),
+                    carbs: Number(row.CarbsRatio || 40),
+                    fat: Number(row.FatRatio || 30)
+                  }
+                }
+              };
+            } else if (currentStore === "meals") {
+              if (!data.meals) data.meals = [];
+              let meal = data.meals.find((m2) => m2.id === row.MealID);
+              if (!meal) {
+                meal = { id: row.MealID, name: row.MealName, foods: [] };
+                data.meals.push(meal);
+              }
+              meal.foods.push({
+                product: { product_name: row.FoodName },
+                quantity: Number(row.Quantity),
+                unit: row.Unit
+              });
+            } else if (currentStore === "favorites") {
+              if (!data.favorites) data.favorites = [];
+              data.favorites.push({ code: row.ProductCode });
+            }
+          }
+        }
+      });
+      return data;
+    }
+    async _proceedImport() {
+      if (!this.importData) return;
+      try {
+        const count = await this.db.importData(this.importData, this.importOverride);
+        this.importMessage = {
+          text: `${this.translations.dataImportedCorrecty || "Data imported correctly."}
+ Imported ${count} new values.`,
+          type: "success"
+        };
+        this.showImportModal = false;
+        this.importData = null;
+        this.onPageInit();
+      } catch (err) {
+        console.error("Final import error:", err);
+        this.importMessage = { text: "Error importing data", type: "error" };
+      }
+    }
     _formatDate(dateStr) {
       const [year, month, day] = dateStr.split("-");
       return `${day}/${month}/${year}`;
@@ -33707,6 +34025,27 @@
         </div>
       </div>
 
+      <div class="card">
+        <h2>${this.translations.dataManagement || "Data Management"}</h2>
+        <p style="margin-bottom: 10px;">${this.translations.exportDataDesc || "Backup your logs, account settings and weight history."}</p>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button class="btn" @click="${() => this.showExportModal = true}">
+            ${this.translations.exportData || "Export Data"}
+          </button>
+          
+          <div class="file-input-wrapper">
+            <button class="btn">${this.translations.importData || "Import Data"}</button>
+            <input type="file" accept=".json,.csv" @change="${this._handleFileSelect}" />
+          </div>
+        </div>
+
+        ${this.importMessage ? b2`
+          <div class="import-msg ${this.importMessage.type}">
+            ${this.importMessage.text.split("\n").map((line) => b2`<div>${line}</div>`)}
+          </div>
+        ` : ""}
+      </div>
+
       <div class="card danger-zone">
         <h2>${this.translations.dangerZone || "Danger Zone"}</h2>
         <p style="margin-bottom: 10px;">${this.translations.clearDataWarning || "Clear all your data permanently. This cannot be undone."}</p>
@@ -33769,6 +34108,86 @@
           </div>
         </div>
       ` : ""}
+
+      ${this.showExportModal ? b2`
+        <div class="modal-overlay">
+          <div class="modal" style="width: 400px; max-width: 95%;">
+            <div class="modal-header">
+              <h3>${this.translations.exportData || "Export Data"}</h3>
+              <button class="close-btn" @click="${() => this.showExportModal = false}">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+
+            <div style="text-align: left; margin-bottom: 20px;">
+              <p style="font-weight: bold; margin-bottom: 10px;">${this.translations.selectDataToExport || "Select data to export"}:</p>
+              
+              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+                <input type="checkbox" ?checked="${this.exportStores.has("daily_consumption")}" @change="${() => this._toggleExportStore("daily_consumption")}">
+                ${this.translations.dailyConsumption || "Daily Consumption"}
+              </label>
+              
+              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+                <input type="checkbox" ?checked="${this.exportStores.has("user_data")}" @change="${() => this._toggleExportStore("user_data")}">
+                ${this.translations.userData || "User Profile & Weight History"}
+              </label>
+
+              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+                <input type="checkbox" ?checked="${this.exportStores.has("meals")}" @change="${() => this._toggleExportStore("meals")}">
+                ${this.translations.savedMeals || "Saved Meals"}
+              </label>
+
+              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+                <input type="checkbox" ?checked="${this.exportStores.has("products")}" @change="${() => this._toggleExportStore("products")}">
+                ${this.translations.cachedProducts || "Cached Products"}
+              </label>
+
+              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+                <input type="checkbox" ?checked="${this.exportStores.has("favorites")}" @change="${() => this._toggleExportStore("favorites")}">
+                ${this.translations.favorites || "Favorites"}
+              </label>
+
+              <p style="font-weight: bold; margin: 20px 0 10px;">${this.translations.selectFormat || "Select format"}:</p>
+              
+              <div style="display: flex; gap: 20px;">
+                <label style="cursor: pointer;">
+                  <input type="radio" name="format" value="json" ?checked="${this.exportFormat === "json"}" @change="${() => this.exportFormat = "json"}">
+                  JSON
+                </label>
+                <label style="cursor: pointer;">
+                  <input type="radio" name="format" value="csv" ?checked="${this.exportFormat === "csv"}" @change="${() => this.exportFormat = "csv"}">
+                  CSV
+                </label>
+              </div>
+            </div>
+
+            <button class="btn" style="width: 100%;" ?disabled="${this.exportStores.size === 0}" @click="${this._handleExport}">
+              ${this.translations.exportConfirm || "Export Now"}
+            </button>
+          </div>
+        </div>
+      ` : ""}
+
+      ${this.showImportModal ? b2`
+        <div class="modal-overlay">
+          <div class="modal" style="width: 400px; max-width: 95%;">
+            <h3>${this.translations.confirmImport || "Confirm Import"}</h3>
+            <p>${this.translations.confirmOverrideMsg || "Do you want to override the current app data?"}</p>
+            
+            <label style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px 0; cursor: pointer;">
+              <input type="checkbox" .checked="${this.importOverride}" @change="${(e6) => this.importOverride = e6.target.checked}">
+              ${this.translations.overrideCurrentData || "Override current data"}
+            </label>
+
+            <div class="modal-buttons">
+              <button class="btn" @click="${() => this.showImportModal = false}">${this.translations.cancel || "Cancel"}</button>
+              <button class="btn" @click="${this._proceedImport}">${this.translations.import || "Import"}</button>
+            </div>
+          </div>
+        </div>
+      ` : ""}
     `;
     }
   };
@@ -33814,6 +34233,27 @@
   __decorateClass([
     r5()
   ], PageUser.prototype, "newWeightValue", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "showExportModal", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "exportFormat", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "exportStores", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "showImportModal", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "importData", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "importOverride", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "importMessage", 2);
 
   // src/components/componentLineChart/componentLineChart.ts
   var ComponentLineChart = class extends i4 {
@@ -34242,7 +34682,14 @@
         try {
           const profile = JSON.parse(savedProfile);
           if (profile.goals) {
-            this.userGoals = profile.goals;
+            this.userGoals = {
+              ...this.userGoals,
+              ...profile.goals,
+              macros: {
+                ...this.userGoals.macros,
+                ...profile.goals.macros || {}
+              }
+            };
           }
         } catch (e6) {
           console.error("Failed to parse user profile", e6);
@@ -34952,7 +35399,7 @@
       };
       try {
         await this.db.addFoodItem(date, this.selectedCategory, mealItem);
-        this.triggerPageNavigation({ page: "home" });
+        this.triggerPageNavigation({ page: "home", maintainParams: "false" });
       } catch (e6) {
         console.error("Error adding meal to diary", e6);
         this.error = "Failed to add to diary";
