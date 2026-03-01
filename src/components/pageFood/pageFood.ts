@@ -433,7 +433,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
 
       await this.db.addFoodItem(this.selectedDate, this.selectedCategory, foodItem);
 
-      this.triggerPageNavigation({ page: 'home' });
+      this.triggerPageNavigation({ page: 'home', maintainParams: 'false' },);
 
     } catch (e) {
       console.error("Error adding to diary", e);

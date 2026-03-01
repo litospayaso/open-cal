@@ -1,5 +1,11 @@
 # page-user
 
+## 0.0.2
+
+### Patch Changes
+
+- adding import/export logic for the first version
+
 ## 0.0.1
 
 ### Patch Changes

@@ -44,12 +44,15 @@ export default class PageOpenCal extends Page {
   navigateToPage(params: { [key: string]: string }, maintainParams: boolean = true): void {
     delete (params.isTrusted);
     const currentParams = Object.fromEntries(this.getQueryParamsURL());
+    maintainParams = params.maintainParams === 'false' ? false : maintainParams;
     if (params.page) {
       this.page = params.page || 'home';
     }
     if (maintainParams) {
       params = { ...currentParams, ...params };
     }
+    delete params.maintainParams;
+    console.log('%c params', 'background: #df03fc; color: #f8fc03', params);
     this.setQueryParamsURL(params);
     this.requestUpdate();
   }

@@ -1,6 +1,7 @@
 import { html, css, type PropertyValues } from 'lit';
 import { state } from 'lit/decorators.js';
 import Page from '../../shared/page';
+import type { MealCategory } from '../../shared/db';
 
 interface UserProfile {
   height: number;
@@ -184,6 +185,27 @@ export default class PageUser extends Page {
         border-radius: 4px;
         cursor: pointer;
       }
+      .file-input-wrapper {
+        position: relative;
+        display: inline-block;
+        margin-top: 10px;
+        width: 100%;
+      }
+      .file-input-wrapper input[type="file"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+      }
+      .import-msg {
+        margin-top: 8px;
+        font-size: 0.9rem;
+      }
+      .import-msg.success { color: var(--palette-green, #4caf50); }
+      .import-msg.error { color: var(--palette-red, #f44336); }
     `
   ];
 
@@ -202,6 +224,13 @@ export default class PageUser extends Page {
   @state() weightHistory: { date: string, weight: number }[] = [];
   @state() newWeightDate: string = new Date().toISOString().split('T')[0];
   @state() newWeightValue: number = 0;
+  @state() showExportModal: boolean = false;
+  @state() exportFormat: 'json' | 'csv' = 'json';
+  @state() exportStores: Set<string> = new Set(['daily_consumption', 'user_data', 'meals', 'products', 'favorites']);
+  @state() showImportModal: boolean = false;
+  @state() importData: any = null;
+  @state() importOverride: boolean = false;
+  @state() importMessage: { text: string, type: 'success' | 'error' } | null = null;
 
   onPageInit(): void {
     const savedProfile = localStorage.getItem('user_profile');
@@ -325,6 +354,172 @@ export default class PageUser extends Page {
     }
   }
 
+  private async _handleExport() {
+    const { content, extension } = await this.db.getExportData(Array.from(this.exportStores), this.exportFormat);
+
+    // Filename: BroteData_YYYY-mm-dd_hh-mm-ss.[json|csv]
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0];
+    const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '-');
+    const filename = `BroteData_${dateStr}_${timeStr}.${extension}`;
+
+    const blob = new Blob([content], { type: extension === 'json' ? 'application/json' : 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    this.showExportModal = false;
+  }
+
+  private _toggleExportStore(store: string) {
+    const newStores = new Set(this.exportStores);
+    if (newStores.has(store)) {
+      newStores.delete(store);
+    } else {
+      newStores.add(store);
+    }
+    this.exportStores = newStores;
+  }
+
+  private _handleFileSelect(e: Event) {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      const extension = file.name.split('.').pop()?.toLowerCase();
+
+      try {
+        if (extension === 'json') {
+          this.importData = JSON.parse(content);
+        } else if (extension === 'csv') {
+          this.importData = this._parseCSV(content);
+        } else {
+          throw new Error('Unsupported file format');
+        }
+
+        this.showImportModal = true;
+        this.importMessage = null;
+      } catch (err) {
+        console.error('Import error:', err);
+        this.importMessage = { text: this.translations.fileCannotBeParsed || 'File can not be parsed', type: 'error' };
+        this.importData = null;
+      }
+      // Reset input
+      (e.target as HTMLInputElement).value = '';
+    };
+    reader.readAsText(file);
+  }
+
+  private _parseCSV(content: string): any {
+    const data: any = {};
+    const lines = content.split('\n');
+    let currentStore = '';
+    let headers: string[] = [];
+
+    lines.forEach(line => {
+      line = line.trim();
+      if (!line) return;
+
+      if (line.startsWith('--- ')) {
+        const storeName = line.replace(/---/g, '').trim().toLowerCase().replace(/ /g, '_');
+        currentStore = storeName === 'saved_meals' ? 'meals' : storeName;
+        headers = [];
+      } else if (currentStore) {
+        const parts = line.split(',').map(p => p.trim().replace(/^"|"$/g, ''));
+        if (headers.length === 0) {
+          headers = parts;
+        } else {
+          const row: any = {};
+          headers.forEach((h, i) => {
+            row[h] = parts[i];
+          });
+
+          // Reconstruct nested structures if necessary
+          if (currentStore === 'daily_consumption') {
+            if (!data.daily_consumption) data.daily_consumption = [];
+            let log = data.daily_consumption.find((l: any) => l.date === row.Date);
+            if (!log) {
+              log = { date: row.Date, breakfast: [], snack1: [], lunch: [], snack2: [], dinner: [], snack3: [] };
+              data.daily_consumption.push(log);
+            }
+            const cat = row.Category as MealCategory;
+            log[cat].push({
+              product: {
+                product_name: row.ProductName,
+                nutriments: {
+                  'energy-kcal': Number(row.Calories),
+                  carbohydrates: Number(row.Carbs),
+                  fat: Number(row.Fat),
+                  proteins: Number(row.Protein)
+                }
+              },
+              quantity: Number(row.Quantity),
+              unit: row.Unit
+            });
+          } else if (currentStore === 'weight_history') {
+            if (!data.weight_history) data.weight_history = [];
+            data.weight_history.push({ date: row.Date, weight: Number(row.Weight) });
+          } else if (currentStore === 'user_profile') {
+            data.user_profile = {
+              height: Number(row.Height),
+              weight: Number(row.Weight),
+              gender: row.Gender,
+              goals: {
+                calories: Number(row.DailyCalories),
+                macros: {
+                  protein: Number(row.ProteinRatio || 30),
+                  carbs: Number(row.CarbsRatio || 40),
+                  fat: Number(row.FatRatio || 30)
+                }
+              }
+            };
+          } else if (currentStore === 'meals') {
+            if (!data.meals) data.meals = [];
+            let meal = data.meals.find((m: any) => m.id === row.MealID);
+            if (!meal) {
+              meal = { id: row.MealID, name: row.MealName, foods: [] };
+              data.meals.push(meal);
+            }
+            meal.foods.push({
+              product: { product_name: row.FoodName },
+              quantity: Number(row.Quantity),
+              unit: row.Unit
+            });
+          } else if (currentStore === 'favorites') {
+            if (!data.favorites) data.favorites = [];
+            data.favorites.push({ code: row.ProductCode });
+          }
+        }
+      }
+    });
+
+    return data;
+  }
+
+  private async _proceedImport() {
+    if (!this.importData) return;
+
+    try {
+      const count = await this.db.importData(this.importData, this.importOverride);
+      this.importMessage = {
+        text: `${this.translations.dataImportedCorrecty || 'Data imported correctly.'}\n Imported ${count} new values.`,
+        type: 'success'
+      };
+      this.showImportModal = false;
+      this.importData = null;
+      // Refresh local state if profile was updated
+      this.onPageInit();
+    } catch (err) {
+      console.error('Final import error:', err);
+      this.importMessage = { text: 'Error importing data', type: 'error' };
+    }
+  }
+
   private _formatDate(dateStr: string): string {
     const [year, month, day] = dateStr.split('-');
     return `${day}/${month}/${year}`;
@@ -424,6 +619,27 @@ export default class PageUser extends Page {
         </div>
       </div>
 
+      <div class="card">
+        <h2>${this.translations.dataManagement || 'Data Management'}</h2>
+        <p style="margin-bottom: 10px;">${this.translations.exportDataDesc || 'Backup your logs, account settings and weight history.'}</p>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button class="btn" @click="${() => this.showExportModal = true}">
+            ${this.translations.exportData || 'Export Data'}
+          </button>
+          
+          <div class="file-input-wrapper">
+            <button class="btn">${this.translations.importData || 'Import Data'}</button>
+            <input type="file" accept=".json,.csv" @change="${this._handleFileSelect}" />
+          </div>
+        </div>
+
+        ${this.importMessage ? html`
+          <div class="import-msg ${this.importMessage.type}">
+            ${this.importMessage.text.split('\n').map(line => html`<div>${line}</div>`)}
+          </div>
+        ` : ''}
+      </div>
+
       <div class="card danger-zone">
         <h2>${this.translations.dangerZone || 'Danger Zone'}</h2>
         <p style="margin-bottom: 10px;">${this.translations.clearDataWarning || 'Clear all your data permanently. This cannot be undone.'}</p>
@@ -482,6 +698,86 @@ export default class PageUser extends Page {
               <button class="btn" @click="${this._saveNewWeightEntry}">
                 ${this.translations.saveEntry || 'Save Entry'}
               </button>
+            </div>
+          </div>
+        </div>
+      ` : ''}
+
+      ${this.showExportModal ? html`
+        <div class="modal-overlay">
+          <div class="modal" style="width: 400px; max-width: 95%;">
+            <div class="modal-header">
+              <h3>${this.translations.exportData || 'Export Data'}</h3>
+              <button class="close-btn" @click="${() => this.showExportModal = false}">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+
+            <div style="text-align: left; margin-bottom: 20px;">
+              <p style="font-weight: bold; margin-bottom: 10px;">${this.translations.selectDataToExport || 'Select data to export'}:</p>
+              
+              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+                <input type="checkbox" ?checked="${this.exportStores.has('daily_consumption')}" @change="${() => this._toggleExportStore('daily_consumption')}">
+                ${this.translations.dailyConsumption || 'Daily Consumption'}
+              </label>
+              
+              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+                <input type="checkbox" ?checked="${this.exportStores.has('user_data')}" @change="${() => this._toggleExportStore('user_data')}">
+                ${this.translations.userData || 'User Profile & Weight History'}
+              </label>
+
+              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+                <input type="checkbox" ?checked="${this.exportStores.has('meals')}" @change="${() => this._toggleExportStore('meals')}">
+                ${this.translations.savedMeals || 'Saved Meals'}
+              </label>
+
+              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+                <input type="checkbox" ?checked="${this.exportStores.has('products')}" @change="${() => this._toggleExportStore('products')}">
+                ${this.translations.cachedProducts || 'Cached Products'}
+              </label>
+
+              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+                <input type="checkbox" ?checked="${this.exportStores.has('favorites')}" @change="${() => this._toggleExportStore('favorites')}">
+                ${this.translations.favorites || 'Favorites'}
+              </label>
+
+              <p style="font-weight: bold; margin: 20px 0 10px;">${this.translations.selectFormat || 'Select format'}:</p>
+              
+              <div style="display: flex; gap: 20px;">
+                <label style="cursor: pointer;">
+                  <input type="radio" name="format" value="json" ?checked="${this.exportFormat === 'json'}" @change="${() => this.exportFormat = 'json'}">
+                  JSON
+                </label>
+                <label style="cursor: pointer;">
+                  <input type="radio" name="format" value="csv" ?checked="${this.exportFormat === 'csv'}" @change="${() => this.exportFormat = 'csv'}">
+                  CSV
+                </label>
+              </div>
+            </div>
+
+            <button class="btn" style="width: 100%;" ?disabled="${this.exportStores.size === 0}" @click="${this._handleExport}">
+              ${this.translations.exportConfirm || 'Export Now'}
+            </button>
+          </div>
+        </div>
+      ` : ''}
+
+      ${this.showImportModal ? html`
+        <div class="modal-overlay">
+          <div class="modal" style="width: 400px; max-width: 95%;">
+            <h3>${this.translations.confirmImport || 'Confirm Import'}</h3>
+            <p>${this.translations.confirmOverrideMsg || 'Do you want to override the current app data?'}</p>
+            
+            <label style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px 0; cursor: pointer;">
+              <input type="checkbox" .checked="${this.importOverride}" @change="${(e: any) => this.importOverride = e.target.checked}">
+              ${this.translations.overrideCurrentData || 'Override current data'}
+            </label>
+
+            <div class="modal-buttons">
+              <button class="btn" @click="${() => this.showImportModal = false}">${this.translations.cancel || 'Cancel'}</button>
+              <button class="btn" @click="${this._proceedImport}">${this.translations.import || 'Import'}</button>
             </div>
           </div>
         </div>

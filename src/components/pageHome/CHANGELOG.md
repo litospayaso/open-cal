@@ -1,5 +1,11 @@
 # home-page
 
+## 0.0.7
+
+### Patch Changes
+
+- adding import/export logic for the first version
+
 ## 0.0.6
 
 ### Patch Changes

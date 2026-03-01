@@ -308,7 +308,7 @@ export default class PageMeal extends Page {
 
     try {
       await this.db.addFoodItem(date, this.selectedCategory, mealItem);
-      this.triggerPageNavigation({ page: 'home' });
+      this.triggerPageNavigation({ page: 'home', maintainParams: 'false' });
     } catch (e) {
       console.error("Error adding meal to diary", e);
       this.error = "Failed to add to diary";

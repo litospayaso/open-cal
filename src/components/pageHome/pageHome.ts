@@ -158,7 +158,14 @@ export default class PageHome extends Page {
       try {
         const profile = JSON.parse(savedProfile);
         if (profile.goals) {
-          this.userGoals = profile.goals;
+          this.userGoals = {
+            ...this.userGoals,
+            ...profile.goals,
+            macros: {
+              ...this.userGoals.macros,
+              ...(profile.goals.macros || {})
+            }
+          };
         }
       } catch (e) {
         console.error('Failed to parse user profile', e);

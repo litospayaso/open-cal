@@ -501,6 +501,162 @@ export class DBService {
     });
   }
 
+  async getExportData(selectedStores: string[], format: 'json' | 'csv'): Promise<{ content: string, extension: string }> {
+    await this.ensureInit();
+    const exportData: any = {};
+
+    // 1. Collect Data
+    if (selectedStores.includes('user_data')) {
+      const profile = localStorage.getItem('user_profile');
+      exportData.user_profile = profile ? JSON.parse(profile) : null;
+      exportData.weight_history = await this.getWeightHistory();
+    }
+
+    if (selectedStores.includes('daily_consumption')) {
+      exportData.daily_consumption = await this._getAllFromStore(STORE_NAME);
+    }
+    if (selectedStores.includes('products')) {
+      exportData.products = await this._getAllFromStore(STORE_PRODUCTS);
+    }
+    if (selectedStores.includes('favorites')) {
+      exportData.favorites = await this._getAllFromStore(STORE_FAVORITES);
+    }
+    if (selectedStores.includes('meals')) {
+      exportData.meals = await this._getAllFromStore(STORE_MEALS);
+    }
+
+    // 2. Format Data
+    if (format === 'json') {
+      return {
+        content: JSON.stringify(exportData, null, 2),
+        extension: 'json'
+      };
+    } else {
+      // CSV Logic
+      let csvContent = '';
+
+      if (exportData.user_profile) {
+        csvContent += '--- USER PROFILE ---\n';
+        csvContent += 'Height,Weight,Gender,DailyCalories,ProteinRatio,CarbsRatio,FatRatio\n';
+        const p = exportData.user_profile;
+        csvContent += `${p.height || ''},${p.weight || ''},${p.gender || ''},${p.goals?.calories || ''},${p.goals?.macros?.protein || ''},${p.goals?.macros?.carbs || ''},${p.goals?.macros?.fat || ''}\n\n`;
+      }
+
+      if (exportData.weight_history) {
+        csvContent += '--- WEIGHT HISTORY ---\n';
+        csvContent += 'Date,Weight\n';
+        exportData.weight_history.forEach((h: any) => {
+          csvContent += `${h.date},${h.weight}\n`;
+        });
+        csvContent += '\n';
+      }
+
+      if (exportData.daily_consumption) {
+        csvContent += '--- DAILY CONSUMPTION ---\n';
+        csvContent += 'Date,Category,ProductName,Quantity,Unit,Calories,Carbs,Fat,Protein\n';
+        exportData.daily_consumption.forEach((log: DailyLog) => {
+          const categories: MealCategory[] = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3'];
+          categories.forEach(cat => {
+            log[cat]?.forEach(item => {
+              csvContent += `${log.date},${cat},"${item.product.product_name || ''}",${item.quantity},${item.unit},${item.product.nutriments?.['energy-kcal'] || 0},${item.product.nutriments?.carbohydrates || 0},${item.product.nutriments?.fat || 0},${item.product.nutriments?.proteins || 0}\n`;
+            });
+          });
+        });
+        csvContent += '\n';
+      }
+
+      if (exportData.meals) {
+        csvContent += '--- SAVED MEALS ---\n';
+        csvContent += 'MealID,MealName,FoodName,Quantity,Unit\n';
+        exportData.meals.forEach((meal: Meal) => {
+          meal.foods?.forEach(f => {
+            csvContent += `${meal.id},"${meal.name}","${f.product.product_name || ''}",${f.quantity},${f.unit}\n`;
+          });
+        });
+        csvContent += '\n';
+      }
+
+      if (exportData.favorites) {
+        csvContent += '--- FAVORITES ---\n';
+        csvContent += 'ProductCode\n';
+        exportData.favorites.forEach((f: any) => {
+          csvContent += `${f.code}\n`;
+        });
+      }
+
+      return {
+        content: csvContent,
+        extension: 'csv'
+      };
+    }
+  }
+
+  async importData(data: any, override: boolean): Promise<number> {
+    await this.ensureInit();
+    let importedCount = 0;
+
+    const storesMap: Record<string, string> = {
+      'daily_consumption': STORE_NAME,
+      'products': STORE_PRODUCTS,
+      'favorites': STORE_FAVORITES,
+      'meals': STORE_MEALS,
+      'weight_history': STORE_WEIGHT_HISTORY
+    };
+
+    for (const [key, storeName] of Object.entries(storesMap)) {
+      if (data[key] && Array.isArray(data[key])) {
+        const transaction = this.db!.transaction([storeName], 'readwrite');
+        const store = transaction.objectStore(storeName);
+
+        for (const item of data[key]) {
+          let shouldPut = true;
+
+          if (!override) {
+            if (key === 'products') {
+              const existing = await this.getCachedProduct(item.code);
+              if (existing) shouldPut = false;
+            } else if (key === 'meals') {
+              const existing = await this.getMeal(item.id);
+              if (existing) shouldPut = false;
+            } else if (key === 'weight_history') {
+              const history = await this.getWeightHistory();
+              const existing = history.find(h => h.date === item.date);
+              if (existing) shouldPut = false;
+            }
+          }
+
+          if (shouldPut) {
+            await new Promise<void>((resolve, reject) => {
+              const request = store.put(item);
+              request.onsuccess = () => {
+                importedCount++;
+                resolve();
+              };
+              request.onerror = () => reject(request.error);
+            });
+          }
+        }
+      }
+    }
+
+    if (data.user_profile) {
+      localStorage.setItem('user_profile', JSON.stringify(data.user_profile));
+      importedCount++;
+    }
+
+    return importedCount;
+  }
+
+  private async _getAllFromStore(storeName: string): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([storeName], 'readonly');
+      const store = transaction.objectStore(storeName);
+      const request = store.getAll();
+      request.onsuccess = () => resolve(request.result || []);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
   private async ensureInit(): Promise<void> {
     if (!this.db) {
       await this.init();
