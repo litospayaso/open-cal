@@ -26094,6 +26094,7 @@
       mealDescription: "Descripci\xF3n (Receta)",
       duplicateMeal: "Duplicar comida",
       deleteMeal: "Eliminar comida",
+      delete: "Eliminar",
       addToMeal: "A\xF1adir a la comida",
       saveMeal: "Guardar comida",
       addFood: "A\xF1adir alimento",
@@ -26118,7 +26119,46 @@
       deleteEntry: "Eliminar entrada",
       saveEntry: "Guardar entrada",
       weightHistory: "Historial de peso",
-      addPastWeight: "A\xF1adir peso pasado"
+      addPastWeight: "A\xF1adir peso pasado",
+      dataManagement: "Gesti\xF3n de datos",
+      exportDataDesc: "Copia de seguridad de tus registros, ajustes y historial de peso.",
+      exportData: "Exportar datos",
+      importData: "Importar datos",
+      dataImportedCorrectly: "Datos importados correctamente.",
+      importedNewValues: "Se han importado {count} nuevos valores.",
+      fileCannotBeParsed: "El archivo no se puede procesar",
+      confirmImport: "Confirmar importaci\xF3n",
+      confirmOverrideMsg: "\xBFQuieres sobrescribir los datos actuales?",
+      overrideCurrentData: "Sobrescribir datos actuales",
+      selectDataToExport: "Selecciona los datos a exportar",
+      dailyConsumption: "Consumo diario",
+      userData: "Perfil de usuario e historial",
+      savedMeals: "Comidas guardadas",
+      cachedProducts: "Productos en cach\xE9",
+      selectExportFormat: "Selecciona el formato de exportaci\xF3n",
+      exportConfirm: "Exportar",
+      import: "Importar",
+      clearDataMsg: "\xBFEst\xE1s seguro de que quieres borrar todos los datos? Esta acci\xF3n no se puede deshacer.",
+      errorImporting: "Error al importar los datos",
+      editMeal: "Editar comida",
+      duplicatedSuffix: "{name} - duplicado",
+      errorAddingToDiary: "Error al a\xF1adir al diario",
+      errorCreatingMeal: "Error al crear la comida",
+      errorDuplicatingMeal: "Error al duplicar la comida",
+      errorDeletingMeal: "Error al eliminar la comida",
+      total: "Total",
+      productName: "Nombre del producto",
+      brand: "Marca",
+      removeFromFavorites: "Eliminar de favoritos",
+      addToFavorites: "A\xF1adir a favoritos",
+      errorAddingToMeal: "Error al a\xF1adir a la comida",
+      errorMealNotFound: "Comida no encontrada",
+      cameraPermissionRequired: "Se requiere permiso de c\xE1mara",
+      cameraPermissionDesc: "Por favor, permite el acceso a la c\xE1mara para escanear c\xF3digos de barras.",
+      cameraError: "Acceso a la c\xE1mara denegado o error al iniciar el esc\xE1ner. Por favor, comprueba los permisos.",
+      retry: "Reintentar",
+      goBack: "Volver",
+      unknownProduct: "Producto desconocido"
     },
     en: {
       search: "Search",
@@ -26185,6 +26225,7 @@
       mealDescription: "Description (Recipe)",
       duplicateMeal: "Duplicate meal",
       deleteMeal: "Delete meal",
+      delete: "Delete",
       addToMeal: "Add to meal",
       saveMeal: "Save meal",
       addFood: "Add food",
@@ -26209,7 +26250,46 @@
       deleteEntry: "Delete entry",
       saveEntry: "Save entry",
       weightHistory: "Weight History",
-      addPastWeight: "Add past weight"
+      addPastWeight: "Add past weight",
+      dataManagement: "Data Management",
+      exportDataDesc: "Backup your logs, account settings and weight history.",
+      exportData: "Export Data",
+      importData: "Import Data",
+      dataImportedCorrectly: "Data imported correctly.",
+      importedNewValues: "Imported {count} new values.",
+      fileCannotBeParsed: "File can not be parsed",
+      confirmImport: "Confirm Import",
+      confirmOverrideMsg: "Do you want to override the current app data?",
+      overrideCurrentData: "Override current data",
+      selectDataToExport: "Select data to export",
+      dailyConsumption: "Daily Consumption",
+      userData: "User Profile & History",
+      savedMeals: "Saved Meals",
+      cachedProducts: "Cached Products",
+      selectExportFormat: "Select export format",
+      exportConfirm: "Export",
+      import: "Import",
+      clearDataMsg: "Are you sure you want to clear all app data? This action cannot be undone.",
+      errorImporting: "Error importing data",
+      editMeal: "Edit meal",
+      duplicatedSuffix: "{name} - duplicated",
+      errorAddingToDiary: "Failed to add to diary",
+      errorCreatingMeal: "Failed to create new meal",
+      errorDuplicatingMeal: "Failed to duplicate meal",
+      errorDeletingMeal: "Failed to delete meal",
+      total: "Total",
+      productName: "Product Name",
+      brand: "Brand",
+      removeFromFavorites: "Remove from favorites",
+      addToFavorites: "Add to favorites",
+      errorAddingToMeal: "Failed to add to meal",
+      errorMealNotFound: "Meal not found",
+      cameraPermissionRequired: "Camera Permission Required",
+      cameraPermissionDesc: "Please allow camera access to scan barcodes.",
+      cameraError: "Camera access denied or error starting scanner. Please check permissions.",
+      retry: "Retry",
+      goBack: "Go Back",
+      unknownProduct: "Unknown Product"
     },
     fr: {
       search: "Rechercher",
@@ -26276,6 +26356,7 @@
       mealDescription: "Description (Recette)",
       duplicateMeal: "Dupliquer le repas",
       deleteMeal: "Supprimer le repas",
+      delete: "Supprimer",
       addToMeal: "Ajouter au repas",
       saveMeal: "Enregistrer le repas",
       addFood: "Ajouter un aliment",
@@ -26295,7 +26376,46 @@
       confirm: "Confirmer",
       kcalEated: "kcal consomm\xE9es",
       remainingCals: "Vous pouvez encore consommer {cal} calories",
-      remainingCalsOver: "Vous avez d\xE9pass\xE9 votre apport calorique quotidien de {cal} calories"
+      remainingCalsOver: "Vous avez d\xE9pass\xE9 votre apport calorique quotidien de {cal} calories",
+      dataManagement: "Gestion des donn\xE9es",
+      exportDataDesc: "Sauvegardez vos journaux, param\xE8tres et historique de poids.",
+      exportData: "Exporter les donn\xE9es",
+      importData: "Importer des donn\xE9es",
+      dataImportedCorrectly: "Donn\xE9es import\xE9es avec succ\xE8s.",
+      importedNewValues: "{count} nouvelles valeurs import\xE9es.",
+      fileCannotBeParsed: "Le fichier ne peut pas \xEAtre analys\xE9",
+      confirmImport: "Confirmer l'importation",
+      confirmOverrideMsg: "Voulez-vous \xE9craser les donn\xE9es actuelles de l'application ?",
+      overrideCurrentData: "\xC9craser les donn\xE9es actuelles",
+      selectDataToExport: "S\xE9lectionnez les donn\xE9es \xE0 exporter",
+      dailyConsumption: "Consommation quotidienne",
+      userData: "Profil utilisateur et historique",
+      savedMeals: "Repas enregistr\xE9s",
+      cachedProducts: "Produits en cache",
+      selectExportFormat: "Format d'exportation",
+      exportConfirm: "Exporter",
+      import: "Importer",
+      clearDataMsg: "\xCAtes-vous s\xFBr de vouloir effacer toutes les donn\xE9es ? Cette action est irr\xE9versible.",
+      errorImporting: "Erreur lors de l'importation",
+      editMeal: "Modifier le repas",
+      duplicatedSuffix: "{name} - dupliqu\xE9",
+      errorAddingToDiary: "\xC9chec de l'ajout au journal",
+      errorCreatingMeal: "\xC9chec de la cr\xE9ation du repas",
+      errorDuplicatingMeal: "\xC9chec de la duplication du repas",
+      errorDeletingMeal: "\xC9chec de la suppression du repas",
+      total: "Total",
+      productName: "Nom du produit",
+      brand: "Marque",
+      removeFromFavorites: "Retirer des favoris",
+      addToFavorites: "Ajouter aux favoris",
+      errorAddingToMeal: "\xC9chec de l'ajout au repas",
+      errorMealNotFound: "Repas non trouv\xE9",
+      cameraPermissionRequired: "Permission cam\xE9ra requise",
+      cameraPermissionDesc: "Veuillez autoriser l'acc\xE8s \xE0 la cam\xE9ra pour scanner les codes-barres.",
+      cameraError: "Acc\xE8s \xE0 la cam\xE9ra refus\xE9 ou erreur lors du d\xE9marrage du scanner. Veuillez v\xE9rifier les permissions.",
+      retry: "R\xE9essayer",
+      goBack: "Retour",
+      unknownProduct: "Produit inconnu"
     },
     de: {
       search: "Suche",
@@ -26362,6 +26482,7 @@
       mealDescription: "Beschreibung (Rezept)",
       duplicateMeal: "Duplizieren Mahlzeit",
       deleteMeal: "L\xF6schen Mahlzeit",
+      delete: "L\xF6schen",
       addToMeal: "Zur Mahlzeit hinzuf\xFCgen",
       saveMeal: "Mahlzeit speichern",
       addFood: "Lebensmittel hinzuf\xFCgen",
@@ -26381,7 +26502,46 @@
       confirm: "Best\xE4tigen",
       kcalEated: "kcal konsumiert",
       remainingCals: "Du kannst noch {cal} Kalorien zu dir nehmen",
-      remainingCalsOver: "Du hast deine t\xE4gliche Kalorienzufuhr um {cal} Kalorien \xFCberschritten"
+      remainingCalsOver: "Du hast deine t\xE4gliche Kalorienzufuhr um {cal} Kalorien \xFCberschritten",
+      dataManagement: "Datenverwaltung",
+      exportDataDesc: "Sichern Sie Ihre Protokolle, Einstellungen und Gewichtshistorie.",
+      exportData: "Daten exportieren",
+      importData: "Daten importieren",
+      dataImportedCorrectly: "Daten erfolgreich importiert.",
+      importedNewValues: "{count} neue Werte importiert.",
+      fileCannotBeParsed: "Datei kann nicht analysiert werden",
+      confirmImport: "Import best\xE4tigen",
+      confirmOverrideMsg: "M\xF6chten Sie die aktuellen App-Daten \xFCberschreiben?",
+      overrideCurrentData: "Aktuelle Daten \xFCberschreiben",
+      selectDataToExport: "Daten zum Exportieren ausw\xE4hlen",
+      dailyConsumption: "T\xE4glicher Verbrauch",
+      userData: "Benutzerprofil und Verlauf",
+      savedMeals: "Gespeicherte Mahlzeiten",
+      cachedProducts: "Gespeicherte Produkte",
+      selectExportFormat: "Exportformat ausw\xE4hlen",
+      exportConfirm: "Exportieren",
+      import: "Importieren",
+      clearDataMsg: "Sind Sie sicher, dass Sie alle App-Daten l\xF6schen m\xF6chten? Dies kann nicht r\xFCckg\xE4ngig gemacht werden.",
+      errorImporting: "Fehler beim Importieren der Daten",
+      editMeal: "Mahlzeit bearbeiten",
+      duplicatedSuffix: "{name} - dupliziert",
+      errorAddingToDiary: "Fehler beim Hinzuf\xFCgen zum Tagebuch",
+      errorCreatingMeal: "Fehler beim Erstellen der Mahlzeit",
+      errorDuplicatingMeal: "Fehler beim Duplizieren der Mahlzeit",
+      errorDeletingMeal: "Fehler beim L\xF6schen der Mahlzeit",
+      total: "Gesamt",
+      productName: "Produktname",
+      brand: "Marke",
+      removeFromFavorites: "Von Favoriten entfernen",
+      addToFavorites: "Zu Favoriten hinzuf\xFCgen",
+      errorAddingToMeal: "Fehler beim Hinzuf\xFCgen zur Mahlzeit",
+      errorMealNotFound: "Mahlzeit nicht gefunden",
+      cameraPermissionRequired: "Kameraberechtigung erforderlich",
+      cameraPermissionDesc: "Bitte erlauben Sie den Kamerazugriff, um Barcodes zu scannen.",
+      cameraError: "Kamerazugriff verweigert oder Fehler beim Starten des Scanners. Bitte \xFCberpr\xFCfen Sie die Berechtigungen.",
+      retry: "Wiederholen",
+      goBack: "Zur\xFCck",
+      unknownProduct: "Unbekanntes Produkt"
     },
     it: {
       search: "Cerca",
@@ -26448,6 +26608,7 @@
       mealDescription: "Descrizione (Ricetta)",
       duplicateMeal: "Duplica pasto",
       deleteMeal: "Elimina pasto",
+      delete: "Elimina",
       addToMeal: "Aggiungi al pasto",
       saveMeal: "Salva pasto",
       addFood: "Aggiungi alimento",
@@ -26467,7 +26628,46 @@
       confirm: "Conferma",
       kcalEated: "kcal consumidas",
       remainingCals: "Puoi ancora consumare {cal} calorie",
-      remainingCalsOver: "Hai superato l'apporto calorico giornaliero di {cal} calorie"
+      remainingCalsOver: "Hai superato l'apporto calorico giornaliero di {cal} calorie",
+      dataManagement: "Gestione dati",
+      exportDataDesc: "Backup dei log, delle impostazioni e della cronologia del peso.",
+      exportData: "Esporta dati",
+      importData: "Importa dati",
+      dataImportedCorrectly: "Dati importati correttamente.",
+      importedNewValues: "{count} nuovi valori importati.",
+      fileCannotBeParsed: "Il file non pu\xF2 essere analizzato",
+      confirmImport: "Conferma importazione",
+      confirmOverrideMsg: "Vuoi sovrascrivere i dati attuali dell'app?",
+      overrideCurrentData: "Sovrascrivi dati attuali",
+      selectDataToExport: "Seleziona i dati da esportare",
+      dailyConsumption: "Consumo giornaliero",
+      userData: "Profilo utente e cronologia",
+      savedMeals: "Pasti salvati",
+      cachedProducts: "Prodotti in cache",
+      selectExportFormat: "Seleziona formato esportazione",
+      exportConfirm: "Esporta",
+      import: "Importa",
+      clearDataMsg: "Sei sicuro di voler cancellare tutti i dati dell'app? Questa azione non pu\xF2 essere annullata.",
+      errorImporting: "Errore durante l'importazione dei dati",
+      editMeal: "Modifica pasto",
+      duplicatedSuffix: "{name} - duplicato",
+      errorAddingToDiary: "Impossibile aggiungere al diario",
+      errorCreatingMeal: "Impossibile creare il pasto",
+      errorDuplicatingMeal: "Impossibile duplicare il pasto",
+      errorDeletingMeal: "Impossibile eliminare il pasto",
+      total: "Totale",
+      productName: "Nome prodotto",
+      brand: "Marca",
+      removeFromFavorites: "Rimuovi dai preferiti",
+      addToFavorites: "Aggiungi ai preferiti",
+      errorAddingToMeal: "Impossibile aggiungere al pasto",
+      errorMealNotFound: "Pasto non trovato",
+      cameraPermissionRequired: "Permesso fotocamera richiesto",
+      cameraPermissionDesc: "Si prega di consentire l'accesso alla fotocamera per scansionare i codici a barre.",
+      cameraError: "Accesso alla fotocamera negato o errore durante l'avvio dello scanner. Controlla i permessi.",
+      retry: "Riprova",
+      goBack: "Indietro",
+      unknownProduct: "Prodotto sconosciuto"
     }
   };
 
@@ -27025,6 +27225,95 @@
   };
   var dbService = new DBService();
 
+  // src/shared/functions.ts
+  var loadCss = (styleString, id) => {
+    if (!document.getElementById(id)) {
+      const style = document.createElement("style");
+      style.textContent = styleString;
+      document.head.append(style);
+    }
+  };
+  var register = (tag, component) => {
+    if (document.createElement(tag).constructor === HTMLElement) {
+      const newComponent = component;
+      const classVersion = () => class Version extends newComponent {
+        constructor() {
+          super();
+        }
+      };
+      window.customElements.define(tag, classVersion());
+    }
+  };
+  var variableStyles = i`
+  :root {
+    --palette-lightgrey: #cdcdcd;
+    --palette-grey: #a19fa2;
+    --palette-green: #4fb9ad;
+    --palette-purple: #a285bb;
+    --palette-blue: #a9afe9;
+    --palette-black: #191c25;
+
+    --protein-color: #24d9c4;
+    --fat-color: #f484c7eb;
+    --carbs-color: #ca96f8eb;
+    --calories-color: #707bde;
+
+    --counter-border-width: 2px;
+
+    --background-color: #fff;
+    --text-color: #191c25;
+
+    --card-background: #fff;
+    --card-text: #191c25;
+    --card-border: var(--palette-green);
+
+    --input-background: transparent;
+    --input-text: #191c25;
+    --input-border: #a19fa2;
+    --input-placeholder: #757575;
+
+    --button-icon-color: #fff;
+    --section-background: #f5f5f5;
+
+    --spinner-track-color: rgba(0, 0, 0, 0.1);
+    --spinner-active-color: #4fb9ad;
+
+    --group-button-active-bg: var(--palette-green);
+    --chart-line-color: var(--palette-green);
+    --group-button-active-text: #fff;
+    --group-button-hover-bg: rgba(0, 0, 0, 0.05);
+  }
+
+  [data-theme="dark"] {
+    --background-color: #191c25;
+    --text-color: #fff;
+
+    --card-background: #191c25;
+    --card-text: #fff;
+    --card-border: #a285bb;
+
+    --input-background: rgba(255, 255, 255, 0.1);
+    --input-text: #fff;
+    --input-border: #a285bb;
+    --input-placeholder: #ccc;
+    --section-background: rgba(255, 255, 255, 0.05);
+
+    --spinner-track-color: rgba(255, 255, 255, 0.1);
+    --spinner-active-color: #a9afe9;
+
+    --group-button-active-bg: var(--palette-purple);
+    --chart-line-color: var(--palette-purple);
+    --group-button-active-text: #fff;
+    --group-button-hover-bg: rgba(255, 255, 255, 0.1);
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+  }
+    `;
+
   // src/shared/page.ts
   var Page = class extends i4 {
     constructor() {
@@ -27034,7 +27323,9 @@
       this.translations = translations[this.getLanguage()] || translations.en;
     }
     static {
-      this.styles = [i`
+      this.styles = [
+        variableStyles,
+        i`
     .card {
       background: var(--card-background);
       color: var(--card-text);
@@ -27076,6 +27367,76 @@
     option {
       background-color: var(--card-background);
       color: var(--card-text);
+    }
+    input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 1px solid var(--input-border, #a19fa2);
+      border-radius: 4px;
+      margin-right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      background-color: var(--input-background, transparent);
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    input[type="checkbox"]:checked {
+      background-color: var(--group-button-active-bg, #4fb9ad);
+      border-color: var(--group-button-active-bg, #4fb9ad);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+      background-size: 14px;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    label.checkbox-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-weight: normal;
+      margin-bottom: 0.8rem;
+    }
+    input[type="radio"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 1px solid var(--input-border, #a19fa2);
+      border-radius: 50%;
+      margin-right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      background-color: var(--input-background, transparent);
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    input[type="radio"]:checked {
+      border-color: var(--group-button-active-bg, #4fb9ad);
+    }
+    input[type="radio"]:checked::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      background-color: var(--group-button-active-bg, #4fb9ad);
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    label.radio-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-weight: normal;
+      margin-bottom: 0.8rem;
     }
     .theme-toggles {
       display: flex;
@@ -27121,7 +27482,72 @@
     .btn:hover {
       opacity: 0.9;
     }
-    `];
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(2px);
+    }
+    .modal {
+      background: var(--card-background);
+      color: var(--card-text);
+      padding: 24px;
+      border-radius: 12px;
+      max-width: 90%;
+      width: 400px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      text-align: center;
+      border: 1px solid var(--card-border);
+      position: relative;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .modal-header h3 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: var(--palette-green);
+    }
+    :host-context([data-theme="dark"]) .modal-header h3 {
+      color: var(--palette-purple);
+    }
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: var(--card-text);
+      padding: 0;
+      line-height: 1;
+      width: auto;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .close-btn:hover {
+      opacity: 1;
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      justify-content: center;
+    }
+    .modal-buttons .btn, .modal-buttons .btn-danger {
+      flex: 1;
+      max-width: 150px;
+    }
+    `
+      ];
     }
     /**
      * Function to navigate to another url.
@@ -27306,101 +27732,6 @@
       } });
     };
   }
-
-  // src/shared/functions.ts
-  var loadCss = (styleString, id) => {
-    if (!document.getElementById(id)) {
-      const style = document.createElement("style");
-      style.textContent = styleString;
-      document.head.append(style);
-    }
-  };
-  var register = (tag, component) => {
-    if (document.createElement(tag).constructor === HTMLElement) {
-      const newComponent = component;
-      const classVersion = () => class Version extends newComponent {
-        constructor() {
-          super();
-        }
-      };
-      window.customElements.define(tag, classVersion());
-    }
-  };
-  var variableStyles = i`
-  :root {
-    --palette-grey: #a19fa2;
-    --palette-green: #4fb9ad;
-    --palette-purple: #a285bb;
-    --palette-blue: #a9afe9;
-    --palette-black: #191c25;
-
-    --protein-color: #24d9c4;
-    --fat-color: #f484c7eb;
-    --carbs-color: #ca96f8eb;
-    --calories-color: #707bde;
-
-    --counter-border-width: 2px;
-
-    /* Semantic Variables - Light Mode Default */
-    --background-color: #fff;
-    --text-color: #191c25;
-
-    --card-background: #fff;
-    --card-text: #191c25;
-    --card-border: var(--palette-green);
-
-    --input-background: transparent;
-    --input-text: #191c25;
-    --input-border: #a19fa2;
-    /* palette-grey */
-    --input-placeholder: #757575;
-
-    --button-icon-color: #fff;
-    --section-background: #f5f5f5;
-
-    --spinner-track-color: rgba(0, 0, 0, 0.1);
-    --spinner-active-color: #a285bb;
-
-    --group-button-active-bg: var(--palette-green);
-    --chart-line-color: var(--palette-green);
-    --group-button-active-text: #fff;
-    --group-button-hover-bg: rgba(0, 0, 0, 0.05);
-  }
-
-  [data-theme="dark"] {
-    /* Semantic Variables - Dark Mode Override */
-    --background-color: #191c25;
-    --text-color: #fff;
-
-    --card-background: #191c25;
-    /* palette-black */
-    --card-text: #fff;
-    --card-border: #a285bb;
-    /* palette-purple */
-
-    --input-background: rgba(255, 255, 255, 0.1);
-    --input-text: #fff;
-    --input-border: #a285bb;
-    /* palette-purple */
-    --input-placeholder: #ccc;
-    --section-background: rgba(255, 255, 255, 0.05);
-
-    --spinner-track-color: rgba(255, 255, 255, 0.1);
-    --spinner-active-color: #a9afe9;
-    /* using palette-blue for better visibility in dark mode */
-
-    --group-button-active-bg: var(--palette-purple);
-    --chart-line-color: var(--palette-purple);
-    --group-button-active-text: #fff;
-    --group-button-hover-bg: rgba(255, 255, 255, 0.1);
-  }
-
-  body {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--background-color);
-    color: var(--text-color);
-  }
-    `;
 
   // src/components/pageOpenCal/pageOpenCal.ts
   var _PageOpenCal = class _PageOpenCal extends Page {
@@ -31648,7 +31979,7 @@
       } catch (err) {
         console.error("Error starting scanner:", err);
         this.hasPermission = false;
-        this.error = "Camera access denied or error starting scanner. Please check permissions.";
+        this.error = this.translations.cameraError || "Camera access denied or error starting scanner. Please check permissions.";
       }
     }
     async stopScanning() {
@@ -31675,11 +32006,11 @@
       
       ${this.hasPermission === false ? b2`
         <div class="permission-request">
-          <h2>Camera Permission Required</h2>
-          <p>${this.error || "Please allow camera access to scan barcodes."}</p>
-          <button class="back-btn" @click="${() => this.startScanning()}">Retry</button>
+          <h2>${this.translations.cameraPermissionRequired}</h2>
+          <p>${this.error || this.translations.cameraPermissionDesc}</p>
+          <button class="back-btn" @click="${() => this.startScanning()}">${this.translations.retry}</button>
           <br><br>
-          <button class="back-btn" @click="${this.handleBack}">Go Back</button>
+          <button class="back-btn" @click="${this.handleBack}">${this.translations.goBack}</button>
         </div>
       ` : ""}
 
@@ -31690,7 +32021,7 @@
       </div>
 
       <div class="controls">
-        <button class="back-btn" @click="${this.handleBack}">Cancel</button>
+        <button class="back-btn" @click="${this.handleBack}">${this.translations.cancel}</button>
       </div>
     `;
     }
@@ -32457,7 +32788,6 @@
 
   // src/components/componentEmoji/emojiList.ts
   var emojiList = [
-    // --- Fruits ---
     { emoji: "\u{1F347}", keywords: ["grapes", "fruit", "uvas", "fruta", "raisins", "trauben", "obst", "uva"] },
     { emoji: "\u{1F348}", keywords: ["melon", "fruit", "mel\xF3n", "fruta", "melon", "melone", "melone"] },
     { emoji: "\u{1F349}", keywords: ["watermelon", "fruit", "sand\xEDa", "fruta", "past\xE8que", "wassermelone", "anguria"] },
@@ -32476,7 +32806,6 @@
     { emoji: "\u{1F345}", keywords: ["tomato", "vegetable", "tomate", "vegetal", "tomate", "tomate", "pomodoro"] },
     { emoji: "\u{1FAD2}", keywords: ["olive", "oliva", "aceituna", "olive", "olive", "oliva"] },
     { emoji: "\u{1F965}", keywords: ["coconut", "fruit", "coco", "fruta", "noix de coco", "kokosnuss", "cocco"] },
-    // --- Vegetables ---
     { emoji: "\u{1F951}", keywords: ["avocado", "vegetable", "aguacate", "palta", "mod", "avocat", "avocado", "avocado"] },
     { emoji: "\u{1F346}", keywords: ["eggplant", "vegetable", "berenjena", "vegetal", "aubergine", "aubergine", "melanzana"] },
     { emoji: "\u{1F954}", keywords: ["potato", "vegetable", "patata", "papa", "vegetal", "pomme de terre", "kartoffel", "patata"] },
@@ -32491,7 +32820,6 @@
     { emoji: "\u{1F344}", keywords: ["mushroom", "fungus", "hongo", "seta", "champi\xF1\xF3n", "champignon", "pilz", "fungo"] },
     { emoji: "\u{1F95C}", keywords: ["peanuts", "nut", "cacahuetes", "man\xED", "cacahu\xE8tes", "erdn\xFCsse", "arachidi"] },
     { emoji: "\u{1F330}", keywords: ["chestnut", "nut", "casta\xF1a", "ch\xE2taigne", "kastanie", "castagna"] },
-    // --- Prepared Food ---
     { emoji: "\u{1F35E}", keywords: ["bread", "pan", "pain", "brot", "pane"] },
     { emoji: "\u{1F950}", keywords: ["croissant", "pastry", "croissant", "croissant", "croissant", "cornetto"] },
     { emoji: "\u{1F956}", keywords: ["baguette", "bread", "baguette", "barra", "baguette", "baguette", "baguette"] },
@@ -32522,7 +32850,6 @@
     { emoji: "\u{1F37F}", keywords: ["popcorn", "snack", "palomitas", "pop-corn", "popcorn", "popcorn"] },
     { emoji: "\u{1F9C2}", keywords: ["salt", "seasoning", "sal", "sel", "salz", "sale"] },
     { emoji: "\u{1F96B}", keywords: ["canned food", "can", "comida en lata", "lata", "conserve", "dose", "cibo in scatola"] },
-    // --- Asian Food ---
     { emoji: "\u{1F371}", keywords: ["bento box", "lunch", "bento", "caja de almuerzo", "bento", "bento", "bento"] },
     { emoji: "\u{1F359}", keywords: ["rice ball", "onigiri", "bola de arroz", "onigiri", "boulette de riz", "reisb\xE4llchen", "palla di riso"] },
     { emoji: "\u{1F35A}", keywords: ["cooked rice", "rice", "arroz cocido", "arroz", "riz cuit", "riz", "gekochter reis", "reis", "riso cotto", "riso"] },
@@ -32539,13 +32866,11 @@
     { emoji: "\u{1F95F}", keywords: ["dumpling", "empanada", "bollo", "dumpling", "teigtasche", "gnocco"] },
     { emoji: "\u{1F960}", keywords: ["fortune cookie", "cookie", "galleta de la fortuna", "biscuit chinois", "gl\xFCckskeks", "biscotto della fortuna"] },
     { emoji: "\u{1F961}", keywords: ["takeout box", "food", "caja de comida", "para llevar", "bo\xEEte \xE0 emporter", "take-away-box", "scatola da asporto"] },
-    // --- Seafood ---
     { emoji: "\u{1F980}", keywords: ["crab", "seafood", "cangrejo", "marisco", "crabe", "krabbe", "granchio"] },
     { emoji: "\u{1F99E}", keywords: ["lobster", "seafood", "langosta", "bogavante", "homard", "hummer", "aragosta"] },
     { emoji: "\u{1F990}", keywords: ["shrimp", "seafood", "camar\xF3n", "gamba", "crevette", "garnele", "gambero"] },
     { emoji: "\u{1F991}", keywords: ["squid", "seafood", "calamar", "calmar", "tintenfisch", "calamaro"] },
     { emoji: "\u{1F9AA}", keywords: ["oyster", "ostras", "hu\xEEtre", "auster", "ostrica"] },
-    // --- Sweets ---
     { emoji: "\u{1F366}", keywords: ["soft ice cream", "ice cream", "helado suave", "glace \xE0 l'italienne", "softeis", "gelato soft"] },
     { emoji: "\u{1F367}", keywords: ["shaved ice", "dessert", "granizado", "raspado", "glace pil\xE9e", "wassereis", "granita"] },
     { emoji: "\u{1F368}", keywords: ["ice cream", "dessert", "helado", "copa de helado", "glace", "eiscreme", "gelato"] },
@@ -32560,9 +32885,8 @@
     { emoji: "\u{1F36D}", keywords: ["lollipop", "candy", "piruleta", "chupachups", "sucette", "lutscher", "lecca lecca"] },
     { emoji: "\u{1F36E}", keywords: ["custard", "flan", "pudding", "flan", "cr\xE8me caramel", "pudding", "budino"] },
     { emoji: "\u{1F36F}", keywords: ["honey pot", "honey", "miel", "tarro", "miel", "honig", "miele"] },
-    // --- Drinks ---
-    { emoji: "\u{1F37C}", keywords: ["baby bottle", "milk", "biber\xF3n", "leche", "biberon", "babyflasche", "biberon"] },
     { emoji: "\u{1F95B}", keywords: ["glass of milk", "milk", "vaso de leche", "leche", "verre de lait", "milch", "bicchiere di latte"] },
+    { emoji: "\u{1F37C}", keywords: ["baby bottle", "milk", "biber\xF3n", "leche", "biberon", "babyflasche", "biberon"] },
     { emoji: "\u2615", keywords: ["hot beverage", "coffee", "tea", "bebida caliente", "caf\xE9", "t\xE9", "boisson chaude", "hei\xDFgetr\xE4nk", "bevanda calda"] },
     { emoji: "\u{1FAD6}", keywords: ["teapot", "tea", "tetera", "th\xE9i\xE8re", "teekanne", "teiera"] },
     { emoji: "\u{1F375}", keywords: ["teacup without handle", "tea", "matcha", "taza de t\xE9", "t\xE9", "tasse de th\xE9", "teetasse", "tazza di t\xE8"] },
@@ -32582,14 +32906,12 @@
     { emoji: "\u{1F9C9}", keywords: ["mate", "drink", "mate", "yerba", "mat\xE9", "mate", "mate"] },
     { emoji: "\u{1F9CA}", keywords: ["ice", "cube", "hielo", "cubito", "glace", "eisunrfel", "ghiaccio"] },
     { emoji: "\u{1FAD9}", keywords: ["jar", "container", "food", "tarro", "bote", "bocal", "glas", "barattolo"] },
-    // --- Dishware ---
     { emoji: "\u{1F962}", keywords: ["chopsticks", "utensils", "palillos", "baguettes", "essst\xE4bchen", "bacchette"] },
     { emoji: "\u{1F37D}\uFE0F", keywords: ["fork and knife with plate", "dining", "plato", "cubiertos", "assiette", "teller", "piatto"] },
     { emoji: "\u{1F374}", keywords: ["fork and knife", "cutlery", "tenedor y cuchillo", "cubiertos", "fourchette et couteau", "besteck", "forchetta e coltello"] },
     { emoji: "\u{1F944}", keywords: ["spoon", "cutlery", "cuchara", "cuill\xE8re", "l\xF6ffel", "cucchiaio"] },
     { emoji: "\u{1F52A}", keywords: ["kitchen knife", "knife", "cuchillo", "couteau", "messer", "coltello"] },
     { emoji: "\u{1F3FA}", keywords: ["amphora", "jar", "anfora", "\xE1nfora", "amphore", "amphore", "anfora"] },
-    // --- Animals as Food ---
     { emoji: "\u{1F42E}", keywords: ["cow", "beef", "animal", "vaca", "ternera", "vache", "b\u0153uf", "kuh", "rind", "mucca", "manzo"] },
     { emoji: "\u{1F437}", keywords: ["pig", "pork", "animal", "cerdo", "puerco", "cochon", "porc", "schwein", "maiale"] },
     { emoji: "\u{1F411}", keywords: ["sheep", "lamb", "animal", "oveja", "cordero", "mouton", "agneau", "schaf", "lamm", "pecora", "agnello"] },
@@ -32770,7 +33092,7 @@
         status: 1,
         status_verbose: "product found",
         product: {
-          product_name: queryName || "New Product",
+          product_name: queryName || this.translations.unknownProduct || "New Product",
           brands: "",
           nutriments: {
             "energy-kcal_100g": 0,
@@ -32883,7 +33205,7 @@
         this.triggerPageNavigation({ page: "home", maintainParams: "false" });
       } catch (e6) {
         console.error("Error adding to diary", e6);
-        this.error = "Failed to add to diary";
+        this.error = this.translations.errorAddingToDiary || "Failed to add to diary";
       }
     }
     async _addToMeal() {
@@ -32914,11 +33236,11 @@
           await this.db.saveMeal(meal);
           this.triggerPageNavigation({ page: "meal", mealId: this.mealId });
         } else {
-          this.error = "Meal not found in database";
+          this.error = this.translations.errorMealNotFound || "Meal not found in database";
         }
       } catch (e6) {
         console.error("Error adding to meal", e6);
-        this.error = "Failed to add to meal";
+        this.error = this.translations.errorAddingToMeal || "Failed to add to meal";
       }
     }
     render() {
@@ -32945,7 +33267,7 @@
       <div class="page-container">
         <div class="product-header">
           <div class="emoji-container">
-            <component-emoji text="${this.product.product.product_name || "Unknown Product"}" size="l"></component-emoji>
+            <component-emoji text="${this.product.product.product_name || this.translations.unknownProduct}" size="l"></component-emoji>
           </div>
           </div>
           <div class="product-name">
@@ -32956,19 +33278,19 @@
                 type="text" 
                 .value="${(this.editedProduct?.product).product_name || ""}" 
                 @input="${this._handleNameChange}"
-                placeholder="Product Name"
+                placeholder="${this.translations.productName}"
               />
               <input 
                 class="brand-input"
                 type="text" 
                 .value="${(this.editedProduct?.product).brands || ""}" 
                 @input="${this._handleBrandChange}"
-                placeholder="Brand"
+                placeholder="${this.translations.brand}"
               />
             </div>
           ` : b2`
             <div style="text-align: center;">
-              <h1 class="product-name-title">${this.product.product.product_name || "Unknown Product"}</h1>
+              <h1 class="product-name-title">${this.product.product.product_name || this.translations.unknownProduct}</h1>
               ${this.product.product.brands ? b2`<div class="product-brand">${this.product.product.brands}</div>` : ""}
             </div>
         `}
@@ -32976,7 +33298,7 @@
         <button 
           @click="${this._toggleFavorite}" 
           class="favorite-btn"
-          aria-label="${this.isFavoriteState ? "Remove from favorites" : "Add to favorites"}"
+          aria-label="${this.isFavoriteState ? this.translations.removeFromFavorites : this.translations.addToFavorites}"
         >
           <svg
             class="favorite-icon ${this.isFavoriteState ? "is-favorite" : ""}"
@@ -33561,35 +33883,6 @@
         border: 1px solid var(--palette-red, #f44336);
         background: rgba(244, 67, 54, 0.1);
       }
-      .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        color: var(--app-text-color-primary, #333);
-      }
-      .modal {
-        background: var(--card-background, #fff);
-        color: var(--card-text);
-        padding: 20px;
-        border-radius: 8px;
-        max-width: 90%;
-        width: 300px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        text-align: center;
-      }
-      .modal-buttons {
-        display: flex;
-        gap: 10px;
-        margin-top: 20px;
-        justify-content: center;
-      }
       .btn-secondary {
         background: #ccc;
         color: #fff;
@@ -33613,25 +33906,6 @@
         border: 1px solid var(--card-border);
         border-radius: 8px;
         margin-bottom: 8px;
-      }
-      .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-      }
-      .modal-header h3 {
-        margin: 0;
-      }
-      .close-btn {
-        background: none;
-        border: none;
-        font-size: 24px;
-        cursor: pointer;
-        color: var(--card-text);
-        padding: 0;
-        line-height: 1;
-        width: auto;
       }
       .weight-history-form {
         display: flex;
@@ -33827,7 +34101,6 @@
           this.importMessage = { text: this.translations.fileCannotBeParsed || "File can not be parsed", type: "error" };
           this.importData = null;
         }
-        e6.target.value = "";
       };
       reader.readAsText(file);
     }
@@ -33915,9 +34188,11 @@
       if (!this.importData) return;
       try {
         const count = await this.db.importData(this.importData, this.importOverride);
+        const successMsg = this.translations.dataImportedCorrectly || "Data imported correctly.";
+        const countMsg = (this.translations.importedNewValues || "Imported {count} new values.").replace("{count}", count.toString());
         this.importMessage = {
-          text: `${this.translations.dataImportedCorrecty || "Data imported correctly."}
- Imported ${count} new values.`,
+          text: `${successMsg}
+${countMsg}`,
           type: "success"
         };
         this.showImportModal = false;
@@ -33925,7 +34200,7 @@
         this.onPageInit();
       } catch (err) {
         console.error("Final import error:", err);
-        this.importMessage = { text: "Error importing data", type: "error" };
+        this.importMessage = { text: this.translations.errorImporting || "Error importing data", type: "error" };
       }
     }
     _formatDate(dateStr) {
@@ -33947,23 +34222,23 @@
     render() {
       return b2`
       <div class="card">
-        <h2>${this.translations.personalDetails || "Personal Details"}</h2>
+        <h2>${this.translations.personalDetails}</h2>
         
         <div class="form-group">
-          <label>${this.translations.gender || "Gender"}</label>
+          <label>${this.translations.gender}</label>
           <select .value="${this.gender}" @change="${this._handleGenderChange}">
-            <option value="male" ?selected="${this.gender === "male"}">${this.translations.male || "Male"}</option>
-            <option value="female" ?selected="${this.gender === "female"}">${this.translations.female || "Female"}</option>
-            <option value="non-binary" ?selected="${this.gender === "non-binary"}">${this.translations.nonBinary || "Non-binary"}</option>
+            <option value="male" ?selected="${this.gender === "male"}">${this.translations.male}</option>
+            <option value="female" ?selected="${this.gender === "female"}">${this.translations.female}</option>
+            <option value="non-binary" ?selected="${this.gender === "non-binary"}">${this.translations.nonBinary}</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label>${this.translations.height || "Height"} (cm)</label>
+          <label>${this.translations.height} (cm)</label>
           <input type="number" .value="${this.height}" @input="${(e6) => this._handleNumberInput("height", e6)}" placeholder="e.g. 175" />
         </div>
         <div class="form-group">
-          <label>${this.translations.weight || "Weight"} (kg)</label>
+          <label>${this.translations.weight} (kg)</label>
           <input type="number" step="0.1" .value="${this.weight}" @input="${(e6) => this._handleNumberInput("weight", e6)}" placeholder="e.g. 70.5" />
         </div>
 
@@ -33972,49 +34247,49 @@
         </div>
 
         <button class="btn" @click="${() => this.showWeightModal = true}">
-          ${this.translations.updateHistoricalWeight || "Update historical user weight data"}
+          ${this.translations.updateHistoricalWeight}
         </button>
       </div>
 
       <div class="card">
-        <h2>${this.translations.nutritionalGoals || "Nutritional Goals"}</h2>
+        <h2>${this.translations.nutritionalGoals}</h2>
         
         <div class="form-group">
-          <label>${this.translations.dailyCalories || "Daily Calories"}</label>
+          <label>${this.translations.dailyCalories}</label>
           <input class="input-calories" type="number" .value="${this.dailyCalories}" @input="${(e6) => this._handleNumberInput("dailyCalories", e6)}" placeholder="e.g. 2000" />
         </div>
 
-        <label>${this.translations.macroRatio || "Macronutrient Ratio"} (%)</label>
+        <label>${this.translations.macroRatio} (%)</label>
         <div class="macro-inputs">
           <div class="form-group">
-            <label>${this.translations.protein || "Protein"}</label>
+            <label>${this.translations.protein}</label>
             <input class="input-protein" type="number" .value="${this.proteinRatio}" @input="${(e6) => this._handleNumberInput("proteinRatio", e6)}" />
           </div>
           <div class="form-group">
-            <label>${this.translations.carbs || "Carbs"}</label>
+            <label>${this.translations.carbs}</label>
             <input class="input-carbs" type="number" .value="${this.carbsRatio}" @input="${(e6) => this._handleNumberInput("carbsRatio", e6)}" />
           </div>
           <div class="form-group">
-            <label>${this.translations.fat || "Fat"}</label>
+            <label>${this.translations.fat}</label>
             <input class="input-fat" type="number" .value="${this.fatRatio}" @input="${(e6) => this._handleNumberInput("fatRatio", e6)}" />
           </div>
         </div>
         <div style="font-size: 0.8rem; color: #666; margin-top: 5px; text-align: right;">
-          Total: ${this.proteinRatio + this.carbsRatio + this.fatRatio}%
+          ${this.translations.total}: ${this.proteinRatio + this.carbsRatio + this.fatRatio}%
         </div>
       </div>
 
       <div class="card">
-        <h2>${this.translations.settings || "Settings"}</h2>
+        <h2>${this.translations.settings}</h2>
         <div class="form-group">
-          <label>${this.translations.theme || "Theme"}</label>
+          <label>${this.translations.theme}</label>
           <div class="theme-toggles">
-            <button class="btn" style="color: white; background-color:var(--palette-green)" @click="${() => this._handleThemeChange("light")}">${this.translations.light || "Light"}</button>
-            <button class="btn" style="color: white; background-color:var(--palette-purple)" @click="${() => this._handleThemeChange("dark")}">${this.translations.dark || "Dark"}</button>
+            <button class="btn" style="color: white; background-color:var(--palette-green)" @click="${() => this._handleThemeChange("light")}">${this.translations.light}</button>
+            <button class="btn" style="color: white; background-color:var(--palette-purple)" @click="${() => this._handleThemeChange("dark")}">${this.translations.dark}</button>
           </div>
         </div>
         <div class="form-group">
-          <label>${this.translations.language || "Language"}</label>
+          <label>${this.translations.language}</label>
           <select .value="${this.language}" @change="${this._handleLanguageChange}">
             <option value="en" ?selected="${this.language === "en"}">English</option>
             <option value="es" ?selected="${this.language === "es"}">Español</option>
@@ -34026,15 +34301,15 @@
       </div>
 
       <div class="card">
-        <h2>${this.translations.dataManagement || "Data Management"}</h2>
-        <p style="margin-bottom: 10px;">${this.translations.exportDataDesc || "Backup your logs, account settings and weight history."}</p>
+        <h2>${this.translations.dataManagement}</h2>
+        <p style="margin-bottom: 10px;">${this.translations.exportDataDesc}</p>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
           <button class="btn" @click="${() => this.showExportModal = true}">
-            ${this.translations.exportData || "Export Data"}
+            ${this.translations.exportData}
           </button>
           
           <div class="file-input-wrapper">
-            <button class="btn">${this.translations.importData || "Import Data"}</button>
+            <button class="btn">${this.translations.importData}</button>
             <input type="file" accept=".json,.csv" @change="${this._handleFileSelect}" />
           </div>
         </div>
@@ -34047,21 +34322,24 @@
       </div>
 
       <div class="card danger-zone">
-        <h2>${this.translations.dangerZone || "Danger Zone"}</h2>
-        <p style="margin-bottom: 10px;">${this.translations.clearDataWarning || "Clear all your data permanently. This cannot be undone."}</p>
+        <h2>${this.translations.dangerZone}</h2>
+        <p style="margin-bottom: 10px;">${this.translations.clearDataWarning}</p>
         <button class="btn-danger" @click="${() => this.showClearModal = true}">
-          ${this.translations.clearAllData || "Clear All Data"}
+          ${this.translations.clearAllData}
         </button>
       </div>
 
       ${this.showClearModal ? b2`
         <div class="modal-overlay">
           <div class="modal">
-            <h3>${this.translations.confirmClearData || "Are you sure?"}</h3>
-            <p>${this.translations.confirmClearDataDesc || "This will delete all your logs, meals, and settings permanently."}</p>
+            <div class="modal-header">
+              <h3>${this.translations.confirmClearData || "Confirm Clear Data"}</h3>
+              <button class="close-btn" @click="${() => this.showClearModal = false}">&times;</button>
+            </div>
+            <p>${this.translations.clearDataMsg || "Are you sure you want to clear all app data? This action cannot be undone."}</p>
             <div class="modal-buttons">
               <button class="btn" @click="${() => this.showClearModal = false}">${this.translations.cancel || "Cancel"}</button>
-              <button class="btn-danger" @click="${this._clearAllData}">${this.translations.confirm || "Confirm"}</button>
+              <button class="btn-danger" @click="${this._clearAllData}">${this.translations.clear || "Clear"}</button>
             </div>
           </div>
         </div>
@@ -34069,14 +34347,10 @@
 
       ${this.showWeightModal ? b2`
         <div class="modal-overlay">
-          <div class="modal" style="width: 400px; max-width: 95%;">
+          <div class="modal" style="width: 500px; max-width: 95%;">
             <div class="modal-header">
               <h3>${this.translations.weightHistory || "Weight History"}</h3>
-              <button class="close-btn" @click="${() => this.showWeightModal = false}">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </button>
+              <button class="close-btn" @click="${() => this.showWeightModal = false}">&times;</button>
             </div>
             
             <div class="weight-history-list">
@@ -34111,52 +34385,48 @@
 
       ${this.showExportModal ? b2`
         <div class="modal-overlay">
-          <div class="modal" style="width: 400px; max-width: 95%;">
+          <div class="modal" style="width: 450px; max-width: 95%;">
             <div class="modal-header">
-              <h3>${this.translations.exportData || "Export Data"}</h3>
-              <button class="close-btn" @click="${() => this.showExportModal = false}">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </button>
+              <h3>${this.translations.exportData}</h3>
+              <button class="close-btn" @click="${() => this.showExportModal = false}">&times;</button>
             </div>
 
             <div style="text-align: left; margin-bottom: 20px;">
-              <p style="font-weight: bold; margin-bottom: 10px;">${this.translations.selectDataToExport || "Select data to export"}:</p>
+              <p style="font-weight: bold; margin-bottom: 10px;">${this.translations.selectDataToExport}:</p>
               
-              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+              <label class="checkbox-label">
                 <input type="checkbox" ?checked="${this.exportStores.has("daily_consumption")}" @change="${() => this._toggleExportStore("daily_consumption")}">
-                ${this.translations.dailyConsumption || "Daily Consumption"}
+                ${this.translations.dailyConsumption}
               </label>
               
-              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+              <label class="checkbox-label">
                 <input type="checkbox" ?checked="${this.exportStores.has("user_data")}" @change="${() => this._toggleExportStore("user_data")}">
-                ${this.translations.userData || "User Profile & Weight History"}
+                ${this.translations.userData}
               </label>
 
-              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+              <label class="checkbox-label">
                 <input type="checkbox" ?checked="${this.exportStores.has("meals")}" @change="${() => this._toggleExportStore("meals")}">
-                ${this.translations.savedMeals || "Saved Meals"}
+                ${this.translations.savedMeals}
               </label>
 
-              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+              <label class="checkbox-label">
                 <input type="checkbox" ?checked="${this.exportStores.has("products")}" @change="${() => this._toggleExportStore("products")}">
-                ${this.translations.cachedProducts || "Cached Products"}
+                ${this.translations.cachedProducts}
               </label>
 
-              <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+              <label class="checkbox-label">
                 <input type="checkbox" ?checked="${this.exportStores.has("favorites")}" @change="${() => this._toggleExportStore("favorites")}">
-                ${this.translations.favorites || "Favorites"}
+                ${this.translations.favorites}
               </label>
 
-              <p style="font-weight: bold; margin: 20px 0 10px;">${this.translations.selectFormat || "Select format"}:</p>
+              <p style="font-weight: bold; margin: 20px 0 10px;">${this.translations.selectExportFormat}:</p>
               
-              <div style="display: flex; gap: 20px;">
-                <label style="cursor: pointer;">
+              <div style="display: flex; gap: 20px; justify-content: center;">
+                <label class="radio-label">
                   <input type="radio" name="format" value="json" ?checked="${this.exportFormat === "json"}" @change="${() => this.exportFormat = "json"}">
                   JSON
                 </label>
-                <label style="cursor: pointer;">
+                <label class="radio-label">
                   <input type="radio" name="format" value="csv" ?checked="${this.exportFormat === "csv"}" @change="${() => this.exportFormat = "csv"}">
                   CSV
                 </label>
@@ -34164,7 +34434,7 @@
             </div>
 
             <button class="btn" style="width: 100%;" ?disabled="${this.exportStores.size === 0}" @click="${this._handleExport}">
-              ${this.translations.exportConfirm || "Export Now"}
+              ${this.translations.exportConfirm}
             </button>
           </div>
         </div>
@@ -34173,17 +34443,20 @@
       ${this.showImportModal ? b2`
         <div class="modal-overlay">
           <div class="modal" style="width: 400px; max-width: 95%;">
-            <h3>${this.translations.confirmImport || "Confirm Import"}</h3>
-            <p>${this.translations.confirmOverrideMsg || "Do you want to override the current app data?"}</p>
+            <div class="modal-header">
+              <h3>${this.translations.confirmImport}</h3>
+              <button class="close-btn" @click="${() => this.showImportModal = false}">&times;</button>
+            </div>
+            <p>${this.translations.confirmOverrideMsg}</p>
             
-            <label style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px 0; cursor: pointer;">
+            <label class="checkbox-label" style="justify-content: center; margin: 20px 0;">
               <input type="checkbox" .checked="${this.importOverride}" @change="${(e6) => this.importOverride = e6.target.checked}">
-              ${this.translations.overrideCurrentData || "Override current data"}
+              ${this.translations.overrideCurrentData}
             </label>
 
             <div class="modal-buttons">
-              <button class="btn" @click="${() => this.showImportModal = false}">${this.translations.cancel || "Cancel"}</button>
-              <button class="btn" @click="${this._proceedImport}">${this.translations.import || "Import"}</button>
+              <button class="btn" @click="${() => this.showImportModal = false}">${this.translations.cancel}</button>
+              <button class="btn" @click="${this._proceedImport}">${this.translations.import}</button>
             </div>
           </div>
         </div>
@@ -34789,9 +35062,9 @@
             .fatGoalPercent=${this.userGoals.macros.fat}
             .carbsGoalPercent=${this.userGoals.macros.carbs}
             .proteinGoalPercent=${this.userGoals.macros.protein}
-            .fatEatenPercent=${this.totals.fat * 9 / (this.userGoals.calories || 1) * 100}
-            .carbsEatenPercent=${this.totals.carbs * 4 / (this.userGoals.calories || 1) * 100}
-            .proteinEatenPercent=${this.totals.protein * 4 / (this.userGoals.calories || 1) * 100}
+            .fatEatenPercent=${this.totals.fat * 9 / (this.totals.fat * 9 + this.totals.carbs * 4 + this.totals.protein * 4 || 1) * 100}
+            .carbsEatenPercent=${this.totals.carbs * 4 / (this.totals.fat * 9 + this.totals.carbs * 4 + this.totals.protein * 4 || 1) * 100}
+            .proteinEatenPercent=${this.totals.protein * 4 / (this.totals.fat * 9 + this.totals.carbs * 4 + this.totals.protein * 4 || 1) * 100}
             .translations=${JSON.stringify(this.translations)}
         ></component-progress-bar>
       </div>
@@ -35008,9 +35281,15 @@
       let currentCarbsPercent = this.carbsEatenPercent;
       let currentProteinPercent = this.proteinEatenPercent;
       if (currentFatPercent === -1 || currentCarbsPercent === -1 || currentProteinPercent === -1) {
-        currentFatPercent = fatCalories / totalGoal * 100;
-        currentCarbsPercent = carbsCalories / totalGoal * 100;
-        currentProteinPercent = proteinCalories / totalGoal * 100;
+        const macroTotal = fatCalories + carbsCalories + proteinCalories || 1;
+        currentFatPercent = fatCalories / macroTotal * 100;
+        currentCarbsPercent = carbsCalories / macroTotal * 100;
+        currentProteinPercent = proteinCalories / macroTotal * 100;
+        if (fatCalories + carbsCalories + proteinCalories === 0) {
+          currentFatPercent = 0;
+          currentCarbsPercent = 0;
+          currentProteinPercent = 0;
+        }
       }
       const totalEatenPercent = currentFatPercent + currentCarbsPercent + currentProteinPercent;
       const usagePercent = Math.min(this.caloriesEaten / totalGoal * 100, 100);
@@ -35034,15 +35313,15 @@
             ${statusText}
         </div>
         <div class="progress-bar-track" role="progressbar" aria-valuenow="${this.caloriesEaten}" aria-valuemin="0" aria-valuemax="${this.dailyCaloriesGoal}" aria-label="Daily calories progress">
-           <div class="segment fat" style="width: ${renderedFatWidth}%" title="Fat: ${this.fatEaten}g"></div>
            <div class="segment carbs" style="width: ${renderedCarbsWidth}%" title="Carbs: ${this.carbsEaten}g"></div>
+           <div class="segment fat" style="width: ${renderedFatWidth}%" title="Fat: ${this.fatEaten}g"></div>
            <div class="segment protein" style="width: ${renderedProteinWidth}%" title="Protein: ${this.proteinEaten}g"></div>
         </div>
         <div class="label-container">
           <div class="macros-label">
-             <div><span class="label fat">${this.translationsTexts["fat"]}</span> <span>${Math.round(currentFatPercent)}</span> / ${this.fatGoalPercent}%</div>
-             <div><span class="label carbs">${this.translationsTexts["carbs"]}</span> <span>${Math.round(currentCarbsPercent)}</span> / ${this.carbsGoalPercent}%</div>
-             <div><span class="label protein">${this.translationsTexts["protein"]}</span> <span>${Math.round(currentProteinPercent)}</span> / ${this.proteinGoalPercent}%</div>
+            <div><span class="label carbs">${this.translationsTexts["carbs"]}</span> <span>${Math.round(currentCarbsPercent)}</span> / ${this.carbsGoalPercent}%</div>
+            <div><span class="label fat">${this.translationsTexts["fat"]}</span> <span>${Math.round(currentFatPercent)}</span> / ${this.fatGoalPercent}%</div>
+            <div><span class="label protein">${this.translationsTexts["protein"]}</span> <span>${Math.round(currentProteinPercent)}</span> / ${this.proteinGoalPercent}%</div>
           </div>
           <div class="label">
              <span>${this.caloriesEaten}</span> / ${this.dailyCaloriesGoal} ${this.translationsTexts["kcalEated"]}
@@ -35272,6 +35551,7 @@
         margin-bottom: 0;
       }
       .menu-btn {
+        color: var(--text-color);
         background: none;
         border: none;
         font-size: 1.5rem;
@@ -35301,39 +35581,10 @@
         font-size: 1rem;
       }
       .dropdown-item:hover {
-        background-color: var(--input-background);
+        background-color: var(--group-button-active-bg);
       }
       .dropdown-item.delete {
         color: var(--palette-red, #f44336);
-      }
-      .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        color: var(--app-text-color-primary, #333);
-      }
-      .modal {
-        background: var(--card-background, #fff);
-        color: var(--card-text);
-        padding: 20px;
-        border-radius: 8px;
-        max-width: 90%;
-        width: 300px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        text-align: center;
-      }
-      .modal-buttons {
-        display: flex;
-        gap: 10px;
-        margin-top: 20px;
-        justify-content: center;
       }
     `
       ];
@@ -35394,7 +35645,6 @@
           nutrition_data_prepared_per: "serving"
         },
         quantity: 1,
-        // 1 serv of the meal
         unit: "meal"
       };
       try {
@@ -35402,7 +35652,7 @@
         this.triggerPageNavigation({ page: "home", maintainParams: "false" });
       } catch (e6) {
         console.error("Error adding meal to diary", e6);
-        this.error = "Failed to add to diary";
+        this.error = this.translations.errorAddingToDiary || "Failed to add to diary";
       }
     }
     async _removeFood(index) {
@@ -35418,7 +35668,6 @@
       this.meal = {
         id,
         name: this.translations.newMeal || "New Meal",
-        // default name
         description: "",
         foods: []
       };
@@ -35427,7 +35676,7 @@
         await this.db.saveMeal(this.meal);
       } catch (e6) {
         console.error("Error creating new meal", e6);
-        this.error = "Failed to create new meal";
+        this.error = this.translations.errorCreatingMeal || "Failed to create new meal";
       }
     }
     async _handleNameChange(e6) {
@@ -35458,7 +35707,7 @@
       const newMeal = {
         ...this.meal,
         id: newId,
-        name: `${this.meal.name} - duplicated`
+        name: (this.translations.duplicatedSuffix || "{name} - duplicated").replace("{name}", this.meal.name)
       };
       try {
         await this.db.saveMeal(newMeal);
@@ -35466,7 +35715,7 @@
         this.onPageInit();
       } catch (e6) {
         console.error("Error duplicating meal", e6);
-        this.error = "Failed to duplicate meal";
+        this.error = this.translations.errorDuplicatingMeal || "Failed to duplicate meal";
       }
     }
     _handleDelete() {
@@ -35482,7 +35731,7 @@
         }
       } catch (e6) {
         console.error("Error deleting meal", e6);
-        this.error = "Failed to delete meal";
+        this.error = this.translations.errorDeletingMeal || "Failed to delete meal";
       } finally {
         this.showDeleteModal = false;
       }
@@ -35491,7 +35740,7 @@
       return b2`
       <div class="page-container">
         <div class="header-container">
-            <h1>${this.isNew ? this.translations.createNewMeal : this.translations.editProduct}</h1>
+            <h1>${this.isNew ? this.translations.createNewMeal : this.translations.editMeal}</h1>
             ${!this.isNew ? b2`
             <div style="position: relative;">
                 <button class="menu-btn" @click="${this._toggleMenu}">&#8942;</button>
@@ -35633,7 +35882,10 @@
         ${this.showDeleteModal ? b2`
         <div class="modal-overlay">
           <div class="modal">
-            <h3>${this.translations.confirmClearData}</h3>
+            <div class="modal-header">
+              <h3>${this.translations.confirmClearData}</h3>
+              <button class="close-btn" @click="${() => this.showDeleteModal = false}">&times;</button>
+            </div>
             <p>${this.translations.deleteMealMessage}</p>
             <div class="modal-buttons">
               <button class="btn" @click="${() => this.showDeleteModal = false}">${this.translations.cancel}</button>
