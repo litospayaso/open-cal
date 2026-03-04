@@ -1,7 +1,7 @@
 import { html, css, type PropertyValueMap } from 'lit';
 import { state } from 'lit/decorators.js';
 import Page from '../../shared/page';
-import { type DailyLog, type MealCategory } from '../../shared/db';
+import { type DailyLog, type MealCategory, type UserStatus } from '../../shared/db';
 
 export default class PageHome extends Page {
   static styles = [
@@ -139,10 +139,12 @@ export default class PageHome extends Page {
 
   @state() currentDate: string = new Date().toISOString().split('T')[0];
   @state() dailyLog: DailyLog | null = null;
+  @state() userStatus: UserStatus | null = null;
   @state() loading: boolean = true;
   @state() totals = { calories: 0, carbs: 0, fat: 0, protein: 0 };
   @state() userGoals = {
     calories: 2000,
+    defaultBasalCalories: 0,
     macros: { protein: 30, carbs: 40, fat: 30 }
   };
 
@@ -164,7 +166,8 @@ export default class PageHome extends Page {
             macros: {
               ...this.userGoals.macros,
               ...(profile.goals.macros || {})
-            }
+            },
+            defaultBasalCalories: profile.goals.defaultBasalCalories || 0
           };
         }
       } catch (e) {
@@ -177,6 +180,7 @@ export default class PageHome extends Page {
     this.loading = true;
     try {
       this.dailyLog = await this.db.getDailyLog(this.currentDate);
+      this.userStatus = await this.db.getUserStatus(this.currentDate);
       this.calculateTotals();
     } catch (e) {
       console.error("Failed to load daily log", e);
@@ -272,6 +276,16 @@ export default class PageHome extends Page {
         </div>
       </div>
 
+      <component-user-status
+        .exerciseCalories=${this.userStatus?.exerciseCalories || 0}
+        .basalCalories=${this.userStatus?.basalCalories || this.userGoals.defaultBasalCalories || 0}
+        .steps=${this.userStatus?.steps || 0}
+        .sleepHours=${this.userStatus?.sleepHours || 0}
+        .energyLevel=${this.userStatus?.energyLevel || 0}
+        .hungerLevel=${this.userStatus?.hungerLevel || 0}
+        @status-changed="${this._handleStatusChanged}"
+      ></component-user-status>
+
       <div class="progress-container">
         <component-progress-bar
             .dailyCaloriesGoal=${this.userGoals.calories}
@@ -325,6 +339,26 @@ export default class PageHome extends Page {
       this.loadData();
     } catch (e) {
       console.error("Failed to remove item", e);
+    }
+  }
+
+  async _handleStatusChanged(e: CustomEvent) {
+    const { exerciseCalories, basalCalories, steps, sleepHours, energyLevel, hungerLevel } = e.detail;
+
+    this.userStatus = {
+      date: this.currentDate,
+      exerciseCalories,
+      basalCalories,
+      steps,
+      sleepHours,
+      energyLevel,
+      hungerLevel
+    };
+
+    try {
+      await this.db.saveUserStatus(this.userStatus);
+    } catch (err) {
+      console.error("Failed to save user status", err);
     }
   }
 

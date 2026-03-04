@@ -18,6 +18,16 @@ export interface DailyLog {
   snack3: FoodEntry[];
 }
 
+export interface UserStatus {
+  date: string; // YYYY-MM-DD
+  exerciseCalories: number;
+  basalCalories: number;
+  steps: number;
+  sleepHours: number;
+  energyLevel: number;
+  hungerLevel: number;
+}
+
 export interface Meal {
   id: string;
   name: string;
@@ -26,12 +36,13 @@ export interface Meal {
 }
 
 const DB_NAME = 'OpenCalDB';
-const DB_VERSION = 4;
+const DB_VERSION = 5;
 const STORE_NAME = 'daily_consumption';
 const STORE_PRODUCTS = 'products';
 const STORE_FAVORITES = 'favorites';
 const STORE_MEALS = 'meals';
 const STORE_WEIGHT_HISTORY = 'weight_history';
+const STORE_USER_STATUS = 'user_status';
 
 export class DBService {
   private db: IDBDatabase | null = null;
@@ -66,6 +77,9 @@ export class DBService {
         }
         if (!db.objectStoreNames.contains(STORE_WEIGHT_HISTORY)) {
           db.createObjectStore(STORE_WEIGHT_HISTORY, { keyPath: 'date' });
+        }
+        if (!db.objectStoreNames.contains(STORE_USER_STATUS)) {
+          db.createObjectStore(STORE_USER_STATUS, { keyPath: 'date' });
         }
       };
     });
@@ -130,7 +144,7 @@ export class DBService {
             lunch: [],
             snack2: [],
             dinner: [],
-            snack3: []
+            snack3: [],
           });
         }
       };
@@ -155,6 +169,48 @@ export class DBService {
       request.onerror = () => {
         reject(request.error);
       };
+    });
+  }
+
+  async getUserStatus(date: string): Promise<UserStatus> {
+    await this.ensureInit();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([STORE_USER_STATUS], 'readonly');
+      const store = transaction.objectStore(STORE_USER_STATUS);
+      const request = store.get(date);
+
+      request.onsuccess = () => {
+        const result = request.result as UserStatus;
+        if (result) {
+          resolve(result);
+        } else {
+          resolve({
+            date,
+            exerciseCalories: 0,
+            basalCalories: 0,
+            steps: 0,
+            sleepHours: 0,
+            energyLevel: 0,
+            hungerLevel: 0
+          });
+        }
+      };
+
+      request.onerror = () => {
+        reject(request.error);
+      };
+    });
+  }
+
+  async saveUserStatus(status: UserStatus): Promise<void> {
+    await this.ensureInit();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([STORE_USER_STATUS], 'readwrite');
+      const store = transaction.objectStore(STORE_USER_STATUS);
+      const request = store.put(status);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
     });
   }
 

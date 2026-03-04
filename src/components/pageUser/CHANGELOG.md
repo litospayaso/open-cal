@@ -1,5 +1,11 @@
 # page-user
 
+## 0.0.4
+
+### Patch Changes
+
+- Adding daily user status log functionality
+
 ## 0.0.3
 
 ### Patch Changes

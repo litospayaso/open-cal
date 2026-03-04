@@ -1,5 +1,11 @@
 # brote
 
+## 1.0.9
+
+### Patch Changes
+
+- Adding daily user status log functionality
+
 ## 1.0.8
 
 ### Patch Changes

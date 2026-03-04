@@ -1,9 +1,12 @@
 import { html, css, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { variableStyles } from '../../shared/functions';
 
 @customElement('component-slider')
 export default class ComponentSlider extends LitElement {
-  static styles = css`
+  static styles = [
+    variableStyles,
+    css`
     :host {
       display: block;
       width: 100%;
@@ -29,12 +32,18 @@ export default class ComponentSlider extends LitElement {
     input[type="range"] {
       -webkit-appearance: none;
       width: 100%;
-      height: 8px;
-      background: var(--background-secondary, #e0e0e0);
-      border-radius: 4px;
+      height: 6px;
+      background: var(--palette-lightgrey, #e0e0e0);
+      border-radius: 3px;
       outline: none;
       opacity: 0.9;
       transition: opacity 0.2s;
+    }
+
+    /* Light mode specific adjustment for "white background" */
+    :host(:not([data-theme="dark"])) input[type="range"] {
+      background: #f0f0f0;
+      border: 1px solid #e0e0e0;
     }
 
     input[type="range"]:hover {
@@ -44,24 +53,24 @@ export default class ComponentSlider extends LitElement {
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
-      background: var(--palette-green, #4CAF50);
+      background: var(--palette-green, #4fb9ad);
       cursor: pointer;
       border: 2px solid white;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
       transition: transform 0.1s;
     }
 
     input[type="range"]::-moz-range-thumb {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
-      background: var(--palette-green, #4CAF50);
+      background: var(--palette-green, #4fb9ad);
       cursor: pointer;
       border: 2px solid white;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
       transition: transform 0.1s;
     }
 
@@ -72,29 +81,15 @@ export default class ComponentSlider extends LitElement {
     input[type="range"]::-moz-range-thumb:hover {
       transform: scale(1.1);
     }
-
-    /* Support for dark mode styling directly */
-    @media (prefers-color-scheme: dark) {
-      input[type="range"] {
-         background: var(--background-secondary-dark, #424242);
-      }
-      input[type="range"]::-webkit-slider-thumb {
-         background: var(--palette-purple, #9c27b0);
-      }
-      input[type="range"]::-moz-range-thumb {
-         background: var(--palette-purple, #9c27b0);
-      }
-    }
     
-    /* Global class based dark mode support in open-cal */
     :host([data-theme="dark"]) input[type="range"] {
-       background: var(--background-secondary-dark, #424242);
+       background: rgba(255, 255, 255, 0.1);
     }
     :host([data-theme="dark"]) input[type="range"]::-webkit-slider-thumb {
-       background: var(--palette-purple, #9c27b0);
+       background: var(--palette-purple, #a285bb);
     }
     :host([data-theme="dark"]) input[type="range"]::-moz-range-thumb {
-       background: var(--palette-purple, #9c27b0);
+       background: var(--palette-purple, #a285bb);
     }
 
     .tooltip {
@@ -102,8 +97,8 @@ export default class ComponentSlider extends LitElement {
       top: -30px;
       left: 0;
       transform: translateX(-50%);
-      background-color: var(--card-background, #333);
-      color: var(--text-color, #fff);
+      background-color: var(--card-background, #fff);
+      color: var(--text-color, #191c25);
       padding: 4px 8px;
       border-radius: 4px;
       font-size: 0.75rem;
@@ -111,13 +106,16 @@ export default class ComponentSlider extends LitElement {
       opacity: 0;
       transition: opacity 0.2s;
       white-space: nowrap;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border: 1px solid var(--card-border, #4fb9ad);
     }
     
     .tooltip.visible {
       opacity: 1;
     }
-  `;
+  `];
+
+  @property({ type: String }) format: 'number' | 'time' = 'number';
 
   @property({ type: Number }) steps = 1;
   @property({ type: String }) minTag = '';
@@ -130,20 +128,25 @@ export default class ComponentSlider extends LitElement {
   @state() private tooltipPosition = 0;
 
   private updateTooltipPosition(target: HTMLInputElement) {
-    // Calculate the thumb position percentage
     const min = Number(target.min) || 0;
     const max = Number(target.max) || 100;
     const val = Number(target.value);
 
-    // percentage between 0 to 1
     const percent = (val - min) / (max - min);
 
-    // Width of standard slider thumb is approx 20px
     const thumbWidth = 20;
 
-    // Position offset taking into account the thumb width
-    const offset = (thumbWidth / 2) - (thumbWidth * percent);
-    this.tooltipPosition = `calc(\${percent * 100}% + \${offset}px)` as any;
+    const offset = ((thumbWidth / 2) - (thumbWidth * percent)) + 3;
+    this.tooltipPosition = `calc(${percent * 100}% + ${offset}px)` as any;
+  }
+
+  private formatValue(val: number): string {
+    if (this.format === 'time') {
+      const hours = Math.floor(val);
+      const minutes = Math.round((val - hours) * 60);
+      return `${hours}:${minutes.toString().padStart(2, '0')}`;
+    }
+    return String(val);
   }
 
   private handleInput(e: Event) {
@@ -151,7 +154,6 @@ export default class ComponentSlider extends LitElement {
     this.value = Number(target.value);
     this.updateTooltipPosition(target);
 
-    // Dispatch custom event for consumers
     this.dispatchEvent(new CustomEvent('value-changed', {
       detail: { value: this.value },
       bubbles: true,
@@ -168,11 +170,16 @@ export default class ComponentSlider extends LitElement {
     this.isDragging = false;
   }
 
+  private get currentTheme() {
+    return this.getAttribute('data-theme') || document.documentElement.getAttribute('data-theme') || 'light';
+  }
+
   render() {
+    const theme = this.currentTheme;
     return html`
-      <div class="slider-container">
+      <div class="slider-container" data-theme="${theme}">
         <div class="tooltip ${this.isDragging ? 'visible' : ''}" style="left: ${this.tooltipPosition}">
-          ${this.value}
+          ${this.formatValue(this.value)}
         </div>
         <input 
           type="range" 

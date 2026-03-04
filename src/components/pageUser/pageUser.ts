@@ -9,6 +9,7 @@ interface UserProfile {
   gender: 'male' | 'female' | 'non-binary';
   goals: {
     calories: number;
+    defaultBasalCalories?: number;
     macros: {
       protein: number;
       carbs: number;
@@ -168,6 +169,7 @@ export default class PageUser extends Page {
   @state() proteinRatio: number = 30;
   @state() carbsRatio: number = 40;
   @state() fatRatio: number = 30;
+  @state() defaultBasalCalories: number = 0;
 
   @state() theme: 'light' | 'dark' = 'light';
   @state() language: string = 'en';
@@ -200,6 +202,7 @@ export default class PageUser extends Page {
         this.proteinRatio = profile.goals?.macros?.protein || 30;
         this.carbsRatio = profile.goals?.macros?.carbs || 40;
         this.fatRatio = profile.goals?.macros?.fat || 30;
+        this.defaultBasalCalories = profile.goals?.defaultBasalCalories || 0;
       } catch (e) {
         console.error('Failed to parse user profile', e);
       }
@@ -236,6 +239,7 @@ export default class PageUser extends Page {
       gender: this.gender,
       goals: {
         calories: this.dailyCalories,
+        defaultBasalCalories: this.defaultBasalCalories,
         macros: {
           protein: this.proteinRatio,
           carbs: this.carbsRatio,
@@ -246,7 +250,7 @@ export default class PageUser extends Page {
     localStorage.setItem('user_profile', JSON.stringify(profile));
   }
 
-  private async _handleNumberInput(field: 'height' | 'weight' | 'dailyCalories' | 'proteinRatio' | 'carbsRatio' | 'fatRatio', e: Event) {
+  private async _handleNumberInput(field: 'height' | 'weight' | 'dailyCalories' | 'proteinRatio' | 'carbsRatio' | 'fatRatio' | 'defaultBasalCalories', e: Event) {
     const value = Number((e.target as HTMLInputElement).value);
     // @ts-ignore
     this[field] = value;
@@ -507,6 +511,10 @@ export default class PageUser extends Page {
         <div class="form-group">
           <label>${this.translations.weight} (kg)</label>
           <input type="number" step="0.1" .value="${this.weight}" @input="${(e: Event) => this._handleNumberInput('weight', e)}" placeholder="e.g. 70.5" />
+        </div>
+        <div class="form-group">
+          <label>Default daily basal calories (kcal)</label>
+          <input type="number" .value="${this.defaultBasalCalories}" @input="${(e: Event) => this._handleNumberInput('defaultBasalCalories', e)}" placeholder="e.g. 1500" />
         </div>
 
         <div class="chart-wrapper">

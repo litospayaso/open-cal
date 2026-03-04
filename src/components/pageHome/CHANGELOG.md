@@ -1,5 +1,11 @@
 # home-page
 
+## 0.0.9
+
+### Patch Changes
+
+- Adding daily user status log functionality
+
 ## 0.0.8
 
 ### Patch Changes
