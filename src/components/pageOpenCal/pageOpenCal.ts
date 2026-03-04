@@ -52,7 +52,6 @@ export default class PageOpenCal extends Page {
       params = { ...currentParams, ...params };
     }
     delete params.maintainParams;
-    console.log('%c params', 'background: #df03fc; color: #f8fc03', params);
     this.setQueryParamsURL(params);
     this.requestUpdate();
   }

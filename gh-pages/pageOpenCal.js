@@ -27204,6 +27204,9 @@
       if (selectedStores.includes("meals")) {
         exportData.meals = await this._getAllFromStore(STORE_MEALS);
       }
+      if (selectedStores.includes("user_status")) {
+        exportData.user_status = await this._getAllFromStore(STORE_USER_STATUS);
+      }
       if (format === "json") {
         return {
           content: JSON.stringify(exportData, null, 2),
@@ -27213,9 +27216,9 @@
         let csvContent = "";
         if (exportData.user_profile) {
           csvContent += "--- USER PROFILE ---\n";
-          csvContent += "Height,Weight,Gender,DailyCalories,ProteinRatio,CarbsRatio,FatRatio\n";
+          csvContent += "Height,Weight,Gender,DailyCalories,ProteinRatio,CarbsRatio,FatRatio,DefaultBasalCalories\n";
           const p3 = exportData.user_profile;
-          csvContent += `${p3.height || ""},${p3.weight || ""},${p3.gender || ""},${p3.goals?.calories || ""},${p3.goals?.macros?.protein || ""},${p3.goals?.macros?.carbs || ""},${p3.goals?.macros?.fat || ""}
+          csvContent += `${p3.height || ""},${p3.weight || ""},${p3.gender || ""},${p3.goals?.calories || ""},${p3.goals?.macros?.protein || ""},${p3.goals?.macros?.carbs || ""},${p3.goals?.macros?.fat || ""},${p3.goals?.defaultBasalCalories || ""}
 
 `;
         }
@@ -27253,11 +27256,30 @@
           });
           csvContent += "\n";
         }
+        if (exportData.products) {
+          csvContent += "--- CACHED PRODUCTS ---\n";
+          csvContent += "Code,ProductName,Brands,Calories,Carbs,Fat,Protein,DefaultGrams\n";
+          exportData.products.forEach((p3) => {
+            const prod = p3.product;
+            csvContent += `${p3.code},"${(prod?.product_name || "").replace(/"/g, '""')}", "${(prod?.brands || "").replace(/"/g, '""')}", ${prod?.nutriments?.["energy-kcal_100g"] || 0}, ${prod?.nutriments?.carbohydrates_100g || 0}, ${prod?.nutriments?.fat_100g || 0}, ${prod?.nutriments?.proteins_100g || 0}, ${prod?.default_grams || ""}
+`;
+          });
+          csvContent += "\n";
+        }
         if (exportData.favorites) {
           csvContent += "--- FAVORITES ---\n";
           csvContent += "ProductCode\n";
           exportData.favorites.forEach((f3) => {
             csvContent += `${f3.code}
+`;
+          });
+          csvContent += "\n";
+        }
+        if (exportData.user_status) {
+          csvContent += "--- USER STATUS ---\n";
+          csvContent += "Date,ExerciseCalories,BasalCalories,Steps,SleepHours,EnergyLevel,HungerLevel,Thoughts\n";
+          exportData.user_status.forEach((s4) => {
+            csvContent += `${s4.date},${s4.exerciseCalories || 0},${s4.basalCalories || 0},${s4.steps || 0},${s4.sleepHours || 0},${s4.energyLevel || 0},${s4.hungerLevel || 0},"${(s4.thoughts || "").replace(/"/g, '""')}"
 `;
           });
         }
@@ -27275,45 +27297,70 @@
         "products": STORE_PRODUCTS,
         "favorites": STORE_FAVORITES,
         "meals": STORE_MEALS,
-        "weight_history": STORE_WEIGHT_HISTORY
+        "weight_history": STORE_WEIGHT_HISTORY,
+        "user_status": STORE_USER_STATUS
       };
-      for (const [key, storeName] of Object.entries(storesMap)) {
-        if (data[key] && Array.isArray(data[key])) {
-          const transaction = this.db.transaction([storeName], "readwrite");
-          const store = transaction.objectStore(storeName);
-          for (const item of data[key]) {
+      const importBatches = {};
+      for (const [dataKey, storeName] of Object.entries(storesMap)) {
+        if (data[dataKey] && Array.isArray(data[dataKey])) {
+          const itemsToPut = [];
+          for (const item of data[dataKey]) {
             let shouldPut = true;
             if (!override) {
-              if (key === "products") {
+              if (dataKey === "products") {
                 const existing = await this.getCachedProduct(item.code);
                 if (existing) shouldPut = false;
-              } else if (key === "meals") {
+              } else if (dataKey === "meals") {
                 const existing = await this.getMeal(item.id);
                 if (existing) shouldPut = false;
-              } else if (key === "weight_history") {
+              } else if (dataKey === "weight_history") {
                 const history = await this.getWeightHistory();
                 const existing = history.find((h3) => h3.date === item.date);
+                if (existing) shouldPut = false;
+              } else if (dataKey === "user_status") {
+                const existing = await this.getUserStatusSummary(item.date);
                 if (existing) shouldPut = false;
               }
             }
             if (shouldPut) {
-              await new Promise((resolve, reject) => {
-                const request2 = store.put(item);
-                request2.onsuccess = () => {
-                  importedCount++;
-                  resolve();
-                };
-                request2.onerror = () => reject(request2.error);
-              });
+              itemsToPut.push(item);
             }
           }
+          if (itemsToPut.length > 0) {
+            importBatches[storeName] = itemsToPut;
+          }
         }
+      }
+      for (const [storeName, items] of Object.entries(importBatches)) {
+        const transaction = this.db.transaction([storeName], "readwrite");
+        const store = transaction.objectStore(storeName);
+        const batchPromises = items.map((item) => {
+          return new Promise((resolve, reject) => {
+            const request2 = store.put(item);
+            request2.onsuccess = () => {
+              importedCount++;
+              resolve();
+            };
+            request2.onerror = () => reject(request2.error);
+          });
+        });
+        await Promise.all(batchPromises);
       }
       if (data.user_profile) {
         localStorage.setItem("user_profile", JSON.stringify(data.user_profile));
         importedCount++;
       }
       return importedCount;
+    }
+    async getUserStatusSummary(date) {
+      await this.ensureInit();
+      return new Promise((resolve) => {
+        const transaction = this.db.transaction([STORE_USER_STATUS], "readonly");
+        const store = transaction.objectStore(STORE_USER_STATUS);
+        const request2 = store.get(date);
+        request2.onsuccess = () => resolve(request2.result);
+        request2.onerror = () => resolve(null);
+      });
     }
     async _getAllFromStore(storeName) {
       return new Promise((resolve, reject) => {
@@ -27891,7 +27938,6 @@
         params = { ...currentParams, ...params };
       }
       delete params.maintainParams;
-      console.log("%c params", "background: #df03fc; color: #f8fc03", params);
       this.setQueryParamsURL(params);
       this.requestUpdate();
     }
@@ -32175,13 +32221,18 @@
     });
   };
   var request = async (url, http) => {
-    const domain = `https://world.openfoodfacts.net/`;
+    const lang = localStorage.getItem("language") || "en";
+    const subdomain = lang === "en" ? "world" : lang;
+    const domain = `https://${subdomain}.openfoodfacts.org`;
     const method = http?.method ? http.method : "GET";
     const options = {
       method,
       mode: "cors",
+      headers: {
+        "User-Agent": "Brote - Android/iOS/Web - Version 1.0 - https://github.com/litospayaso/open-cal"
+      },
       cache: "no-cache",
-      credentials: "same-origin"
+      credentials: "omit"
     };
     if (http?.body) {
       if (http.body instanceof URLSearchParams) {
@@ -32190,7 +32241,7 @@
         options.body = JSON.stringify(http.body);
       }
     }
-    const response = await fetch(`${domain}${url}`, options);
+    const response = await fetch(`${domain}/${url}`, options);
     return handleResponse(response);
   };
 
@@ -32202,7 +32253,7 @@
   };
   var searchProduct = async (query) => {
     const lang = localStorage.getItem("language") || "en";
-    const response = await request(`/cgi/search.pl?search_terms=${query}&search_simple=1&action=process&json=1&page_size=35&fields=code,brands,product_name,product_name_${lang},product_name_en,nutriments&lc=${lang}`);
+    const response = await request(`api/v2/search?search_terms=${query}&search_simple=1&action=process&json=1&page_size=35&fields=code,brands,product_name,product_name_${lang},product_name_en,nutriments&lc=${lang}&cc=${lang}`);
     if (response && response.products) {
       const products = response.products.map((p3) => {
         return {
@@ -33916,7 +33967,7 @@
       this.newWeightValue = 0;
       this.showExportModal = false;
       this.exportFormat = "json";
-      this.exportStores = /* @__PURE__ */ new Set(["daily_consumption", "user_data", "meals", "products", "favorites"]);
+      this.exportStores = /* @__PURE__ */ new Set(["daily_consumption", "user_data", "meals", "products", "favorites", "user_status"]);
       this.showImportModal = false;
       this.importData = null;
       this.importOverride = false;
@@ -34268,6 +34319,7 @@
                 gender: row.Gender,
                 goals: {
                   calories: Number(row.DailyCalories),
+                  defaultBasalCalories: Number(row.DefaultBasalCalories || 0),
                   macros: {
                     protein: Number(row.ProteinRatio || 30),
                     carbs: Number(row.CarbsRatio || 40),
@@ -34290,6 +34342,36 @@
             } else if (currentStore === "favorites") {
               if (!data.favorites) data.favorites = [];
               data.favorites.push({ code: row.ProductCode });
+            } else if (currentStore === "cached_products") {
+              if (!data.products) data.products = [];
+              data.products.push({
+                code: row.Code,
+                status: 1,
+                status_verbose: "product found",
+                product: {
+                  product_name: row.ProductName,
+                  brands: row.Brands,
+                  default_grams: Number(row.DefaultGrams || 0),
+                  nutriments: {
+                    "energy-kcal_100g": Number(row.Calories),
+                    carbohydrates_100g: Number(row.Carbs),
+                    fat_100g: Number(row.Fat),
+                    proteins_100g: Number(row.Protein)
+                  }
+                }
+              });
+            } else if (currentStore === "user_status") {
+              if (!data.user_status) data.user_status = [];
+              data.user_status.push({
+                date: row.Date,
+                exerciseCalories: Number(row.ExerciseCalories),
+                basalCalories: Number(row.BasalCalories),
+                steps: Number(row.Steps),
+                sleepHours: Number(row.SleepHours),
+                energyLevel: Number(row.EnergyLevel),
+                hungerLevel: Number(row.HungerLevel),
+                thoughts: row.Thoughts
+              });
             }
           }
         }
@@ -34313,6 +34395,9 @@ ${countMsg}`,
       } catch (err) {
         console.error("Final import error:", err);
         this.importMessage = { text: this.translations.errorImporting || "Error importing data", type: "error" };
+      } finally {
+        this.showImportModal = false;
+        this.importData = null;
       }
     }
     _formatDate(dateStr) {
@@ -34533,6 +34618,11 @@ ${countMsg}`,
               <label class="checkbox-label">
                 <input type="checkbox" ?checked="${this.exportStores.has("favorites")}" @change="${() => this._toggleExportStore("favorites")}">
                 ${this.translations.favorites}
+              </label>
+
+              <label class="checkbox-label">
+                <input type="checkbox" ?checked="${this.exportStores.has("user_status")}" @change="${() => this._toggleExportStore("user_status")}">
+                ${this.translations.dailyStatus}
               </label>
 
               <p style="font-weight: bold; margin: 20px 0 10px;">${this.translations.selectExportFormat}:</p>
@@ -35229,6 +35319,11 @@ ${countMsg}`,
       ${this.renderCategory(this.translations.snackAfternoon, "snack2")}
       ${this.renderCategory(this.translations.dinner, "dinner")}
       ${this.renderCategory(this.translations.snackEvening, "snack3")}
+
+      ${!this.dailyLog || this.dailyLog.breakfast.length === 0 && this.dailyLog.snack1.length === 0 && this.dailyLog.lunch.length === 0 && this.dailyLog.snack2.length === 0 && this.dailyLog.dinner.length === 0 && this.dailyLog.snack3.length === 0 ? b2`
+        <component-day-tip .language="${this.getLanguage()}"></component-day-tip>
+        <button class="btn" @click="${() => this.triggerPageNavigation({ page: "search" })}">${this.translations.addFood}</button>
+      ` : ""}
     `;
     }
     async _handleRemoveItem(category, index) {
@@ -36110,6 +36205,139 @@ ${countMsg}`,
 
   // src/components/componentUserStatus/index.ts
   register("component-user-status", ComponentUserStatus);
+
+  // src/components/componentDayTip/componentDayTip.ts
+  var ComponentDayTip = class extends i4 {
+    constructor() {
+      super(...arguments);
+      this.language = "en";
+      this.tips = {
+        es: [
+          "Bebe m\xE1s agua durante el d\xEDa.",
+          "Intenta comer al menos 5 porciones de frutas y verduras.",
+          "Caminar 10,000 pasos al d\xEDa mejora significativamente tu salud.",
+          "Dormir entre 7 y 8 horas es fundamental para la recuperaci\xF3n muscular.",
+          "Limita el consumo de bebidas azucaradas y opta por infusiones o agua.",
+          "La constancia es la clave del \xE9xito en cualquier plan nutricional.",
+          "Planea tus comidas con antelaci\xF3n para evitar elecciones poco saludables."
+        ],
+        en: [
+          "Drink more water throughout the day.",
+          "Try to eat at least 5 portions of fruits and vegetables.",
+          "Walking 10,000 steps a day significantly improves your health.",
+          "Sleeping between 7 and 8 hours is essential for muscle recovery.",
+          "Limit sugary drinks and opt for infusions or water.",
+          "Consistency is the key to success in any nutritional plan.",
+          "Plan your meals in advance to avoid unhealthy choices."
+        ],
+        it: [
+          "Bevi pi\xF9 acqua durante il giorno.",
+          "Cerca di mangiare almeno 5 porzioni di frutta e verdura.",
+          "Camminare 10.000 passi al giorno migliora significativamente la tua salute.",
+          "Dormire tra le 7 e le 8 ore \xE8 fondamentale per il recupero muscolare.",
+          "Limita il consumo di bevande zuccherate e opta per infusi o acqua.",
+          "La costanza \xE8 la chiave del successo in qualsiasi piano nutrizionale.",
+          "Pianifica i tuoi pasti in anticipo per evitare scelte poco sane."
+        ],
+        fr: [
+          "Buvez plus d'eau tout au long de la journ\xE9e.",
+          "Essayez de manger au moins 5 portions de fruits et l\xE9gumes.",
+          "Marcher 10 000 pas par jour am\xE9liore consid\xE9rablement votre sant\xE9.",
+          "Dormir entre 7 et 8 heures est essentiel pour la r\xE9cup\xE9ration musculaire.",
+          "Limitez les boissons sucr\xE9es et optez pour des infusions ou de l'eau.",
+          "La r\xE9gularit\xE9 est la cl\xE9 du succ\xE8s de tout plan nutritionnel.",
+          "Planifiez vos repas \xE0 l'avance pour \xE9viter les choix malsains."
+        ],
+        de: [
+          "Trinken Sie \xFCber den Tag verteilt mehr Wasser.",
+          "Versuchen Sie, mindestens 5 Portionen Obst und Gem\xFCse zu essen.",
+          "10.000 Schritte am Tag zu gehen, verbessert Ihre Gesundheit erheblich.",
+          "7 bis 8 Stunden Schlaf sind f\xFCr die Muskelerholung unerl\xE4sslich.",
+          "Begrenzen Sie zuckerhaltige Getr\xE4nke und w\xE4hlen Sie stattdessen Tees oder Wasser.",
+          "Best\xE4ndigkeit ist der Schl\xFCssel zum Erfolg bei jedem Ern\xE4hrungsplan.",
+          "Planen Sie Ihre Mahlzeiten im Voraus, um ungesunde Entscheidungen zu vermeiden."
+        ]
+      };
+      this.selectedTip = "";
+    }
+    static {
+      this.styles = [
+        Page.styles,
+        i`
+      :host {
+        display: block;
+        margin: 16px 0;
+      }
+      .tip-card {
+        background: var(--card-background);
+        border: 2px dashed var(--card-border);
+        border-radius: 8px;
+        padding: 16px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        box-sizing: border-box;
+      }
+      .tip-title {
+        font-weight: bold;
+        color: var(--palette-purple);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+      }
+      :host-context([data-theme="light"]) .tip-title {
+        color: var(--palette-green);
+      }
+      .tip-text {
+        font-size: 1rem;
+        color: var(--card-text);
+        line-height: 1.4;
+      }
+    `
+      ];
+    }
+    connectedCallback() {
+      super.connectedCallback();
+      this.selectRandomTip();
+    }
+    updated(changedProperties) {
+      if (changedProperties.has("language")) {
+        this.selectRandomTip();
+      }
+    }
+    selectRandomTip() {
+      const languageTips = this.tips[this.language] || this.tips.en;
+      const randomIndex = Math.floor(Math.random() * languageTips.length);
+      this.selectedTip = languageTips[randomIndex];
+    }
+    render() {
+      const tipTitle = {
+        es: "Consejo del d\xEDa",
+        en: "Tip of the day",
+        it: "Consiglio del giorno",
+        fr: "Conseil du jour",
+        de: "Tipp des Tages"
+      }[this.language] || "Tip of the day";
+      return b2`
+      <div class="tip-card">
+        <div class="tip-title">${tipTitle}</div>
+        <div class="tip-text">${this.selectedTip}</div>
+      </div>
+    `;
+    }
+  };
+  __decorateClass([
+    n4({ type: String })
+  ], ComponentDayTip.prototype, "language", 2);
+  __decorateClass([
+    r5()
+  ], ComponentDayTip.prototype, "tips", 2);
+  __decorateClass([
+    r5()
+  ], ComponentDayTip.prototype, "selectedTip", 2);
+
+  // src/components/componentDayTip/index.ts
+  register("component-day-tip", ComponentDayTip);
 
   // src/components/pageHome/index.ts
   register("page-home", PageHome);

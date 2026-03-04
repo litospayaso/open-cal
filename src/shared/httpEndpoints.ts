@@ -11,7 +11,7 @@ export const getProduct = async (barcode: string): Promise<ProductInterface> => 
 
 export const searchProduct = async (query: string): Promise<SearchProductInterface> => {
   const lang = localStorage.getItem('language') || 'en';
-  const response = await request(`/cgi/search.pl?search_terms=${query}&search_simple=1&action=process&json=1&page_size=35&fields=code,brands,product_name,product_name_${lang},product_name_en,nutriments&lc=${lang}`);
+  const response = await request(`api/v2/search?search_terms=${query}&search_simple=1&action=process&json=1&page_size=35&fields=code,brands,product_name,product_name_${lang},product_name_en,nutriments&lc=${lang}&cc=${lang}`);
 
   if (response && response.products) {
     const products = response.products.map((p: any) => {

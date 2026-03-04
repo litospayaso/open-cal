@@ -1,5 +1,11 @@
 # page-opencal
 
+## 0.0.5
+
+### Patch Changes
+
+- updating export to include cached food and search api to fix cors issue and adding app user-agent
+
 ## 0.0.4
 
 ### Patch Changes

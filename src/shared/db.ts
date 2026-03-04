@@ -576,6 +576,9 @@ export class DBService {
     if (selectedStores.includes('meals')) {
       exportData.meals = await this._getAllFromStore(STORE_MEALS);
     }
+    if (selectedStores.includes('user_status')) {
+      exportData.user_status = await this._getAllFromStore(STORE_USER_STATUS);
+    }
 
     if (format === 'json') {
       return {
@@ -587,9 +590,9 @@ export class DBService {
 
       if (exportData.user_profile) {
         csvContent += '--- USER PROFILE ---\n';
-        csvContent += 'Height,Weight,Gender,DailyCalories,ProteinRatio,CarbsRatio,FatRatio\n';
+        csvContent += 'Height,Weight,Gender,DailyCalories,ProteinRatio,CarbsRatio,FatRatio,DefaultBasalCalories\n';
         const p = exportData.user_profile;
-        csvContent += `${p.height || ''},${p.weight || ''},${p.gender || ''},${p.goals?.calories || ''},${p.goals?.macros?.protein || ''},${p.goals?.macros?.carbs || ''},${p.goals?.macros?.fat || ''}\n\n`;
+        csvContent += `${p.height || ''},${p.weight || ''},${p.gender || ''},${p.goals?.calories || ''},${p.goals?.macros?.protein || ''},${p.goals?.macros?.carbs || ''},${p.goals?.macros?.fat || ''},${p.goals?.defaultBasalCalories || ''}\n\n`;
       }
 
       if (exportData.weight_history) {
@@ -626,11 +629,30 @@ export class DBService {
         csvContent += '\n';
       }
 
+      if (exportData.products) {
+        csvContent += '--- CACHED PRODUCTS ---\n';
+        csvContent += 'Code,ProductName,Brands,Calories,Carbs,Fat,Protein,DefaultGrams\n';
+        exportData.products.forEach((p: any) => {
+          const prod = p.product;
+          csvContent += `${p.code},"${(prod?.product_name || '').replace(/"/g, '""')}", "${(prod?.brands || '').replace(/"/g, '""')}", ${prod?.nutriments?.['energy-kcal_100g'] || 0}, ${prod?.nutriments?.carbohydrates_100g || 0}, ${prod?.nutriments?.fat_100g || 0}, ${prod?.nutriments?.proteins_100g || 0}, ${prod?.default_grams || ''}\n`;
+        });
+        csvContent += '\n';
+      }
+
       if (exportData.favorites) {
         csvContent += '--- FAVORITES ---\n';
         csvContent += 'ProductCode\n';
         exportData.favorites.forEach((f: any) => {
           csvContent += `${f.code}\n`;
+        });
+        csvContent += '\n';
+      }
+
+      if (exportData.user_status) {
+        csvContent += '--- USER STATUS ---\n';
+        csvContent += 'Date,ExerciseCalories,BasalCalories,Steps,SleepHours,EnergyLevel,HungerLevel,Thoughts\n';
+        exportData.user_status.forEach((s: any) => {
+          csvContent += `${s.date},${s.exerciseCalories || 0},${s.basalCalories || 0},${s.steps || 0},${s.sleepHours || 0},${s.energyLevel || 0},${s.hungerLevel || 0},"${(s.thoughts || '').replace(/"/g, '""')}"\n`;
         });
       }
 
@@ -650,43 +672,61 @@ export class DBService {
       'products': STORE_PRODUCTS,
       'favorites': STORE_FAVORITES,
       'meals': STORE_MEALS,
-      'weight_history': STORE_WEIGHT_HISTORY
+      'weight_history': STORE_WEIGHT_HISTORY,
+      'user_status': STORE_USER_STATUS
     };
 
-    for (const [key, storeName] of Object.entries(storesMap)) {
-      if (data[key] && Array.isArray(data[key])) {
-        const transaction = this.db!.transaction([storeName], 'readwrite');
-        const store = transaction.objectStore(storeName);
+    const importBatches: Record<string, any[]> = {};
 
-        for (const item of data[key]) {
+    for (const [dataKey, storeName] of Object.entries(storesMap)) {
+      if (data[dataKey] && Array.isArray(data[dataKey])) {
+        const itemsToPut: any[] = [];
+        for (const item of data[dataKey]) {
           let shouldPut = true;
 
           if (!override) {
-            if (key === 'products') {
+            if (dataKey === 'products') {
               const existing = await this.getCachedProduct(item.code);
               if (existing) shouldPut = false;
-            } else if (key === 'meals') {
+            } else if (dataKey === 'meals') {
               const existing = await this.getMeal(item.id);
               if (existing) shouldPut = false;
-            } else if (key === 'weight_history') {
+            } else if (dataKey === 'weight_history') {
               const history = await this.getWeightHistory();
               const existing = history.find(h => h.date === item.date);
+              if (existing) shouldPut = false;
+            } else if (dataKey === 'user_status') {
+              const existing = await this.getUserStatusSummary(item.date);
               if (existing) shouldPut = false;
             }
           }
 
           if (shouldPut) {
-            await new Promise<void>((resolve, reject) => {
-              const request = store.put(item);
-              request.onsuccess = () => {
-                importedCount++;
-                resolve();
-              };
-              request.onerror = () => reject(request.error);
-            });
+            itemsToPut.push(item);
           }
         }
+        if (itemsToPut.length > 0) {
+          importBatches[storeName] = itemsToPut;
+        }
       }
+    }
+
+    for (const [storeName, items] of Object.entries(importBatches)) {
+      const transaction = this.db!.transaction([storeName], 'readwrite');
+      const store = transaction.objectStore(storeName);
+
+      const batchPromises = items.map(item => {
+        return new Promise<void>((resolve, reject) => {
+          const request = store.put(item);
+          request.onsuccess = () => {
+            importedCount++;
+            resolve();
+          };
+          request.onerror = () => reject(request.error);
+        });
+      });
+
+      await Promise.all(batchPromises);
     }
 
     if (data.user_profile) {
@@ -695,6 +735,17 @@ export class DBService {
     }
 
     return importedCount;
+  }
+
+  private async getUserStatusSummary(date: string): Promise<any | null> {
+    await this.ensureInit();
+    return new Promise((resolve) => {
+      const transaction = this.db!.transaction([STORE_USER_STATUS], 'readonly');
+      const store = transaction.objectStore(STORE_USER_STATUS);
+      const request = store.get(date);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => resolve(null);
+    });
   }
 
   private async _getAllFromStore(storeName: string): Promise<any[]> {

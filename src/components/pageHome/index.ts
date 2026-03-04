@@ -6,5 +6,6 @@ import '../componentProgressBar';
 import '../componentUserStatus';
 import '../componentEmoji/index';
 import '../componentSearchResult/index';
+import '../componentDayTip/index';
 
 register('page-home', PageHome);

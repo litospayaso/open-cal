@@ -1,4 +1,8 @@
-export const translations = {
+type translationKey = 'es' | 'en' | 'it' | 'fr' | 'de';
+type translationsType = {
+  [key in translationKey]: { [key: string]: string; };
+};
+export const translations: translationsType = {
   es: {
     search: 'Buscar',
     favorites: 'Favoritos',

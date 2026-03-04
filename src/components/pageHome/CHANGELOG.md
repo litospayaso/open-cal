@@ -1,5 +1,11 @@
 # home-page
 
+## 0.0.11
+
+### Patch Changes
+
+- updating export to include cached food and search api to fix cors issue and adding app user-agent
+
 ## 0.0.10
 
 ### Patch Changes

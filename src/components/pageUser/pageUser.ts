@@ -180,7 +180,7 @@ export default class PageUser extends Page {
   @state() newWeightValue: number = 0;
   @state() showExportModal: boolean = false;
   @state() exportFormat: 'json' | 'csv' = 'json';
-  @state() exportStores: Set<string> = new Set(['daily_consumption', 'user_data', 'meals', 'products', 'favorites']);
+  @state() exportStores: Set<string> = new Set(['daily_consumption', 'user_data', 'meals', 'products', 'favorites', 'user_status']);
   @state() showImportModal: boolean = false;
   @state() importData: any = null;
   @state() importOverride: boolean = false;
@@ -421,6 +421,7 @@ export default class PageUser extends Page {
               gender: row.Gender,
               goals: {
                 calories: Number(row.DailyCalories),
+                defaultBasalCalories: Number(row.DefaultBasalCalories || 0),
                 macros: {
                   protein: Number(row.ProteinRatio || 30),
                   carbs: Number(row.CarbsRatio || 40),
@@ -443,6 +444,36 @@ export default class PageUser extends Page {
           } else if (currentStore === 'favorites') {
             if (!data.favorites) data.favorites = [];
             data.favorites.push({ code: row.ProductCode });
+          } else if (currentStore === 'cached_products') {
+            if (!data.products) data.products = [];
+            data.products.push({
+              code: row.Code,
+              status: 1,
+              status_verbose: 'product found',
+              product: {
+                product_name: row.ProductName,
+                brands: row.Brands,
+                default_grams: Number(row.DefaultGrams || 0),
+                nutriments: {
+                  'energy-kcal_100g': Number(row.Calories),
+                  carbohydrates_100g: Number(row.Carbs),
+                  fat_100g: Number(row.Fat),
+                  proteins_100g: Number(row.Protein)
+                }
+              }
+            });
+          } else if (currentStore === 'user_status') {
+            if (!data.user_status) data.user_status = [];
+            data.user_status.push({
+              date: row.Date,
+              exerciseCalories: Number(row.ExerciseCalories),
+              basalCalories: Number(row.BasalCalories),
+              steps: Number(row.Steps),
+              sleepHours: Number(row.SleepHours),
+              energyLevel: Number(row.EnergyLevel),
+              hungerLevel: Number(row.HungerLevel),
+              thoughts: row.Thoughts
+            });
           }
         }
       }
@@ -469,6 +500,9 @@ export default class PageUser extends Page {
     } catch (err) {
       console.error('Final import error:', err);
       this.importMessage = { text: this.translations.errorImporting || 'Error importing data', type: 'error' };
+    } finally {
+      this.showImportModal = false;
+      this.importData = null;
     }
   }
 
@@ -692,6 +726,11 @@ export default class PageUser extends Page {
               <label class="checkbox-label">
                 <input type="checkbox" ?checked="${this.exportStores.has('favorites')}" @change="${() => this._toggleExportStore('favorites')}">
                 ${this.translations.favorites}
+              </label>
+
+              <label class="checkbox-label">
+                <input type="checkbox" ?checked="${this.exportStores.has('user_status')}" @change="${() => this._toggleExportStore('user_status')}">
+                ${this.translations.dailyStatus}
               </label>
 
               <p style="font-weight: bold; margin: 20px 0 10px;">${this.translations.selectExportFormat}:</p>

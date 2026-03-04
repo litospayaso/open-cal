@@ -36,14 +36,19 @@ const handleResponse = async (response: Response) => {
  * @returns a HTTP response with the data requested.
  */
 export const request = async (url: string, http?: HttpRequestInterface): Promise<any> => {
-  const domain = `https://world.openfoodfacts.net/`;
+  const lang = localStorage.getItem('language') || 'en';
+  const subdomain = lang === 'en' ? 'world' : lang;
+  const domain = `https://${subdomain}.openfoodfacts.org`;
   const method = http?.method ? http.method : 'GET';
 
   const options = {
     method,
     mode: 'cors',
+    headers: {
+      'User-Agent': 'Brote - Android/iOS/Web - Version 1.0 - https://github.com/litospayaso/open-cal'
+    },
     cache: 'no-cache',
-    credentials: 'same-origin',
+    credentials: 'omit',
   } as RequestInit;
 
   if (http?.body) {
@@ -54,7 +59,7 @@ export const request = async (url: string, http?: HttpRequestInterface): Promise
     }
   }
 
-  const response = await fetch(`${domain}${url}`, options);
+  const response = await fetch(`${domain}/${url}`, options);
   return handleResponse(response);
 };
 

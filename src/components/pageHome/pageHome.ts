@@ -330,6 +330,18 @@ export default class PageHome extends Page {
       ${this.renderCategory(this.translations.snackAfternoon, 'snack2')}
       ${this.renderCategory(this.translations.dinner, 'dinner')}
       ${this.renderCategory(this.translations.snackEvening, 'snack3')}
+
+      ${!this.dailyLog || (
+        this.dailyLog.breakfast.length === 0 &&
+        this.dailyLog.snack1.length === 0 &&
+        this.dailyLog.lunch.length === 0 &&
+        this.dailyLog.snack2.length === 0 &&
+        this.dailyLog.dinner.length === 0 &&
+        this.dailyLog.snack3.length === 0
+      ) ? html`
+        <component-day-tip .language="${this.getLanguage()}"></component-day-tip>
+        <button class="btn" @click="${() => this.triggerPageNavigation({ page: 'search' })}">${this.translations.addFood}</button>
+      ` : ''}
     `;
   }
 
