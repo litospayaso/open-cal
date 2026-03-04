@@ -26673,12 +26673,13 @@
 
   // src/shared/db.ts
   var DB_NAME = "OpenCalDB";
-  var DB_VERSION = 4;
+  var DB_VERSION = 5;
   var STORE_NAME = "daily_consumption";
   var STORE_PRODUCTS = "products";
   var STORE_FAVORITES = "favorites";
   var STORE_MEALS = "meals";
   var STORE_WEIGHT_HISTORY = "weight_history";
+  var STORE_USER_STATUS = "user_status";
   var DBService = class {
     constructor() {
       this.db = null;
@@ -26710,6 +26711,9 @@
           }
           if (!db.objectStoreNames.contains(STORE_WEIGHT_HISTORY)) {
             db.createObjectStore(STORE_WEIGHT_HISTORY, { keyPath: "date" });
+          }
+          if (!db.objectStoreNames.contains(STORE_USER_STATUS)) {
+            db.createObjectStore(STORE_USER_STATUS, { keyPath: "date" });
           }
         };
       });
@@ -26787,6 +26791,43 @@
         request2.onerror = () => {
           reject(request2.error);
         };
+      });
+    }
+    async getUserStatus(date) {
+      await this.ensureInit();
+      return new Promise((resolve, reject) => {
+        const transaction = this.db.transaction([STORE_USER_STATUS], "readonly");
+        const store = transaction.objectStore(STORE_USER_STATUS);
+        const request2 = store.get(date);
+        request2.onsuccess = () => {
+          const result = request2.result;
+          if (result) {
+            resolve(result);
+          } else {
+            resolve({
+              date,
+              exerciseCalories: 0,
+              basalCalories: 0,
+              steps: 0,
+              sleepHours: 0,
+              energyLevel: 0,
+              hungerLevel: 0
+            });
+          }
+        };
+        request2.onerror = () => {
+          reject(request2.error);
+        };
+      });
+    }
+    async saveUserStatus(status) {
+      await this.ensureInit();
+      return new Promise((resolve, reject) => {
+        const transaction = this.db.transaction([STORE_USER_STATUS], "readwrite");
+        const store = transaction.objectStore(STORE_USER_STATUS);
+        const request2 = store.put(status);
+        request2.onsuccess = () => resolve();
+        request2.onerror = () => reject(request2.error);
       });
     }
     async addFoodItem(date, category, item) {
@@ -33797,6 +33838,7 @@
       this.proteinRatio = 30;
       this.carbsRatio = 40;
       this.fatRatio = 30;
+      this.defaultBasalCalories = 0;
       this.theme = "light";
       this.language = "en";
       this.showClearModal = false;
@@ -33970,6 +34012,7 @@
           this.proteinRatio = profile.goals?.macros?.protein || 30;
           this.carbsRatio = profile.goals?.macros?.carbs || 40;
           this.fatRatio = profile.goals?.macros?.fat || 30;
+          this.defaultBasalCalories = profile.goals?.defaultBasalCalories || 0;
         } catch (e6) {
           console.error("Failed to parse user profile", e6);
         }
@@ -34000,6 +34043,7 @@
         gender: this.gender,
         goals: {
           calories: this.dailyCalories,
+          defaultBasalCalories: this.defaultBasalCalories,
           macros: {
             protein: this.proteinRatio,
             carbs: this.carbsRatio,
@@ -34240,6 +34284,10 @@ ${countMsg}`,
         <div class="form-group">
           <label>${this.translations.weight} (kg)</label>
           <input type="number" step="0.1" .value="${this.weight}" @input="${(e6) => this._handleNumberInput("weight", e6)}" placeholder="e.g. 70.5" />
+        </div>
+        <div class="form-group">
+          <label>Default daily basal calories (kcal)</label>
+          <input type="number" .value="${this.defaultBasalCalories}" @input="${(e6) => this._handleNumberInput("defaultBasalCalories", e6)}" placeholder="e.g. 1500" />
         </div>
 
         <div class="chart-wrapper">
@@ -34485,6 +34533,9 @@ ${countMsg}`,
   __decorateClass([
     r5()
   ], PageUser.prototype, "fatRatio", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "defaultBasalCalories", 2);
   __decorateClass([
     r5()
   ], PageUser.prototype, "theme", 2);
@@ -34803,10 +34854,12 @@ ${countMsg}`,
       super(...arguments);
       this.currentDate = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
       this.dailyLog = null;
+      this.userStatus = null;
       this.loading = true;
       this.totals = { calories: 0, carbs: 0, fat: 0, protein: 0 };
       this.userGoals = {
         calories: 2e3,
+        defaultBasalCalories: 0,
         macros: { protein: 30, carbs: 40, fat: 30 }
       };
     }
@@ -34961,7 +35014,8 @@ ${countMsg}`,
               macros: {
                 ...this.userGoals.macros,
                 ...profile.goals.macros || {}
-              }
+              },
+              defaultBasalCalories: profile.goals.defaultBasalCalories || 0
             };
           }
         } catch (e6) {
@@ -34973,6 +35027,7 @@ ${countMsg}`,
       this.loading = true;
       try {
         this.dailyLog = await this.db.getDailyLog(this.currentDate);
+        this.userStatus = await this.db.getUserStatus(this.currentDate);
         this.calculateTotals();
       } catch (e6) {
         console.error("Failed to load daily log", e6);
@@ -35052,6 +35107,16 @@ ${countMsg}`,
         </div>
       </div>
 
+      <component-user-status
+        .exerciseCalories=${this.userStatus?.exerciseCalories || 0}
+        .basalCalories=${this.userStatus?.basalCalories || this.userGoals.defaultBasalCalories || 0}
+        .steps=${this.userStatus?.steps || 0}
+        .sleepHours=${this.userStatus?.sleepHours || 0}
+        .energyLevel=${this.userStatus?.energyLevel || 0}
+        .hungerLevel=${this.userStatus?.hungerLevel || 0}
+        @status-changed="${this._handleStatusChanged}"
+      ></component-user-status>
+
       <div class="progress-container">
         <component-progress-bar
             .dailyCaloriesGoal=${this.userGoals.calories}
@@ -35105,6 +35170,23 @@ ${countMsg}`,
         console.error("Failed to remove item", e6);
       }
     }
+    async _handleStatusChanged(e6) {
+      const { exerciseCalories, basalCalories, steps, sleepHours, energyLevel, hungerLevel } = e6.detail;
+      this.userStatus = {
+        date: this.currentDate,
+        exerciseCalories,
+        basalCalories,
+        steps,
+        sleepHours,
+        energyLevel,
+        hungerLevel
+      };
+      try {
+        await this.db.saveUserStatus(this.userStatus);
+      } catch (err) {
+        console.error("Failed to save user status", err);
+      }
+    }
     _handleElementClick(item) {
       if (item.unit === "meal") {
         this.triggerPageNavigation({ page: "meal", mealId: item.product.code });
@@ -35147,6 +35229,9 @@ ${countMsg}`,
   __decorateClass([
     r5()
   ], PageHome.prototype, "dailyLog", 2);
+  __decorateClass([
+    r5()
+  ], PageHome.prototype, "userStatus", 2);
   __decorateClass([
     r5()
   ], PageHome.prototype, "loading", 2);
@@ -35373,6 +35458,526 @@ ${countMsg}`,
 
   // src/components/componentProgressBar/index.ts
   register("component-progress-bar", ComponentProgressBar);
+
+  // src/components/componentUserStatus/componentUserStatus.ts
+  var ComponentUserStatus = class extends i4 {
+    constructor() {
+      super(...arguments);
+      this.exerciseCalories = 0;
+      this.basalCalories = 0;
+      this.steps = 0;
+      this.sleepHours = 0;
+      this.energyLevel = 0;
+      this.hungerLevel = 0;
+      this.showModal = false;
+      this._exerciseCalories = 0;
+      this._basalCalories = 0;
+      this._steps = 0;
+      this._sleepHours = 0;
+      this._energyLevel = 0;
+      this._hungerLevel = 0;
+    }
+    static {
+      this.styles = [
+        Page.styles,
+        i`
+    :host {
+      display: block;
+      width: 100%;
+      margin: 16px 0;
+    }
+
+    .status-card {
+      background: var(--card-background, #fff);
+      border: 1px solid var(--card-border, #4fb9ad);
+      border-radius: 8px;
+      padding: 0 10px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      height: 35px;
+      box-sizing: border-box;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .status-item {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .emoji {
+      font-size: 1rem;
+    }
+
+    .value {
+      font-weight: bold;
+      font-size: 0.75rem;
+      color: var(--text-color, #191c25);
+    }
+
+    .label {
+      display: none;
+    }
+
+    .modal-content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      text-align: left;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .slider-container {
+      margin-top: 8px;
+    }
+  `
+      ];
+    }
+    openModal() {
+      this._exerciseCalories = this.exerciseCalories;
+      this._basalCalories = this.basalCalories;
+      this._steps = this.steps;
+      this._sleepHours = this.sleepHours;
+      this._energyLevel = this.energyLevel;
+      this._hungerLevel = this.hungerLevel;
+      this.showModal = true;
+    }
+    closeModal() {
+      this.showModal = false;
+    }
+    saveChanges() {
+      this.exerciseCalories = this._exerciseCalories;
+      this.basalCalories = this._basalCalories;
+      this.steps = this._steps;
+      this.sleepHours = this._sleepHours;
+      this.energyLevel = this._energyLevel;
+      this.hungerLevel = this._hungerLevel;
+      this.dispatchEvent(new CustomEvent("status-changed", {
+        detail: {
+          exerciseCalories: this.exerciseCalories,
+          basalCalories: this.basalCalories,
+          steps: this.steps,
+          sleepHours: this.sleepHours,
+          energyLevel: this.energyLevel,
+          hungerLevel: this.hungerLevel
+        },
+        bubbles: true,
+        composed: true
+      }));
+      this.closeModal();
+    }
+    handleInputChange(e6, key) {
+      const target = e6.target;
+      this[`_${key}`] = Number(target.value);
+    }
+    formatTime(val) {
+      const hours = Math.floor(val);
+      const minutes = Math.round((val - hours) * 60);
+      return `${hours}:${minutes.toString().padStart(2, "0")}`;
+    }
+    render() {
+      return b2`
+      <div class="status-card" @click="${this.openModal}">
+        <div class="status-item" title="Basal Calories">
+          <span class="emoji">🔥</span>
+          ${this.basalCalories > 0 ? b2`<span class="value">${this.basalCalories} kcal</span>` : ""}
+        </div>
+        <div class="status-item" title="Exercise Calories">
+          <span class="emoji">💪</span>
+          ${this.exerciseCalories > 0 ? b2`<span class="value">${this.exerciseCalories} kcal</span>` : ""}
+        </div>
+        <div class="status-item" title="Steps">
+          <span class="emoji">👣</span>
+          ${this.steps > 0 ? b2`<span class="value">${this.steps} steps</span>` : ""}
+        </div>
+        <div class="status-item" title="Sleep">
+          <span class="emoji">😴</span>
+          ${this.sleepHours > 0 ? b2`<span class="value">${this.formatTime(this.sleepHours)} h</span>` : ""}
+        </div>
+        <div class="status-item" title="Energy Level">
+          <span class="emoji">⚡</span>
+          ${this.energyLevel > 0 ? b2`<span class="value">${this.energyLevel}/5</span>` : ""}
+        </div>
+        <div class="status-item" title="Hunger Level">
+          <span class="emoji">🍕</span>
+          ${this.hungerLevel > 0 ? b2`<span class="value">${this.hungerLevel}/5</span>` : ""}
+        </div>
+      </div>
+
+      ${this.showModal ? b2`
+        <div class="modal-overlay" @click="${this.closeModal}">
+          <div class="modal" @click="${(e6) => e6.stopPropagation()}">
+            <div class="modal-header">
+              <h3>Daily Status</h3>
+              <button class="close-btn" @click="${this.closeModal}">&times;</button>
+            </div>
+            
+            <div class="modal-content">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>🔥 Basal kcal (${this._basalCalories})</label>
+                  <input type="number" .value="${String(this._basalCalories)}" @input="${(e6) => this.handleInputChange(e6, "basalCalories")}" />
+                </div>
+                <div class="form-group">
+                  <label>💪 Exercise kcal (${this._exerciseCalories})</label>
+                  <input type="number" .value="${String(this._exerciseCalories)}" @input="${(e6) => this.handleInputChange(e6, "exerciseCalories")}" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>👣 Steps taken (${this._steps})</label>
+                <input type="number" .value="${String(this._steps)}" @input="${(e6) => this.handleInputChange(e6, "steps")}" />
+              </div>
+
+              <div class="form-group">
+                <label>😴 Sleep hours (${this.formatTime(this._sleepHours)})</label>
+                <div class="slider-container">
+                  <component-slider
+                    data-theme="${document.documentElement.getAttribute("data-theme") || "light"}"
+                    format="time"
+                    .min="${0}"
+                    .max="${12}"
+                    .steps="${0.25}"
+                    .value="${this._sleepHours}"
+                    @value-changed="${(e6) => this._sleepHours = e6.detail.value}"
+                    minTag="0h"
+                    maxTag="12h"
+                  ></component-slider>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>⚡ Energy level (${this._energyLevel}/5)</label>
+                <div class="slider-container">
+                  <component-slider
+                    data-theme="${document.documentElement.getAttribute("data-theme") || "light"}"
+                    .min="${0}"
+                    .max="${5}"
+                    .steps="${1}"
+                    .value="${this._energyLevel}"
+                    @value-changed="${(e6) => this._energyLevel = e6.detail.value}"
+                    minTag="🪫"
+                    maxTag="⚡"
+                  ></component-slider>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>🍕 Hunger level (${this._hungerLevel}/5)</label>
+                <div class="slider-container">
+                  <component-slider
+                    data-theme="${document.documentElement.getAttribute("data-theme") || "light"}"
+                    .min="${0}"
+                    .max="${5}"
+                    .steps="${1}"
+                    .value="${this._hungerLevel}"
+                    @value-changed="${(e6) => this._hungerLevel = e6.detail.value}"
+                    minTag="😫"
+                    maxTag="🤤"
+                  ></component-slider>
+                </div>
+              </div>
+
+              <div class="modal-buttons">
+                <button class="btn" @click="${this.saveChanges}">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ` : ""}
+    `;
+    }
+  };
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentUserStatus.prototype, "exerciseCalories", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentUserStatus.prototype, "basalCalories", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentUserStatus.prototype, "steps", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentUserStatus.prototype, "sleepHours", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentUserStatus.prototype, "energyLevel", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentUserStatus.prototype, "hungerLevel", 2);
+  __decorateClass([
+    r5()
+  ], ComponentUserStatus.prototype, "showModal", 2);
+  __decorateClass([
+    r5()
+  ], ComponentUserStatus.prototype, "_exerciseCalories", 2);
+  __decorateClass([
+    r5()
+  ], ComponentUserStatus.prototype, "_basalCalories", 2);
+  __decorateClass([
+    r5()
+  ], ComponentUserStatus.prototype, "_steps", 2);
+  __decorateClass([
+    r5()
+  ], ComponentUserStatus.prototype, "_sleepHours", 2);
+  __decorateClass([
+    r5()
+  ], ComponentUserStatus.prototype, "_energyLevel", 2);
+  __decorateClass([
+    r5()
+  ], ComponentUserStatus.prototype, "_hungerLevel", 2);
+
+  // src/components/componentSlider/componentSlider.ts
+  var ComponentSlider = class extends i4 {
+    constructor() {
+      super(...arguments);
+      this.format = "number";
+      this.steps = 1;
+      this.minTag = "";
+      this.maxTag = "";
+      this.min = 0;
+      this.max = 100;
+      this.value = 50;
+      this.isDragging = false;
+      this.tooltipPosition = 0;
+    }
+    updateTooltipPosition(target) {
+      const min = Number(target.min) || 0;
+      const max = Number(target.max) || 100;
+      const val = Number(target.value);
+      const percent = (val - min) / (max - min);
+      const thumbWidth = 20;
+      const offset = thumbWidth / 2 - thumbWidth * percent + 3;
+      this.tooltipPosition = `calc(${percent * 100}% + ${offset}px)`;
+    }
+    formatValue(val) {
+      if (this.format === "time") {
+        const hours = Math.floor(val);
+        const minutes = Math.round((val - hours) * 60);
+        return `${hours}:${minutes.toString().padStart(2, "0")}`;
+      }
+      return String(val);
+    }
+    handleInput(e6) {
+      const target = e6.target;
+      this.value = Number(target.value);
+      this.updateTooltipPosition(target);
+      this.dispatchEvent(new CustomEvent("value-changed", {
+        detail: { value: this.value },
+        bubbles: true,
+        composed: true
+      }));
+    }
+    handlePointerDown(e6) {
+      this.isDragging = true;
+      this.updateTooltipPosition(e6.target);
+    }
+    handlePointerUp() {
+      this.isDragging = false;
+    }
+    get currentTheme() {
+      return this.getAttribute("data-theme") || document.documentElement.getAttribute("data-theme") || "light";
+    }
+    render() {
+      const theme = this.currentTheme;
+      return b2`
+      <div class="slider-container" data-theme="${theme}">
+        <div class="tooltip ${this.isDragging ? "visible" : ""}" style="left: ${this.tooltipPosition}">
+          ${this.formatValue(this.value)}
+        </div>
+        <input 
+          type="range" 
+          min="${this.min}" 
+          max="${this.max}" 
+          step="${this.steps}" 
+          .value="${String(this.value)}"
+          @input="${this.handleInput}"
+          @mousedown="${this.handlePointerDown}"
+          @mouseup="${this.handlePointerUp}"
+          @touchstart="${this.handlePointerDown}"
+          @touchend="${this.handlePointerUp}"
+          aria-label="Slider"
+        />
+        ${this.minTag || this.maxTag ? b2`
+          <div class="labels">
+            <span>${this.minTag}</span>
+            <span>${this.maxTag}</span>
+          </div>
+        ` : ""}
+      </div>
+    `;
+    }
+  };
+  ComponentSlider.styles = [
+    variableStyles,
+    i`
+    :host {
+      display: block;
+      width: 100%;
+      font-family: var(--font-family, system-ui, sans-serif);
+      position: relative;
+    }
+
+    .slider-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      position: relative;
+    }
+
+    .labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.875rem;
+      color: var(--text-color, inherit);
+      font-weight: 500;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: var(--palette-lightgrey, #e0e0e0);
+      border-radius: 3px;
+      outline: none;
+      opacity: 0.9;
+      transition: opacity 0.2s;
+    }
+
+    /* Light mode specific adjustment for "white background" */
+    :host(:not([data-theme="dark"])) input[type="range"] {
+      background: #f0f0f0;
+      border: 1px solid #e0e0e0;
+    }
+
+    input[type="range"]:hover {
+      opacity: 1;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--palette-green, #4fb9ad);
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      transition: transform 0.1s;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--palette-green, #4fb9ad);
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      transition: transform 0.1s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+    }
+    
+    input[type="range"]::-moz-range-thumb:hover {
+      transform: scale(1.1);
+    }
+    
+    :host([data-theme="dark"]) input[type="range"] {
+       background: rgba(255, 255, 255, 0.1);
+    }
+    :host([data-theme="dark"]) input[type="range"]::-webkit-slider-thumb {
+       background: var(--palette-purple, #a285bb);
+    }
+    :host([data-theme="dark"]) input[type="range"]::-moz-range-thumb {
+       background: var(--palette-purple, #a285bb);
+    }
+
+    .tooltip {
+      position: absolute;
+      top: -30px;
+      left: 0;
+      transform: translateX(-50%);
+      background-color: var(--card-background, #fff);
+      color: var(--text-color, #191c25);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border: 1px solid var(--card-border, #4fb9ad);
+    }
+    
+    .tooltip.visible {
+      opacity: 1;
+    }
+  `
+  ];
+  __decorateClass([
+    n4({ type: String })
+  ], ComponentSlider.prototype, "format", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentSlider.prototype, "steps", 2);
+  __decorateClass([
+    n4({ type: String })
+  ], ComponentSlider.prototype, "minTag", 2);
+  __decorateClass([
+    n4({ type: String })
+  ], ComponentSlider.prototype, "maxTag", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentSlider.prototype, "min", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentSlider.prototype, "max", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentSlider.prototype, "value", 2);
+  __decorateClass([
+    r5()
+  ], ComponentSlider.prototype, "isDragging", 2);
+  __decorateClass([
+    r5()
+  ], ComponentSlider.prototype, "tooltipPosition", 2);
+  ComponentSlider = __decorateClass([
+    t3("component-slider")
+  ], ComponentSlider);
+
+  // src/components/componentUserStatus/index.ts
+  register("component-user-status", ComponentUserStatus);
 
   // src/components/pageHome/index.ts
   register("page-home", PageHome);
