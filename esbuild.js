@@ -92,14 +92,14 @@ await asyncForEach(glob.sync('./src/components/**/index.ts'), async file => {
 });
 
 
-fs.copyFile(`./dist/components/pageOpenCal/${finalVersion}/pageOpenCal.js`, './gh-pages/pageOpenCal.js', err => {
+fs.copyFile(`./dist/components/pageBroteApp/${finalVersion}/pageBroteApp.js`, './gh-pages/pageBroteApp.js', err => {
   if (err) {
     console.log('\x1b[32m%s\x1b[0m', '\n-----------------------------');
     console.log('\x1b[32m%s\x1b[36m%s\x1b[0m', '[ERROR]:      ', err);
     console.log('\x1b[32m%s\x1b[0m', '-----------------------------');
   } else {
     console.log('\x1b[32m%s\x1b[0m', '\n-----------------------------');
-    console.log('\x1b[32m%s\x1b[36m%s\x1b[0m', '[pageOpenCal.js]:      ', ' Lib copy correctly!');
+    console.log('\x1b[32m%s\x1b[36m%s\x1b[0m', '[pageBroteApp.js]:      ', ' Lib copy correctly!');
     console.log('\x1b[32m%s\x1b[0m', '-----------------------------');
   }
 });

@@ -1,5 +1,11 @@
 # page-user
 
+## 0.0.7
+
+### Patch Changes
+
+- Displaying version of the app in user page; Changing the color of the status bar depending on theme; Automating .apk releases
+
 ## 0.0.6
 
 ### Patch Changes

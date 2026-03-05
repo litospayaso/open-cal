@@ -148,7 +148,8 @@ export const translations: translationsType = {
     kcal: 'kcal',
     stepsSuffix: 'pasos',
     hoursSuffix: 'h',
-    dailyBasalCalories: 'Calorías basales diarias por defecto'
+    dailyBasalCalories: 'Calorías basales diarias por defecto',
+    appVersion: 'Brote - Versión de la aplicación'
   },
   en: {
     search: 'Search',
@@ -295,7 +296,8 @@ export const translations: translationsType = {
     kcal: 'kcal',
     stepsSuffix: 'steps',
     hoursSuffix: 'h',
-    dailyBasalCalories: 'Default daily basal calories'
+    dailyBasalCalories: 'Default daily basal calories',
+    appVersion: 'Brote - App Version'
   },
   fr: {
     search: 'Rechercher',
@@ -437,7 +439,8 @@ export const translations: translationsType = {
     kcal: 'kcal',
     stepsSuffix: 'pas',
     hoursSuffix: 'h',
-    dailyBasalCalories: 'Calories basales quotidiennes par défaut'
+    dailyBasalCalories: 'Calories basales quotidiennes par défaut',
+    appVersion: 'Brote - Version de l\'application'
   },
   de: {
     search: 'Suche',
@@ -579,7 +582,8 @@ export const translations: translationsType = {
     kcal: 'kcal',
     stepsSuffix: 'Schritte',
     hoursSuffix: 'Std.',
-    dailyBasalCalories: 'Standard-Grundumsatz'
+    dailyBasalCalories: 'Standard-Grundumsatz',
+    appVersion: 'Brote - App-Version'
   },
   it: {
     search: 'Cerca',
@@ -721,6 +725,7 @@ export const translations: translationsType = {
     kcal: 'kcal',
     stepsSuffix: 'passi',
     hoursSuffix: 'h',
-    dailyBasalCalories: 'Calorie basali giornaliere predefinite'
+    dailyBasalCalories: 'Calorie basali giornaliere predefinite',
+    appVersion: 'Brote - Versione dell\'applicazione'
   },
 };

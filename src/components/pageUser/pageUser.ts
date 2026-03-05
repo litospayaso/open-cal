@@ -1,5 +1,5 @@
 import { html, css, type PropertyValues } from 'lit';
-import { state } from 'lit/decorators.js';
+import { state, property } from 'lit/decorators.js';
 import Page from '../../shared/page';
 import type { MealCategory, UserProfile } from '../../shared/db';
 
@@ -145,8 +145,19 @@ export default class PageUser extends Page {
       }
       .import-msg.success { color: var(--palette-green, #4caf50); }
       .import-msg.error { color: var(--palette-red, #f44336); }
+
+      .app-version {
+        text-align: center;
+        margin-top: 2rem;
+        padding-bottom: 2rem;
+        font-size: 0.8rem;
+        opacity: 0.6;
+        color: var(--app-text-color-primary, #999);
+      }
     `
   ];
+
+  @property() version?: string;
 
   @state() height: number = 0;
   @state() weight: number = 0;
@@ -667,6 +678,12 @@ export default class PageUser extends Page {
         </button>
       </div>
 
+      ${this.version ? html`
+        <div class="app-version">
+          ${this.translations.appVersion}: ${this.version}
+        </div>
+      ` : ''}
+
       ${this.showClearModal ? html`
         <div class="modal-overlay">
           <div class="modal">
@@ -693,7 +710,7 @@ export default class PageUser extends Page {
             
             <div class="weight-history-list">
               ${this.weightHistory.length === 0 ? html`<p style="text-align: center;">${this.translations.noResultsFound || 'No history found'}</p>` : ''}
-              ${this.weightHistory.map(entry => html`
+              ${this.weightHistory.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(entry => html`
                 <div class="weight-history-item">
                   <span>${this._formatDate(entry.date)}</span>
                   <div style="display: flex; align-items: center; gap: 12px; padding-right: 8px;">

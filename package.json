@@ -1,7 +1,7 @@
 {
   "name": "brote",
   "private": true,
-  "version": "1.0.14",
+  "version": "1.0.15",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -22,7 +22,7 @@
     "build:apk": "npm run deploy:pages && npm run cap:sync && node scripts/fix_java_version.js && cd android && .\\gradlew assembleDebug",
     "build:apk:windows": "npm run deploy:pages && npm run cap:sync && node scripts/fix_java_version.js && cd android && gradlew.bat assembleDebug",
     "build:apk:linux": "npm run deploy:pages && npm run cap:sync && node scripts/fix_java_version.js && cd android && chmod +x gradlew && ANDROID_HOME=$HOME/Android/Sdk ./gradlew assembleDebug",
-    "deploy": "npm run deploy:pages && node scripts/apk_release.js"
+    "deploy": "npm run deploy:pages && node scripts/apk_release.js && node scripts/release.js"
   },
   "dependencies": {
     "@capacitor/android": "^8.1.0",

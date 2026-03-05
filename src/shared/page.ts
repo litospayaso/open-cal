@@ -357,6 +357,7 @@ export default class Page<api = {}> extends LitElement {
       document.documentElement.setAttribute('data-theme', 'light');
       document.documentElement.style.background = 'white';
     }
+    window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme } }));
   }
 
   /**

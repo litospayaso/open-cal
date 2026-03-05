@@ -1,5 +1,11 @@
 # brote
 
+## 1.0.15
+
+### Patch Changes
+
+- Displaying version of the app in user page; Changing the color of the status bar depending on theme; Automating .apk releases
+
 ## 1.0.14
 
 ### Patch Changes
