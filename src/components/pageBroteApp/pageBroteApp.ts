@@ -94,6 +94,7 @@ export default class PageBroteApp extends Page {
   private async _setupStatusBar() {
     try {
       if (Capacitor.isNativePlatform()) {
+        await new Promise(resolve => setTimeout(resolve, 500));
         await StatusBar.setOverlaysWebView({ overlay: false });
         await this._updateStatusBarColor();
       }
@@ -122,6 +123,9 @@ export default class PageBroteApp extends Page {
 
   private async _setupNotifications() {
     try {
+      if (Capacitor.isNativePlatform()) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
       if (this._notificationTimeout) {
         clearTimeout(this._notificationTimeout);
         this._notificationTimeout = null;
@@ -175,7 +179,7 @@ export default class PageBroteApp extends Page {
         }
       }
     } catch (e) {
-      console.error('LocalNotifications error in PageOpenCal', e);
+      console.error('LocalNotifications error in PageBroteApp', e);
     }
   }
 

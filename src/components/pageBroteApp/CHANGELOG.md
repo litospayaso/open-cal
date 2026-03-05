@@ -1,5 +1,11 @@
 # brote-app
 
+## 0.0.10
+
+### Patch Changes
+
+- fixing error on setting the status-bar on apk
+
 ## 0.0.9
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # brote
 
+## 1.0.16
+
+### Patch Changes
+
+- fixing error on setting the status-bar on apk
+
 ## 1.0.15
 
 ### Patch Changes
