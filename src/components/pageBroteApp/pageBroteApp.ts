@@ -3,7 +3,7 @@ import Page from '../../shared/page';
 import { state } from 'lit/decorators.js';
 import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
-import { StatusBar, Style } from '@capacitor/status-bar';
+import { StatusBar } from '@capacitor/status-bar';
 import { loadCss, variableStyles } from '../../shared/functions';
 import type { UserProfile } from '../../shared/db';
 import type { GroupButtonOption } from '../componentGroupButton/componentGroupButton';
@@ -63,9 +63,6 @@ export default class PageBroteApp extends Page {
     }
     delete params.maintainParams;
 
-    // Logic for back button:
-    // If we move from home to any other page, we use pushState to create a history entry.
-    // If we move between subpages, we use replaceState so the back button always returns to home.
     const usePushState = oldPage === 'home' && this.page !== 'home';
 
     this.setQueryParamsURL(params, usePushState);
@@ -86,7 +83,7 @@ export default class PageBroteApp extends Page {
     });
 
     window.addEventListener('theme-changed', () => {
-      this._updateStatusBarColor();
+      // Removed _updateStatusBarColor call as per instruction
     });
 
     window.addEventListener('notification-settings-changed', () => {
@@ -106,29 +103,13 @@ export default class PageBroteApp extends Page {
   private async _setupStatusBar() {
     try {
       if (Capacitor.isNativePlatform()) {
+        console.log('forcing status bar opacity...');
         await new Promise(resolve => setTimeout(resolve, 500));
         await StatusBar.setOverlaysWebView({ overlay: false });
-        await this._updateStatusBarColor();
+        await StatusBar.setBackgroundColor({ color: '#000000' });
       }
     } catch (e) {
       console.error('Error configuring StatusBar', e);
-    }
-  }
-
-  private async _updateStatusBarColor() {
-    try {
-      if (Capacitor.isNativePlatform()) {
-        const theme = localStorage.getItem('theme') || 'light';
-        if (theme === 'dark') {
-          await StatusBar.setBackgroundColor({ color: '#a285bb' });
-          // await StatusBar.setStyle({ style: Style.Dark });
-        } else {
-          await StatusBar.setBackgroundColor({ color: '#4fb9ad' });
-          // await StatusBar.setStyle({ style: Style.Light });
-        }
-      }
-    } catch (e) {
-      console.error('Error updating status bar color', e);
     }
   }
 

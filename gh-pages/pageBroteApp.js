@@ -42,7 +42,7 @@
   };
 
   // node_modules/@capacitor/core/dist/index.js
-  var ExceptionCode, CapacitorException, getPlatformId, createCapacitor, initCapacitorGlobal, Capacitor, registerPlugin, WebPlugin, encode, decode, CapacitorCookiesPluginWeb, CapacitorCookies, readBlobAsBase64, normalizeHttpHeaders, buildUrlParams, buildRequestInit, CapacitorHttpPluginWeb, CapacitorHttp, SystemBarsStyle, SystemBarType, SystemBarsPluginWeb, SystemBars;
+  var ExceptionCode, CapacitorException, getPlatformId, createCapacitor, initCapacitorGlobal, Capacitor, registerPlugin, WebPlugin, encode, decode, CapacitorCookiesPluginWeb, CapacitorCookies, readBlobAsBase64, normalizeHttpHeaders, buildUrlParams, buildRequestInit, CapacitorHttpPluginWeb, CapacitorHttp;
   var init_dist = __esm({
     "node_modules/@capacitor/core/dist/index.js"() {
       (function(ExceptionCode2) {
@@ -521,32 +521,6 @@
       CapacitorHttp = registerPlugin("CapacitorHttp", {
         web: () => new CapacitorHttpPluginWeb()
       });
-      (function(SystemBarsStyle2) {
-        SystemBarsStyle2["Dark"] = "DARK";
-        SystemBarsStyle2["Light"] = "LIGHT";
-        SystemBarsStyle2["Default"] = "DEFAULT";
-      })(SystemBarsStyle || (SystemBarsStyle = {}));
-      (function(SystemBarType2) {
-        SystemBarType2["StatusBar"] = "StatusBar";
-        SystemBarType2["NavigationBar"] = "NavigationBar";
-      })(SystemBarType || (SystemBarType = {}));
-      SystemBarsPluginWeb = class extends WebPlugin {
-        async setStyle() {
-          this.unavailable("not available for web");
-        }
-        async setAnimation() {
-          this.unavailable("not available for web");
-        }
-        async show() {
-          this.unavailable("not available for web");
-        }
-        async hide() {
-          this.unavailable("not available for web");
-        }
-      };
-      SystemBars = registerPlugin("SystemBars", {
-        web: () => new SystemBarsPluginWeb()
-      });
     }
   });
 
@@ -572,7 +546,7 @@
               try {
                 new Notification("");
               } catch (e6) {
-                if (e6 instanceof Error && e6.name === "TypeError") {
+                if (e6.name == "TypeError") {
                   return false;
                 }
               }
@@ -28726,10 +28700,10 @@
 
   // node_modules/@capacitor/status-bar/dist/esm/definitions.js
   var Style;
-  (function(Style3) {
-    Style3["Dark"] = "DARK";
-    Style3["Light"] = "LIGHT";
-    Style3["Default"] = "DEFAULT";
+  (function(Style2) {
+    Style2["Dark"] = "DARK";
+    Style2["Light"] = "LIGHT";
+    Style2["Default"] = "DEFAULT";
   })(Style || (Style = {}));
   var Animation;
   (function(Animation2) {
@@ -28766,6 +28740,9 @@
       "build:apk": "node scripts/apk_release.js",
       "build:apk:windows": "npm run deploy:pages && npm run cap:sync && node scripts/fix_java_version.js && cd android && gradlew.bat assembleDebug",
       "build:apk:linux": "npm run deploy:pages && npm run cap:sync && node scripts/fix_java_version.js && cd android && chmod +x gradlew && ANDROID_HOME=$HOME/Android/Sdk ./gradlew assembleDebug",
+      "run:android:windows": 'npm run build && npm run cap:sync && node -e "setTimeout(() => {}, 1000)" && node scripts/fix_java_version.js && npx cap run android -l',
+      "emulator:start:windows": 'start "" "C:\\Users\\angel\\AppData\\Local\\Android\\Sdk\\emulator\\emulator.exe" -avd Pixel_8_Pro_API_36 -no-snapshot-load',
+      "emulator:install:windows": "npm run build:apk:windows && adb install -r android/app/build/outputs/apk/debug/app-debug.apk",
       deploy: "npm run deploy:pages && node scripts/apk_release.js && node scripts/release.js"
     },
     dependencies: {
@@ -28885,7 +28862,6 @@
         loadCss(String(style2), `page-brote-styles-${i5}`);
       });
       window.addEventListener("theme-changed", () => {
-        this._updateStatusBarColor();
       });
       window.addEventListener("notification-settings-changed", () => {
         this._setupNotifications();
@@ -28901,26 +28877,13 @@
     async _setupStatusBar() {
       try {
         if (Capacitor.isNativePlatform()) {
+          console.log("forcing status bar opacity...");
           await new Promise((resolve) => setTimeout(resolve, 500));
           await StatusBar.setOverlaysWebView({ overlay: false });
-          await this._updateStatusBarColor();
+          await StatusBar.setBackgroundColor({ color: "#000000" });
         }
       } catch (e6) {
         console.error("Error configuring StatusBar", e6);
-      }
-    }
-    async _updateStatusBarColor() {
-      try {
-        if (Capacitor.isNativePlatform()) {
-          const theme = localStorage.getItem("theme") || "light";
-          if (theme === "dark") {
-            await StatusBar.setBackgroundColor({ color: "#a285bb" });
-          } else {
-            await StatusBar.setBackgroundColor({ color: "#4fb9ad" });
-          }
-        }
-      } catch (e6) {
-        console.error("Error updating status bar color", e6);
       }
     }
     async _setupNotifications() {
@@ -29039,6 +29002,7 @@
     render() {
       return b2`
     <div class="app-container">
+      V10
       ${this.pageRender()}
     </div>
     <div class="group-button-container">

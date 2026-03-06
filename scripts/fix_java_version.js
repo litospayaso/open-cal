@@ -11,9 +11,15 @@ function findAndFixBuildGradle(dir) {
       findAndFixBuildGradle(fullPath);
     } else if (file === 'build.gradle' || file === 'capacitor.build.gradle') {
       let content = fs.readFileSync(fullPath, 'utf8');
-      if (content.includes('JavaVersion.VERSION_21')) {
+      let originalContent = content;
+
+      content = content.replace(/JavaVersion\.VERSION_21/g, 'JavaVersion.VERSION_17');
+      content = content.replace(/JavaVersion\.VERSION_1_8/g, 'JavaVersion.VERSION_17');
+      content = content.replace(/jvmTarget\s*=\s*['"]?21['"]?/g, "jvmTarget = '17'");
+      content = content.replace(/jvmTarget\s*=\s*['"]?1\.8['"]?/g, "jvmTarget = '17'");
+
+      if (content !== originalContent) {
         console.log(`Fixing Java version in ${fullPath}`);
-        content = content.replace(/JavaVersion\.VERSION_21/g, 'JavaVersion.VERSION_17');
         fs.writeFileSync(fullPath, content);
       }
     }
