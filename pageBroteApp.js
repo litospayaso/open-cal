@@ -28877,7 +28877,10 @@
     async _setupStatusBar() {
       try {
         if (Capacitor.isNativePlatform()) {
+          console.log("forcing status bar opacity...");
+          await new Promise((resolve) => setTimeout(resolve, 500));
           await StatusBar.setOverlaysWebView({ overlay: false });
+          await StatusBar.setBackgroundColor({ color: "#000000" });
         }
       } catch (e6) {
         console.error("Error configuring StatusBar", e6);
@@ -28999,7 +29002,7 @@
     render() {
       return b2`
     <div class="app-container">
-      V8
+      V9
       ${this.pageRender()}
     </div>
     <div class="group-button-container">
