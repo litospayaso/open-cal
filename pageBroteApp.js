@@ -28888,16 +28888,22 @@
       }
     }
     async _updateStatusBarColor() {
+      console.log("WATEVEEEER!");
       try {
         if (Capacitor.isNativePlatform()) {
           const theme = localStorage.getItem("theme") || "light";
+          console.log("Updating StatusBar for theme:", theme);
           if (theme === "dark") {
+            console.log("Setting StatusBar color to #a285bb (Dark)");
             await StatusBar.setBackgroundColor({ color: "#a285bb" });
             await StatusBar.setStyle({ style: Style.Dark });
           } else {
+            console.log("Setting StatusBar color to #4fb9ad (Light)");
             await StatusBar.setBackgroundColor({ color: "#4fb9ad" });
             await StatusBar.setStyle({ style: Style.Light });
           }
+        } else {
+          console.log("Not a native platform, skipping status bar update");
         }
       } catch (e6) {
         console.error("Error updating status bar color", e6);
@@ -29019,7 +29025,7 @@
     render() {
       return b2`
     <div class="app-container">
-      V2
+      V3
       ${this.pageRender()}
     </div>
     <div class="group-button-container">
