@@ -53,6 +53,7 @@ export default class PageBroteApp extends Page {
     delete (params.isTrusted);
     const currentParams = Object.fromEntries(this.getQueryParamsURL());
     maintainParams = params.maintainParams === 'false' ? false : maintainParams;
+    const oldPage = this.page;
     if (params.page) {
       this.page = params.page || 'home';
     }
@@ -60,7 +61,13 @@ export default class PageBroteApp extends Page {
       params = { ...currentParams, ...params };
     }
     delete params.maintainParams;
-    this.setQueryParamsURL(params);
+
+    // Logic for back button:
+    // If we move from home to any other page, we use pushState to create a history entry.
+    // If we move between subpages, we use replaceState so the back button always returns to home.
+    const usePushState = oldPage === 'home' && this.page !== 'home';
+
+    this.setQueryParamsURL(params, usePushState);
     this.requestUpdate();
   }
 
@@ -88,6 +95,10 @@ export default class PageBroteApp extends Page {
     LocalNotifications.addListener('localNotificationActionPerformed', (notification) => {
       console.log('Notification action performed', notification);
       this.navigateToPage({ page: 'home', openStatus: 'true' }, false);
+    });
+
+    window.addEventListener('popstate', () => {
+      this.requestUpdate();
     });
   }
 

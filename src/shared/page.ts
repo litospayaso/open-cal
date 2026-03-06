@@ -396,12 +396,17 @@ export default class Page<api = {}> extends LitElement {
   /**
    * Function to set queryparams in current url
    * @param queryParams object with key value pairs
+   * @param usePushState if true it will use pushState instead of replaceState
    */
-  setQueryParamsURL(queryParams: { [key: string]: string }): void {
+  setQueryParamsURL(queryParams: { [key: string]: string }, usePushState = false): void {
     const queryParamsString = Object.entries(queryParams)
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
-    window.history.replaceState(null, null as unknown as string, `?${queryParamsString}`);
+    if (usePushState) {
+      window.history.pushState(null, null as unknown as string, `?${queryParamsString}`);
+    } else {
+      window.history.replaceState(null, null as unknown as string, `?${queryParamsString}`);
+    }
   }
 
   triggerPageNavigation(queryParams: { [key: string]: string }) {

@@ -1,5 +1,11 @@
 # brote
 
+## 1.0.18
+
+### Patch Changes
+
+- updating navigation to support back event.
+
 ## 1.0.17
 
 ### Patch Changes

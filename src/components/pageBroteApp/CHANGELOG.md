@@ -1,5 +1,11 @@
 # brote-app
 
+## 0.0.12
+
+### Patch Changes
+
+- updating navigation to support back event.
+
 ## 0.0.11
 
 ### Patch Changes
