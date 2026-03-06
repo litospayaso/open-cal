@@ -28878,6 +28878,7 @@
     async _setupStatusBar() {
       try {
         if (Capacitor.isNativePlatform()) {
+          await StatusBar.show();
           await new Promise((resolve) => setTimeout(resolve, 500));
           await StatusBar.setOverlaysWebView({ overlay: false });
           await this._updateStatusBarColor();
@@ -29018,7 +29019,7 @@
     render() {
       return b2`
     <div class="app-container">
-      V1
+      V2
       ${this.pageRender()}
     </div>
     <div class="group-button-container">
