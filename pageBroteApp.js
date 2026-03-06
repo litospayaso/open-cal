@@ -28560,10 +28560,15 @@
     /**
      * Function to set queryparams in current url
      * @param queryParams object with key value pairs
+     * @param usePushState if true it will use pushState instead of replaceState
      */
-    setQueryParamsURL(queryParams) {
+    setQueryParamsURL(queryParams, usePushState = false) {
       const queryParamsString = Object.entries(queryParams).map(([key, value]) => `${key}=${value}`).join("&");
-      window.history.replaceState(null, null, `?${queryParamsString}`);
+      if (usePushState) {
+        window.history.pushState(null, null, `?${queryParamsString}`);
+      } else {
+        window.history.replaceState(null, null, `?${queryParamsString}`);
+      }
     }
     triggerPageNavigation(queryParams) {
       this.dispatchEvent(new CustomEvent("page-navigation", {
@@ -28700,7 +28705,7 @@
   var package_default = {
     name: "brote",
     private: true,
-    version: "1.0.17",
+    version: "1.0.18",
     type: "module",
     scripts: {
       dev: "vite",
@@ -28816,6 +28821,7 @@
       delete params.isTrusted;
       const currentParams = Object.fromEntries(this.getQueryParamsURL());
       maintainParams = params.maintainParams === "false" ? false : maintainParams;
+      const oldPage = this.page;
       if (params.page) {
         this.page = params.page || "home";
       }
@@ -28823,7 +28829,8 @@
         params = { ...currentParams, ...params };
       }
       delete params.maintainParams;
-      this.setQueryParamsURL(params);
+      const usePushState = oldPage === "home" && this.page !== "home";
+      this.setQueryParamsURL(params, usePushState);
       this.requestUpdate();
     }
     onPageInit() {
@@ -28845,6 +28852,9 @@
       LocalNotifications.addListener("localNotificationActionPerformed", (notification) => {
         console.log("Notification action performed", notification);
         this.navigateToPage({ page: "home", openStatus: "true" }, false);
+      });
+      window.addEventListener("popstate", () => {
+        this.requestUpdate();
       });
     }
     async _setupStatusBar() {
