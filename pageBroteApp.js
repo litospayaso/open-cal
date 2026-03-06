@@ -28700,10 +28700,10 @@
 
   // node_modules/@capacitor/status-bar/dist/esm/definitions.js
   var Style;
-  (function(Style3) {
-    Style3["Dark"] = "DARK";
-    Style3["Light"] = "LIGHT";
-    Style3["Default"] = "DEFAULT";
+  (function(Style2) {
+    Style2["Dark"] = "DARK";
+    Style2["Light"] = "LIGHT";
+    Style2["Default"] = "DEFAULT";
   })(Style || (Style = {}));
   var Animation;
   (function(Animation2) {
@@ -28742,7 +28742,7 @@
       "build:apk:linux": "npm run deploy:pages && npm run cap:sync && node scripts/fix_java_version.js && cd android && chmod +x gradlew && ANDROID_HOME=$HOME/Android/Sdk ./gradlew assembleDebug",
       "run:android:windows": 'npm run build && npm run cap:sync && node -e "setTimeout(() => {}, 1000)" && node scripts/fix_java_version.js && npx cap run android -l',
       "emulator:start:windows": 'start "" "C:\\Users\\angel\\AppData\\Local\\Android\\Sdk\\emulator\\emulator.exe" -avd Pixel_8_Pro_API_36 -no-snapshot-load',
-      "emulator:install:windows": "adb install -r android/app/build/outputs/apk/debug/app-debug.apk",
+      "emulator:install:windows": "npm run build:apk:windows && adb install -r android/app/build/outputs/apk/debug/app-debug.apk",
       deploy: "npm run deploy:pages && node scripts/apk_release.js && node scripts/release.js"
     },
     dependencies: {
@@ -28892,8 +28892,10 @@
           const theme = localStorage.getItem("theme") || "light";
           if (theme === "dark") {
             await StatusBar.setBackgroundColor({ color: "#a285bb" });
+            await StatusBar.setStyle({ style: Style.Dark });
           } else {
             await StatusBar.setBackgroundColor({ color: "#4fb9ad" });
+            await StatusBar.setStyle({ style: Style.Light });
           }
         }
       } catch (e6) {
@@ -29016,6 +29018,7 @@
     render() {
       return b2`
     <div class="app-container">
+      V1
       ${this.pageRender()}
     </div>
     <div class="group-button-container">
@@ -36411,7 +36414,7 @@ ${countMsg}`,
         <div class="date-selector">
            <button @click="${() => this.changeDate(-1)}">‹</button>
            <div class="date-display" @click="${this._handleDateDisplayClick}">
-             <span>${this.getFormattedDate()} ANGEL</span>
+             <span>${this.getFormattedDate()}</span>
              <input type="date" .value="${this.currentDate}" @change="${this._handleDateChange}" />
            </div>
            <button @click="${() => this.changeDate(1)}">›</button>
