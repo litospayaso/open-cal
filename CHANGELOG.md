@@ -1,5 +1,12 @@
 # brote
 
+## 1.0.20
+
+### Patch Changes
+
+- allowing the user to search by barcode number, and add the product even if the result returns the correct data.
+- adding deeper messages to tip of the day.
+
 ## 1.0.19
 
 ### Patch Changes

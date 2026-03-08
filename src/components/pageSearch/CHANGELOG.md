@@ -1,5 +1,11 @@
 # search-page
 
+## 0.0.4
+
+### Patch Changes
+
+- allowing the user to search by barcode number, and add the product even if the result returns the correct data.
+
 ## 0.0.3
 
 ### Patch Changes

@@ -190,6 +190,21 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
         }
       } else if (this.viewMode === 'search') {
         if (this.query) {
+          const isBarcode = /^\d{8,14}$/.test(this.query);
+          if (isBarcode) {
+            const productResponse = await this.api.getProduct(this.query);
+            if (productResponse && productResponse.status === 'success' && productResponse.product) {
+              const params = this.getQueryParamsURL();
+              const mealId = params.get('mealId');
+              const navParams: any = { page: 'food', code: this.query };
+              if (mealId) {
+                navParams.mealId = mealId;
+              }
+              this.triggerPageNavigation(navParams);
+              return;
+            }
+          }
+
           const searchResponse = await this.api.searchProduct(this.query);
           const rawProducts = searchResponse.products || [];
 
@@ -323,7 +338,7 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
         <h1>${this.mealId ? this.translations.addFood : this.translations.searchProduct}</h1>
         <div class="search-container">
           <component-search-input 
-            placeholder="${this.translations.searchProduct}" 
+            placeholder="${this.translations.searchProductplacholder}" 
             search-button-text="${this.translations.search}" 
             @search-init="${this._handleSearchInit}"
             @search-blur="${this._handleSearchBlur}"
@@ -360,6 +375,11 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
           <component-spinner class="loading-spinner"></component-spinner>
         ` : html`
           ${this.searchResult.length > 0 ? html`
+            ${this.viewMode === 'search' ? html`
+              <button class="btn btn-create" @click="${() => this.triggerPageNavigation({ page: 'food', code: this._generateId(), query: this.query })}">
+                ${this.translations.createNewProduct}
+              </button>
+            ` : ''}
             <div>
               ${this.searchResult.map(product => html`
                 <component-search-result 
@@ -376,7 +396,6 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
           ` : ''}
           ${this.searchResult.length === 0 && this.query.length > 0 ? html`
             <p>${this.translations.noResultsFound}</p>
-
             ${this.viewMode === 'search' ? html`
               <button class="btn btn-create" @click="${() => this.triggerPageNavigation({ page: 'food', code: this._generateId(), query: this.query })}">
                 ${this.translations.createNewProduct}
