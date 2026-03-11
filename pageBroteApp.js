@@ -28750,7 +28750,7 @@
   var package_default = {
     name: "brote",
     private: true,
-    version: "1.0.20",
+    version: "1.0.21",
     type: "module",
     scripts: {
       dev: "vite",
@@ -28774,7 +28774,7 @@
       "run:android:windows": 'npm run build && npm run cap:sync && node -e "setTimeout(() => {}, 1000)" && node scripts/fix_java_version.js && npx cap run android -l',
       "emulator:start:windows": 'start "" "%LOCALAPPDATA%\\Android\\Sdk\\emulator\\emulator.exe" -avd Pixel_8_Pro_API_36 -no-snapshot-load',
       "emulator:install:windows": "npm run build:apk:windows && adb install -r android/app/build/outputs/apk/debug/app-debug.apk",
-      deploy: "npm run deploy:pages && node scripts/apk_release.js && node scripts/release.js"
+      deploy: "npm run deploy:pages && node scripts/apk_rele>ase.js && node scripts/release.js"
     },
     dependencies: {
       "@capacitor/android": "^8.1.0",
@@ -33418,7 +33418,18 @@
             return await this.db.getCachedProduct(fav.code);
           });
           const results = await Promise.all(promises);
-          products = results.filter((p3) => !!p3);
+          const cachedProducts = results.filter((p3) => !!p3);
+          const allMeals = await this.db.getAllMeals();
+          const favoriteMeals = allMeals.filter((m2) => favorites.some((f3) => f3.code === m2.id));
+          const mealItems = favoriteMeals.map((m2) => ({
+            code: m2.id,
+            product_name: m2.name,
+            isMeal: true,
+            nutriments: {
+              "energy-kcal": m2.foods.reduce((acc, f3) => acc + (f3.product.nutriments?.["energy-kcal"] || 0) * (f3.quantity / 100), 0)
+            }
+          }));
+          products = [...cachedProducts, ...mealItems];
           if (products && products.length > 0 && this.query) {
             products = products.filter((p3) => {
               const name = p3.product_name || p3.product?.product_name || "";
@@ -33458,21 +33469,19 @@
             const lowerQuery = this.query.toLowerCase();
             meals = meals.filter((m2) => m2.name.toLowerCase().includes(lowerQuery));
           }
-          const mealItems = meals.map((m2) => ({
+          products = meals.map((m2) => ({
             code: m2.id,
             url: "",
             product_name: m2.name,
+            isMeal: true,
             nutriments: {
               "energy-kcal": m2.foods.reduce((acc, f3) => acc + (f3.product.nutriments?.["energy-kcal"] || 0) * (f3.quantity / 100), 0)
             }
           }));
-          products = [
-            ...mealItems
-          ];
         }
         this.searchResult = await Promise.all(products.map(async (product) => {
-          if (this.viewMode === "meals") return product;
           const isFavorite = await this.db.isFavorite(product.code);
+          if (product.isMeal) return { ...product, isFavorite };
           const normalized = { ...product, isFavorite };
           if (product.product) {
             normalized.product_name = product.product.product_name || normalized.product_name;
@@ -33523,11 +33532,13 @@
           this.requestUpdate();
           if (product.isFavorite) {
             try {
-              const fullProduct = await this.api.getProduct(e6.detail.code);
-              if (fullProduct) {
-                await this.db.cacheProduct(fullProduct);
-                await this.db.addFavorite(e6.detail.code);
+              if (!product.isMeal) {
+                const fullProduct = await this.api.getProduct(e6.detail.code);
+                if (fullProduct) {
+                  await this.db.cacheProduct(fullProduct);
+                }
               }
+              await this.db.addFavorite(e6.detail.code);
             } catch (err) {
               console.error("Error adding favorite", err);
             }
@@ -33539,7 +33550,7 @@
     }
     _handleElementClick(e6) {
       if (e6.detail?.code) {
-        if (this.viewMode === "meals") {
+        if (this.viewMode === "meals" || this.searchResult.find((p3) => p3.code === e6.detail.code)?.isMeal) {
           this.triggerPageNavigation({ page: "meal", mealId: e6.detail.code });
         } else {
           const params = this.getQueryParamsURL();
@@ -36003,7 +36014,7 @@ ${countMsg}`,
       this._hoveredText = null;
     }
     _generateChartSvg() {
-      const yMargin = 1;
+      const yMargin = 0;
       if (!this._chartContainer) return;
       this._chartContainer.innerHTML = "";
       const width = this._width || this.offsetWidth || 300;
@@ -37090,7 +37101,7 @@ ${countMsg}`,
                     data-theme="${document.documentElement.getAttribute("data-theme") || "light"}"
                     .min="${0}"
                     .max="${5}"
-                    .steps="${1}"
+                    .steps="${0.5}"
                     .value="${this._energyLevel}"
                     @value-changed="${(e6) => this._energyLevel = e6.detail.value}"
                     minTag="🪫"
@@ -37106,7 +37117,7 @@ ${countMsg}`,
                     data-theme="${document.documentElement.getAttribute("data-theme") || "light"}"
                     .min="${0}"
                     .max="${5}"
-                    .steps="${1}"
+                    .steps="${0.5}"
                     .value="${this._hungerLevel}"
                     @value-changed="${(e6) => this._hungerLevel = e6.detail.value}"
                     minTag="😫"
