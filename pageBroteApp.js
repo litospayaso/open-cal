@@ -27496,7 +27496,9 @@
       kcal: "kcal",
       stepsSuffix: "pasos",
       hoursSuffix: "h",
-      dailyBasalCalories: "Calor\xEDas basales diarias por defecto (kcal)",
+      dailyBasalCalories: "Calor\xEDas basales diarias (kcal)",
+      movement: "Movimiento",
+      nutrition: "Nutrici\xF3n",
       appVersion: "Brote - Versi\xF3n de la aplicaci\xF3n",
       exportShareTitle: "Brote - Exportar datos",
       exportShareText: "Aqu\xED tienes tus datos exportados de Brote",
@@ -27655,6 +27657,8 @@
       stepsSuffix: "steps",
       hoursSuffix: "h",
       dailyBasalCalories: "Default daily basal calories (kcal)",
+      movement: "Movement",
+      nutrition: "Nutrition",
       appVersion: "Brote - App Version",
       exportShareTitle: "Brote - Export Data",
       exportShareText: "Here is your exported data from Brote",
@@ -27807,7 +27811,9 @@
       kcal: "kcal",
       stepsSuffix: "pas",
       hoursSuffix: "h",
-      dailyBasalCalories: "Calories basales quotidiennes par d\xE9faut (kcal)",
+      dailyBasalCalories: "Calories basales quotidiennes (kcal)",
+      movement: "Mouvement",
+      nutrition: "Nutrition",
       appVersion: "Brote - Version de l'application",
       exportShareTitle: "Brote - Exporter les donn\xE9es",
       exportShareText: "Voici vos donn\xE9es export\xE9es de Brote",
@@ -27960,7 +27966,9 @@
       kcal: "kcal",
       stepsSuffix: "Schritte",
       hoursSuffix: "Std.",
-      dailyBasalCalories: "Standard-Grundumsatz (kcal)",
+      dailyBasalCalories: "T\xE4glicher Grundumsatz (kcal)",
+      movement: "Bewegung",
+      nutrition: "Ern\xE4hrung",
       appVersion: "Brote - App-Version",
       exportShareTitle: "Brote - Daten exportieren",
       exportShareText: "Hier sind Ihre exportierten Daten von Brote",
@@ -28113,7 +28121,9 @@
       kcal: "kcal",
       stepsSuffix: "passi",
       hoursSuffix: "h",
-      dailyBasalCalories: "Calorie basali giornaliere predefinite (kcal)",
+      dailyBasalCalories: "Calorie basali giornaliere (kcal)",
+      movement: "Movimento",
+      nutrition: "Nutrizione",
       appVersion: "Brote - Versione dell'applicazione",
       exportShareTitle: "Brote - Esporta dati",
       exportShareText: "Ecco i tuoi dati esportati da Brote",
@@ -29436,7 +29446,7 @@
   var package_default = {
     name: "brote",
     private: true,
-    version: "1.0.24",
+    version: "1.0.25",
     type: "module",
     scripts: {
       dev: "vite",
@@ -35840,12 +35850,13 @@
       this.showExportModal = false;
       this.exportFormat = "json";
       this.exportStores = /* @__PURE__ */ new Set(["daily_consumption", "user_data", "meals", "products", "favorites", "user_status"]);
+      this.weeklyChartData = null;
+      this.radarChartData = null;
       this.showImportModal = false;
       this.importData = null;
       this.importOverride = false;
       this.importMessage = null;
       this.statsReferenceDate = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
-      this.weeklyChartData = null;
     }
     static {
       this.styles = [
@@ -36242,6 +36253,32 @@
           }
         ]
       };
+      this.radarChartData = {
+        labels: [
+          this.translations.sleepHours || "Sue\xF1o",
+          this.translations.movement || "Movimiento",
+          this.translations.energyLevel || "Energ\xEDa",
+          this.translations.hungerLevel || "Saciedad",
+          this.translations.nutrition || "Nutrici\xF3n"
+        ],
+        datasets: [
+          {
+            label: "",
+            data: [
+              Math.min(10, avgSleep),
+              // 10 hours is max
+              Math.min(10, avgSteps / 1e3),
+              // 10,000 steps is max
+              Math.min(10, avgEnergy),
+              // 0-10 scale
+              Math.min(10, avgSatiety),
+              // 0-10 scale
+              Math.min(10, avgConsumed / 300)
+              // 3000 kcal is max
+            ]
+          }
+        ]
+      };
     }
     _changeStatsWeek(weeks) {
       const d3 = new Date(this.statsReferenceDate);
@@ -36551,11 +36588,15 @@ ${countMsg}`,
           </div>
           <button @click="${() => this._changeStatsWeek(1)}">›</button>
         </div>
-        ${this.weeklyChartData ? b2`
-          <component-bar-line-chart 
-            .chartData="${this.weeklyChartData}"
-          ></component-bar-line-chart>
-        ` : b2`<div style="text-align: center; padding: 2rem; opacity: 0.6;">Loading statistics...</div>`}
+              ${this.weeklyChartData ? b2`
+                <component-bar-line-chart .chartData="${this.weeklyChartData}"></component-bar-line-chart>
+              ` : ""}
+
+              ${this.radarChartData ? b2`
+                <div style="margin-top: 20px; height: 300px;">
+                  <component-shape-chart .chartData="${this.radarChartData}"></component-shape-chart>
+                </div>
+              ` : ""}
       </div>
 
       <div class="card">
@@ -36870,6 +36911,12 @@ ${countMsg}`,
   ], PageUser.prototype, "exportStores", 2);
   __decorateClass([
     r5()
+  ], PageUser.prototype, "weeklyChartData", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "radarChartData", 2);
+  __decorateClass([
+    r5()
   ], PageUser.prototype, "showImportModal", 2);
   __decorateClass([
     r5()
@@ -36883,9 +36930,6 @@ ${countMsg}`,
   __decorateClass([
     r5()
   ], PageUser.prototype, "statsReferenceDate", 2);
-  __decorateClass([
-    r5()
-  ], PageUser.prototype, "weeklyChartData", 2);
 
   // src/components/componentLineChart/componentLineChart.ts
   var ComponentLineChart = class extends i4 {
@@ -37536,6 +37580,233 @@ ${countMsg}`,
 
   // src/components/componentBarLineChart/index.ts
   register("component-bar-line-chart", ComponentBarLineChart);
+
+  // src/components/componentShapeChart/componentShapeChart.ts
+  var ComponentShapeChart = class extends i4 {
+    constructor() {
+      super(...arguments);
+      this.chartData = {
+        labels: [],
+        datasets: []
+      };
+      this.maxValue = 10;
+      this._width = 0;
+      this._height = 0;
+      this._padding = 50;
+    }
+    static {
+      this.styles = i`
+    :host {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 250px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .chart-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .radar-grid {
+      fill: none;
+      stroke: var(--palette-lightgrey, #cdcdcd);
+      stroke-width: 0.5;
+    }
+
+    .radar-axis {
+      stroke: var(--palette-lightgrey, #cdcdcd);
+      stroke-width: 0.5;
+    }
+
+    .radar-area {
+      fill: var(--chart-line-color, var(--palette-green, #4fb9ad));
+      fill-opacity: 0.4;
+      stroke: var(--chart-line-color, var(--palette-green, #4fb9ad));
+      stroke-width: 2;
+    }
+
+    .axis-label {
+      font-size: 10px;
+      fill: var(--card-text, #333);
+      font-weight: 500;
+    }
+
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      padding: 10px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--card-text, #333);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-box {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+    }
+
+    :host([data-theme="dark"]),
+    :host-context([data-theme="dark"]),
+    :host-context(html[data-theme="dark"]) {
+      --chart-line-color: var(--palette-purple, #a285bb);
+    }
+  `;
+    }
+    connectedCallback() {
+      super.connectedCallback();
+      window.addEventListener("resize", () => this._updateDimensions());
+    }
+    disconnectedCallback() {
+      window.removeEventListener("resize", () => this._updateDimensions());
+      super.disconnectedCallback();
+    }
+    firstUpdated() {
+      this._updateDimensions();
+    }
+    _updateDimensions() {
+      if (!this._chartContainer) return;
+      const rect = this._chartContainer.getBoundingClientRect();
+      this._width = rect.width || 300;
+      this._height = rect.height || 300;
+      this.requestUpdate();
+    }
+    updated(changedProperties) {
+      if (changedProperties.has("chartData") || changedProperties.has("_width") || changedProperties.has("_height")) {
+        this._generateChartSvg();
+      }
+    }
+    _getCoordinates(angle, value, maxValue, size) {
+      const radius = (size / 2 - this._padding) * (value / maxValue);
+      const x2 = size / 2 + radius * Math.cos(angle - Math.PI / 2);
+      const y3 = size / 2 + radius * Math.sin(angle - Math.PI / 2);
+      return { x: x2, y: y3 };
+    }
+    _generateChartSvg() {
+      if (!this._chartContainer) return;
+      this._chartContainer.innerHTML = "";
+      const { labels, datasets } = this.chartData;
+      if (!labels.length || !datasets.length) {
+        this._chartContainer.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%">No Data</div>';
+        return;
+      }
+      const size = Math.min(this._width, this._height);
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("viewBox", `0 0 ${size} ${size}`);
+      svg.style.width = `${size}px`;
+      svg.style.height = `${size}px`;
+      svg.style.margin = "0 auto";
+      svg.style.display = "block";
+      const numAxes = labels.length;
+      const angleStep = Math.PI * 2 / numAxes;
+      const maxValue = this.maxValue;
+      const levels = Array.from({ length: 5 }, (_2, i5) => maxValue / 5 * (i5 + 1));
+      levels.forEach((level) => {
+        const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        const points = labels.map((_2, i5) => {
+          const { x: x2, y: y3 } = this._getCoordinates(i5 * angleStep, level, maxValue, size);
+          return `${x2},${y3}`;
+        }).join(" ");
+        polygon.setAttribute("points", points);
+        polygon.setAttribute("class", "radar-grid");
+        svg.appendChild(polygon);
+      });
+      labels.forEach((label, i5) => {
+        const angle = i5 * angleStep;
+        const { x: x1, y: y1 } = this._getCoordinates(angle, 0, maxValue, size);
+        const { x: x2, y: y22 } = this._getCoordinates(angle, maxValue, maxValue, size);
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", x1.toString());
+        line.setAttribute("y1", y1.toString());
+        line.setAttribute("x2", x2.toString());
+        line.setAttribute("y2", y22.toString());
+        line.setAttribute("class", "radar-axis");
+        svg.appendChild(line);
+        const { x: xl, y: yl } = this._getCoordinates(angle, maxValue + 0.8, maxValue, size);
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", xl.toString());
+        text.setAttribute("y", yl.toString());
+        text.setAttribute("class", "axis-label");
+        text.setAttribute("text-anchor", "middle");
+        text.setAttribute("dominant-baseline", "middle");
+        text.textContent = label;
+        svg.appendChild(text);
+      });
+      datasets.forEach((dataset) => {
+        const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        const points = dataset.data.map((val, i5) => {
+          const { x: x2, y: y3 } = this._getCoordinates(i5 * angleStep, val, maxValue, size);
+          return `${x2},${y3}`;
+        }).join(" ");
+        polygon.setAttribute("points", points);
+        polygon.setAttribute("class", "radar-area");
+        svg.appendChild(polygon);
+        dataset.data.forEach((val, i5) => {
+          const { x: x2, y: y3 } = this._getCoordinates(i5 * angleStep, val, maxValue, size);
+          const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle.setAttribute("cx", x2.toString());
+          circle.setAttribute("cy", y3.toString());
+          circle.setAttribute("r", "3");
+          circle.setAttribute("fill", "var(--chart-line-color)");
+          svg.appendChild(circle);
+        });
+      });
+      this._chartContainer.appendChild(svg);
+    }
+    render() {
+      const showLegend = this.chartData.datasets.length > 1 || this.chartData.datasets.length === 1 && this.chartData.datasets[0].label;
+      return b2`
+      <div class="chart-container"></div>
+      ${showLegend ? b2`
+        <div class="legend">
+          ${this.chartData.datasets.map((ds) => b2`
+            <div class="legend-item">
+              <div class="legend-box" style="background: var(--chart-line-color)"></div>
+              <span>${ds.label}</span>
+            </div>
+          `)}
+        </div>
+      ` : ""}
+    `;
+    }
+  };
+  __decorateClass([
+    n4({ type: Object })
+  ], ComponentShapeChart.prototype, "chartData", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentShapeChart.prototype, "maxValue", 2);
+  __decorateClass([
+    r5()
+  ], ComponentShapeChart.prototype, "_width", 2);
+  __decorateClass([
+    r5()
+  ], ComponentShapeChart.prototype, "_height", 2);
+  __decorateClass([
+    r5()
+  ], ComponentShapeChart.prototype, "_padding", 2);
+  __decorateClass([
+    e5(".chart-container")
+  ], ComponentShapeChart.prototype, "_chartContainer", 2);
+
+  // src/components/componentShapeChart/index.ts
+  register("component-shape-chart", ComponentShapeChart);
 
   // src/components/pageUser/index.ts
   register("page-user", PageUser);
