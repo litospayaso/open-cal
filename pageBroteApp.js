@@ -27496,11 +27496,17 @@
       kcal: "kcal",
       stepsSuffix: "pasos",
       hoursSuffix: "h",
-      dailyBasalCalories: "Calor\xEDas basales diarias por defecto",
+      dailyBasalCalories: "Calor\xEDas basales diarias por defecto (kcal)",
       appVersion: "Brote - Versi\xF3n de la aplicaci\xF3n",
       exportShareTitle: "Brote - Exportar datos",
       exportShareText: "Aqu\xED tienes tus datos exportados de Brote",
-      shareData: "Compartir datos"
+      shareData: "Compartir datos",
+      weekOf: "Semana del",
+      consumed: "Consumidas",
+      burned: "Quemadas",
+      statistics: "Estad\xEDsticas",
+      weightEvolution: "Evoluci\xF3n del peso",
+      averageCalories: "Media calor\xEDas"
     },
     en: {
       search: "Search",
@@ -27648,11 +27654,17 @@
       kcal: "kcal",
       stepsSuffix: "steps",
       hoursSuffix: "h",
-      dailyBasalCalories: "Default daily basal calories",
+      dailyBasalCalories: "Default daily basal calories (kcal)",
       appVersion: "Brote - App Version",
       exportShareTitle: "Brote - Export Data",
       exportShareText: "Here is your exported data from Brote",
-      shareData: "Share data"
+      shareData: "Share data",
+      weekOf: "Week of",
+      consumed: "Consumed",
+      burned: "Burned",
+      statistics: "Statistics",
+      weightEvolution: "Weight evolution",
+      averageCalories: "Average calories"
     },
     fr: {
       search: "Rechercher",
@@ -27795,11 +27807,17 @@
       kcal: "kcal",
       stepsSuffix: "pas",
       hoursSuffix: "h",
-      dailyBasalCalories: "Calories basales quotidiennes par d\xE9faut",
+      dailyBasalCalories: "Calories basales quotidiennes par d\xE9faut (kcal)",
       appVersion: "Brote - Version de l'application",
       exportShareTitle: "Brote - Exporter les donn\xE9es",
       exportShareText: "Voici vos donn\xE9es export\xE9es de Brote",
-      shareData: "Partager les donn\xE9es"
+      shareData: "Partager les donn\xE9es",
+      weekOf: "Semaine du",
+      consumed: "Consomm\xE9es",
+      burned: "Br\xFBl\xE9es",
+      statistics: "Statistiques",
+      weightEvolution: "\xC9volution du poids",
+      averageCalories: "Moyenne calories"
     },
     de: {
       search: "Suche",
@@ -27942,11 +27960,17 @@
       kcal: "kcal",
       stepsSuffix: "Schritte",
       hoursSuffix: "Std.",
-      dailyBasalCalories: "Standard-Grundumsatz",
+      dailyBasalCalories: "Standard-Grundumsatz (kcal)",
       appVersion: "Brote - App-Version",
       exportShareTitle: "Brote - Daten exportieren",
       exportShareText: "Hier sind Ihre exportierten Daten von Brote",
-      shareData: "Daten teilen"
+      shareData: "Daten teilen",
+      weekOf: "Woche vom",
+      consumed: "Verbraucht",
+      burned: "Verbrannt",
+      statistics: "Statistiken",
+      weightEvolution: "Gewichtsentwicklung",
+      averageCalories: "Durchschnittliche Kalorien"
     },
     it: {
       search: "Cerca",
@@ -28089,11 +28113,17 @@
       kcal: "kcal",
       stepsSuffix: "passi",
       hoursSuffix: "h",
-      dailyBasalCalories: "Calorie basali giornaliere predefinite",
+      dailyBasalCalories: "Calorie basali giornaliere predefinite (kcal)",
       appVersion: "Brote - Versione dell'applicazione",
       exportShareTitle: "Brote - Esporta dati",
       exportShareText: "Ecco i tuoi dati esportati da Brote",
-      shareData: "Condividi dati"
+      shareData: "Condividi dati",
+      weekOf: "Settimana del",
+      consumed: "Consumate",
+      burned: "Bruciate",
+      statistics: "Statistiche",
+      weightEvolution: "Evoluzione del peso",
+      averageCalories: "Media calorie"
     }
   };
 
@@ -28773,6 +28803,10 @@
     --carbs-color: #ca96f8eb;
     --calories-color: #707bde;
 
+    --energy-color: #cdcd31;
+    --satiety-color: #4fb9ad;
+    --sleep-hours-color:#fe9696;
+
     --counter-border-width: 2px;
 
     --background-color: #fff;
@@ -29402,7 +29436,7 @@
   var package_default = {
     name: "brote",
     private: true,
-    version: "1.0.23",
+    version: "1.0.24",
     type: "module",
     scripts: {
       dev: "vite",
@@ -35810,6 +35844,8 @@
       this.importData = null;
       this.importOverride = false;
       this.importMessage = null;
+      this.statsReferenceDate = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+      this.weeklyChartData = null;
     }
     static {
       this.styles = [
@@ -35961,6 +35997,31 @@
         opacity: 0.6;
         color: var(--app-text-color-primary, #999);
       }
+
+      .week-selector {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 10px;
+        color: var(--card-text);
+      }
+      .week-selector button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.8rem;
+        padding: 0 15px;
+        line-height: 1;
+        transition: transform 0.2s;
+      }
+      .week-selector button:active {
+        transform: scale(1.2);
+      }
+      .week-display {
+        font-size: 1.1rem;
+        font-weight: bold;
+      }
     `
       ];
     }
@@ -35997,6 +36058,7 @@
         this._saveProfile();
       }
       this._loadWeightHistory();
+      this._loadWeeklyStats();
     }
     async _loadWeightHistory() {
       this.weightHistory = await this.db.getWeightHistory();
@@ -36058,6 +36120,144 @@
       this.notificationTime = e6.target.value;
       this._saveProfile();
       window.dispatchEvent(new CustomEvent("notification-settings-changed"));
+    }
+    async _loadWeeklyStats() {
+      const refDate = new Date(this.statsReferenceDate);
+      const day = refDate.getDay();
+      const diff = refDate.getDate() - day + (day === 0 ? -6 : 1);
+      const monday = new Date(new Date(refDate).setDate(diff));
+      const weekDates = [];
+      for (let i5 = 0; i5 < 7; i5++) {
+        const d3 = new Date(monday);
+        d3.setDate(monday.getDate() + i5);
+        weekDates.push(d3.toISOString().split("T")[0]);
+      }
+      const promises = weekDates.map((date) => Promise.all([
+        this.db.getDailyLog(date),
+        this.db.getUserStatus(date)
+      ]));
+      const results = await Promise.all(promises);
+      const labels = weekDates.map((date) => {
+        const d3 = new Date(date);
+        return d3.toLocaleDateString(this.language, { weekday: "short" });
+      });
+      const consumedData = [];
+      const burnedStackedData = [];
+      const satietyData = [];
+      const energyData = [];
+      const sleepData = [];
+      const stepsData = [];
+      results.forEach(([log, status]) => {
+        let eaten = 0;
+        const categories = ["breakfast", "snack1", "lunch", "snack2", "dinner", "snack3"];
+        categories.forEach((cat) => {
+          log[cat].forEach((item) => {
+            const ratio = item.unit === "meal" ? item.quantity : item.quantity / 100;
+            eaten += (item.product.nutriments["energy-kcal"] || 0) * ratio;
+          });
+        });
+        consumedData.push(Math.round(eaten));
+        const basal = status.basalCalories || this.defaultBasalCalories || 0;
+        const exercise = status.exerciseCalories || 0;
+        burnedStackedData.push([basal, exercise]);
+        satietyData.push(status.hungerLevel || 0);
+        sleepData.push(status.sleepHours || 0);
+        energyData.push(status.energyLevel || 0);
+        stepsData.push(status.steps || 0);
+      });
+      const getAvg = (data) => {
+        const filtered = data.filter((v2) => v2 !== 0);
+        return filtered.length > 0 ? filtered.reduce((a3, b3) => a3 + b3, 0) / filtered.length : 0;
+      };
+      const avgConsumed = getAvg(consumedData);
+      const avgBasal = getAvg(results.map(([_2, s5]) => s5.basalCalories || 0));
+      const avgExercise = getAvg(results.map(([_2, s5]) => s5.exerciseCalories || 0));
+      const burnedTotals = results.map(([_2, s5]) => (s5.basalCalories || 0) + (s5.exerciseCalories || 0));
+      const avgBurnedTotal = getAvg(burnedTotals);
+      const avgSleep = getAvg(sleepData);
+      const avgEnergy = getAvg(energyData);
+      const avgSatiety = getAvg(satietyData);
+      const avgSteps = getAvg(stepsData);
+      const formatLabel = (label, avg, type) => {
+        if (type === "calories") {
+          return `${label} (${Math.round(avg)} kcal)`;
+        } else if (type === "time") {
+          const h3 = Math.floor(avg);
+          const m2 = Math.round((avg - h3) * 60);
+          const formattedTime = `${h3}h ${m2.toString().padStart(2, "0")}m`;
+          return `${label} (${formattedTime})`;
+        } else if (type === "steps") {
+          return `${label} (${Math.round(avg)} pasos)`;
+        } else {
+          return `${label} (${avg.toFixed(1)})`;
+        }
+      };
+      this.weeklyChartData = {
+        labels,
+        datasets: [
+          {
+            label: formatLabel(this.translations.consumed || "Consumidas", avgConsumed, "calories"),
+            type: "bar",
+            data: consumedData,
+            yAxisID: "y"
+          },
+          {
+            label: this.translations.burned || "Quemadas",
+            type: "bar",
+            data: burnedStackedData,
+            stackLabels: [
+              formatLabel(this.translations.basalCalories || "Basal", avgBasal, "calories"),
+              formatLabel(this.translations.exerciseCalories || "Deporte", avgExercise, "calories"),
+              formatLabel(this.translations.total || "Total", avgBurnedTotal, "calories")
+            ],
+            yAxisID: "y"
+          },
+          {
+            label: formatLabel(this.translations.stepsTaken || "Pasos", avgSteps, "steps"),
+            type: "bar",
+            data: stepsData.map((v2) => v2 / 10),
+            color: "var(--palette-blue)",
+            yAxisID: "y"
+          },
+          {
+            label: formatLabel(this.translations.sleepHours || "Sue\xF1o", avgSleep, "time"),
+            type: "line",
+            data: sleepData,
+            yAxisID: "y1",
+            dashed: true,
+            color: "var(--sleep-hours-color)"
+          },
+          {
+            label: formatLabel(this.translations.energyLevel || "Energ\xEDa", avgEnergy, "level"),
+            type: "line",
+            data: energyData,
+            yAxisID: "y1"
+          },
+          {
+            label: formatLabel(this.translations.hungerLevel || "Saciedad", avgSatiety, "level"),
+            type: "line",
+            data: satietyData,
+            yAxisID: "y1",
+            dotted: true
+          }
+        ]
+      };
+    }
+    _changeStatsWeek(weeks) {
+      const d3 = new Date(this.statsReferenceDate);
+      d3.setDate(d3.getDate() + weeks * 7);
+      this.statsReferenceDate = d3.toISOString().split("T")[0];
+      this._loadWeeklyStats();
+    }
+    _getWeekRangeLabel() {
+      const refDate = new Date(this.statsReferenceDate);
+      const day = refDate.getDay();
+      const diff = refDate.getDate() - day + (day === 0 ? -6 : 1);
+      const monday = new Date(new Date(refDate).setDate(diff));
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      const options = { day: "2-digit", month: "2-digit" };
+      return `${monday.toLocaleDateString(this.language, options)} - ${sunday.toLocaleDateString(this.language, options)}`;
     }
     async _clearAllData() {
       try {
@@ -36320,21 +36520,42 @@ ${countMsg}`,
           <input type="number" .value="${this.height}" @input="${(e6) => this._handleNumberInput("height", e6)}" placeholder="e.g. 175" />
         </div>
         <div class="form-group">
-          <label>${this.translations.weight} (kg)</label>
-          <input type="number" step="0.1" .value="${this.weight}" @input="${(e6) => this._handleNumberInput("weight", e6)}" placeholder="e.g. 70.5" />
-        </div>
-        <div class="form-group">
-          <label>Default daily basal calories (kcal)</label>
+          <label>${this.translations.dailyBasalCalories}</label>
           <input type="number" .value="${this.defaultBasalCalories}" @input="${(e6) => this._handleNumberInput("defaultBasalCalories", e6)}" placeholder="e.g. 1500" />
         </div>
+        <div class="form-group">
+          <label>${this.translations.weight} (kg)</label>
+          <input type="number" step="0.1" .value="${this.weight}" @input="${(e6) => this._handleNumberInput("weight", e6)}" placeholder="e.g. 70.5" />
 
+          <button class="btn" style="margin-top: 22px;" @click="${() => this.showWeightModal = true}">
+            ${this.translations.updateHistoricalWeight}
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>${this.translations.statistics}</h2>
+        <div class="week-display">
+          <span>
+            ${this.translations.weightEvolution}
+          </span>
+        </div>
         <div class="chart-wrapper">
           <component-line-chart .data="${this.weightHistory.map((h3) => ({ tag: h3.date, value: h3.weight }))}"></component-line-chart>
         </div>
 
-        <button class="btn" @click="${() => this.showWeightModal = true}">
-          ${this.translations.updateHistoricalWeight}
-        </button>
+        <div class="week-selector">
+          <button @click="${() => this._changeStatsWeek(-1)}">‹</button>
+          <div class="week-display">
+            <span>${this.translations.weekOf} ${this._getWeekRangeLabel()}</span>
+          </div>
+          <button @click="${() => this._changeStatsWeek(1)}">›</button>
+        </div>
+        ${this.weeklyChartData ? b2`
+          <component-bar-line-chart 
+            .chartData="${this.weeklyChartData}"
+          ></component-bar-line-chart>
+        ` : b2`<div style="text-align: center; padding: 2rem; opacity: 0.6;">Loading statistics...</div>`}
       </div>
 
       <div class="card">
@@ -36659,6 +36880,12 @@ ${countMsg}`,
   __decorateClass([
     r5()
   ], PageUser.prototype, "importMessage", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "statsReferenceDate", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "weeklyChartData", 2);
 
   // src/components/componentLineChart/componentLineChart.ts
   var ComponentLineChart = class extends i4 {
@@ -36928,6 +37155,387 @@ ${countMsg}`,
 
   // src/components/componentLineChart/index.ts
   register("component-line-chart", ComponentLineChart);
+
+  // src/components/componentBarLineChart/componentBarLineChart.ts
+  var ComponentBarLineChart = class extends i4 {
+    constructor() {
+      super(...arguments);
+      this.chartData = {
+        labels: [],
+        datasets: []
+      };
+      this._width = 0;
+      this._height = 0;
+      this._padding = {
+        top: 40,
+        right: 50,
+        bottom: 40,
+        left: 60
+      };
+    }
+    static {
+      this.styles = i`
+    :host {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 250px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .chart-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      padding: 10px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--card-text, #333);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-box {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+    }
+
+    .legend-line {
+      width: 20px;
+      height: 2px;
+    }
+
+    .axis-label {
+      font-size: 11px;
+      fill: var(--card-text, #333);
+      font-weight: bold;
+    }
+
+    .tick-text {
+      font-size: 10px;
+      fill: var(--palette-grey, #a19fa2);
+    }
+
+    .grid-line {
+      stroke: var(--palette-lightgrey, #cdcdcd);
+      stroke-width: 0.5;
+      stroke-dasharray: 4,4;
+    }
+
+    .point {
+      stroke-width: 2;
+      fill: #fff;
+    }
+  `;
+    }
+    firstUpdated() {
+      this._updateDimensions();
+      window.addEventListener("resize", () => this._updateDimensions());
+    }
+    disconnectedCallback() {
+      super.disconnectedCallback();
+      window.removeEventListener("resize", () => this._updateDimensions());
+    }
+    _updateDimensions() {
+      const rect = this.getBoundingClientRect();
+      this._width = rect.width;
+      this._height = rect.height;
+    }
+    updated(changedProperties) {
+      if (changedProperties.has("chartData") || changedProperties.has("_width") || changedProperties.has("_height")) {
+        this._generateChartSvg();
+      }
+    }
+    _generateChartSvg() {
+      if (!this._chartContainer || !this.chartData || this.chartData.labels.length === 0) return;
+      this._chartContainer.innerHTML = "";
+      const width = this._width || 300;
+      const height = this._height || 250;
+      const padding = this._padding;
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+      svg.style.width = "100%";
+      svg.style.height = "100%";
+      this._chartContainer.appendChild(svg);
+      const yAxisDatasets = this.chartData.datasets.filter((ds) => (ds.yAxisID === "y" || !ds.yAxisID) && !ds.hidden);
+      const y1AxisDatasets = this.chartData.datasets.filter((ds) => ds.yAxisID === "y1" && !ds.hidden);
+      const getYRange = (datasets, isLeft) => {
+        let min = Infinity;
+        let max = -Infinity;
+        datasets.forEach((ds) => {
+          ds.data.forEach((val) => {
+            const sum = Array.isArray(val) ? val.reduce((a3, b3) => a3 + b3, 0) : val;
+            if (sum < min) min = sum;
+            if (sum > max) max = sum;
+          });
+        });
+        if (min === Infinity) {
+          min = 0;
+          max = 10;
+        }
+        if (isLeft) {
+          const range = Math.max(1, max - min);
+          const potentialSteps = [100, 200, 500, 1e3, 2e3];
+          let step = 500;
+          for (const s5 of potentialSteps) {
+            step = s5;
+            if (range / s5 <= 6) break;
+          }
+          const yAxisMin = Math.floor(min / step) * step;
+          let yAxisMax = yAxisMin;
+          while (yAxisMax < max || (yAxisMax - yAxisMin) / step < 4) {
+            yAxisMax += step;
+          }
+          return { min: yAxisMin, max: yAxisMax, range: yAxisMax - yAxisMin, step };
+        } else {
+          const rangeMax = Math.max(10, max);
+          const yAxisMax = Math.ceil(rangeMax);
+          return { min: 0, max: yAxisMax, range: yAxisMax, step: 1 };
+        }
+      };
+      const yRange = getYRange(yAxisDatasets, true);
+      const y1Range = getYRange(y1AxisDatasets, false);
+      const availableWidth = width - padding.left - padding.right;
+      const availableHeight = height - padding.top - padding.bottom;
+      const stepX = availableWidth / (this.chartData.labels.length || 1);
+      const numTicksY = yRange.range / yRange.step + 1;
+      for (let i5 = 0; i5 < numTicksY; i5++) {
+        const valY = yRange.min + i5 * yRange.step;
+        const ratio = (valY - yRange.min) / yRange.range;
+        const y3 = height - padding.bottom - ratio * availableHeight;
+        const grid = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        grid.setAttribute("x1", padding.left.toString());
+        grid.setAttribute("y1", y3.toString());
+        grid.setAttribute("x2", (width - padding.right).toString());
+        grid.setAttribute("y2", y3.toString());
+        grid.setAttribute("class", "grid-line");
+        svg.appendChild(grid);
+        const textY = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        textY.setAttribute("x", (padding.left - 10).toString());
+        textY.setAttribute("y", y3.toString());
+        textY.setAttribute("text-anchor", "end");
+        textY.setAttribute("alignment-baseline", "middle");
+        textY.setAttribute("class", "tick-text");
+        textY.textContent = valY.toString();
+        svg.appendChild(textY);
+      }
+      for (let i5 = 0; i5 <= y1Range.max; i5 += y1Range.step) {
+        const ratio = i5 / y1Range.max;
+        const y3 = height - padding.bottom - ratio * availableHeight;
+        const textY1 = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        textY1.setAttribute("x", (width - padding.right + 10).toString());
+        textY1.setAttribute("y", y3.toString());
+        textY1.setAttribute("text-anchor", "start");
+        textY1.setAttribute("alignment-baseline", "middle");
+        textY1.setAttribute("class", "tick-text");
+        textY1.textContent = i5.toString();
+        svg.appendChild(textY1);
+      }
+      const leftLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      leftLabel.setAttribute("x", "15");
+      leftLabel.setAttribute("y", (height / 2).toString());
+      leftLabel.setAttribute("transform", `rotate(-90, 15, ${height / 2})`);
+      leftLabel.setAttribute("text-anchor", "middle");
+      leftLabel.setAttribute("class", "axis-label");
+      leftLabel.textContent = "Calor\xEDas (kcal)";
+      svg.appendChild(leftLabel);
+      const rightLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      rightLabel.setAttribute("x", (width - 15).toString());
+      rightLabel.setAttribute("y", (height / 2).toString());
+      rightLabel.setAttribute("transform", `rotate(90, ${width - 15}, ${height / 2})`);
+      rightLabel.setAttribute("text-anchor", "middle");
+      rightLabel.setAttribute("class", "axis-label");
+      rightLabel.textContent = `Nivel / Horas (0-${y1Range.max})`;
+      svg.appendChild(rightLabel);
+      const barDatasets = this.chartData.datasets.filter((d3) => d3.type === "bar");
+      const totalBars = barDatasets.length;
+      const groupPadding = stepX * 0.2;
+      const groupWidth = stepX - groupPadding;
+      const individualBarWidth = groupWidth / totalBars;
+      this.chartData.labels.forEach((label, i5) => {
+        const xText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        xText.setAttribute("x", (padding.left + (i5 + 0.5) * stepX).toString());
+        xText.setAttribute("y", (height - padding.bottom + 20).toString());
+        xText.setAttribute("text-anchor", "middle");
+        xText.setAttribute("class", "tick-text");
+        xText.textContent = label;
+        svg.appendChild(xText);
+        barDatasets.forEach((ds, dsIndex) => {
+          const val = ds.data[i5] || 0;
+          const x2 = padding.left + i5 * stepX + groupPadding / 2 + dsIndex * individualBarWidth;
+          const width2 = individualBarWidth * 0.85;
+          if (Array.isArray(val)) {
+            let currentYValue = 0;
+            val.forEach((stackVal, stackIndex) => {
+              const vBottom = currentYValue;
+              const vTop = currentYValue + stackVal;
+              const yTop = height - padding.bottom - (vTop - yRange.min) / yRange.range * availableHeight;
+              const yBottom = height - padding.bottom - (vBottom - yRange.min) / yRange.range * availableHeight;
+              const clippedYBottom = Math.min(yBottom, height - padding.bottom);
+              const clippedYTop = Math.max(yTop, padding.top);
+              const rectHeight = clippedYBottom - clippedYTop;
+              if (rectHeight > 0) {
+                const defaultStackColors = ["var(--carbs-color)", "var(--fat-color)", "var(--fat-color)", "var(--palette-grey)"];
+                const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                rect.setAttribute("x", x2.toString());
+                rect.setAttribute("y", clippedYTop.toString());
+                rect.setAttribute("width", width2.toString());
+                rect.setAttribute("height", rectHeight.toString());
+                let fillColor = ds.color || "var(--palette-blue)";
+                if (ds.stackColors && ds.stackColors[stackIndex]) {
+                  fillColor = ds.stackColors[stackIndex];
+                } else if (!ds.stackColors) {
+                  fillColor = defaultStackColors[stackIndex % defaultStackColors.length];
+                }
+                rect.setAttribute("fill", fillColor);
+                rect.setAttribute("rx", "2");
+                svg.appendChild(rect);
+              }
+              currentYValue += stackVal;
+            });
+          } else {
+            const barHeight = (val - yRange.min) / yRange.range * availableHeight;
+            const y3 = height - padding.bottom - barHeight;
+            const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            rect.setAttribute("x", x2.toString());
+            rect.setAttribute("y", y3.toString());
+            rect.setAttribute("width", width2.toString());
+            rect.setAttribute("height", Math.max(0, barHeight).toString());
+            rect.setAttribute("fill", ds.color || (ds.yAxisID === "y" ? "var(--calories-color)" : "var(--palette-blue)"));
+            rect.setAttribute("rx", "2");
+            svg.appendChild(rect);
+          }
+        });
+      });
+      const lineDatasets = this.chartData.datasets.filter((d3) => d3.type === "line");
+      lineDatasets.forEach((ds) => {
+        const points = ds.data.map((val, i5) => {
+          const x2 = padding.left + (i5 + 0.5) * stepX;
+          const range = ds.yAxisID === "y" ? yRange : y1Range;
+          const numericVal = Array.isArray(val) ? val.reduce((a3, b3) => a3 + b3, 0) : val;
+          const y3 = height - padding.bottom - (numericVal - range.min) / range.range * availableHeight;
+          return { x: x2, y: y3 };
+        });
+        if (points.length < 1) return;
+        if (points.length === 1) {
+          const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle.setAttribute("cx", points[0].x.toString());
+          circle.setAttribute("cy", points[0].y.toString());
+          circle.setAttribute("r", "4");
+          const defaultLineColor2 = ds.dashed || ds.dotted ? "var(--satiety-color)" : "var(--energy-color)";
+          circle.setAttribute("stroke", ds.color || defaultLineColor2);
+          circle.setAttribute("class", "point");
+          svg.appendChild(circle);
+          return;
+        }
+        let d3 = `M ${points[0].x} ${points[0].y}`;
+        for (let i5 = 0; i5 < points.length - 1; i5++) {
+          const curr = points[i5];
+          const next = points[i5 + 1];
+          const cp1x = curr.x + (next.x - curr.x) / 3;
+          const cp2x = curr.x + 2 * (next.x - curr.x) / 3;
+          d3 += ` C ${cp1x} ${curr.y}, ${cp2x} ${next.y}, ${next.x} ${next.y}`;
+        }
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", d3);
+        path.setAttribute("fill", "none");
+        const defaultLineColor = ds.dashed || ds.dotted ? "var(--satiety-color)" : "var(--energy-color)";
+        path.setAttribute("stroke", ds.color || defaultLineColor);
+        path.setAttribute("stroke-width", "2.5");
+        path.setAttribute("stroke-linecap", "round");
+        path.setAttribute("stroke-linejoin", "round");
+        if (ds.dashed) path.setAttribute("stroke-dasharray", "5,5");
+        if (ds.dotted) path.setAttribute("stroke-dasharray", "2,4");
+        svg.appendChild(path);
+        points.forEach((p3) => {
+          const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle.setAttribute("cx", p3.x.toString());
+          circle.setAttribute("cy", p3.y.toString());
+          circle.setAttribute("r", "4");
+          const defaultLineColor2 = ds.dashed || ds.dotted ? "var(--satiety-color)" : "var(--energy-color)";
+          circle.setAttribute("stroke", ds.color || defaultLineColor2);
+          circle.setAttribute("class", "point");
+          svg.appendChild(circle);
+        });
+      });
+    }
+    render() {
+      return b2`
+      <div class="legend">
+        ${this.chartData.datasets.map((ds) => {
+        const isCalories = ds.yAxisID === "y";
+        if (ds.type === "bar" && ds.stackLabels) {
+          const stackItems = ds.stackLabels.map((label, idx) => {
+            let fillColor = ds.color || "var(--palette-green)";
+            if (ds.stackColors && ds.stackColors[idx]) {
+              fillColor = ds.stackColors[idx];
+            } else if (!ds.stackColors) {
+              const defaultStackColors = ["var(--carbs-color)", "var(--fat-color)", "var(--fat-color)", "var(--palette-grey)"];
+              fillColor = defaultStackColors[idx % defaultStackColors.length];
+            }
+            const isTotal = label.toLowerCase().includes("total");
+            const boxStyle = isTotal ? "border: 1px solid var(--palette-grey); background: transparent;" : `background: ${fillColor}`;
+            return b2`
+            <div class="legend-item">
+              <div class="legend-box" style="${boxStyle}"></div>
+              <span class="${isTotal ? "total-label" : ""}">${label}</span>
+            </div>
+          `;
+          });
+          return stackItems;
+        }
+        let defaultColor = ds.type === "bar" ? isCalories ? "var(--calories-color)" : "var(--palette-blue)" : "var(--energy-color)";
+        if (ds.type === "line" && (ds.dashed || ds.dotted)) {
+          defaultColor = "var(--satiety-color)";
+        }
+        const dsColor = ds.color || defaultColor;
+        return b2`
+        <div class="legend-item">
+          ${ds.type === "bar" ? b2`<div class="legend-box" style="background: ${dsColor}"></div>` : b2`<div class="legend-line" style="border-top: 2px ${ds.dotted ? "dotted" : ds.dashed ? "dashed" : "solid"} ${dsColor}"></div>`}
+          <span>${ds.label}</span>
+        </div>
+      `;
+      })}
+      </div>
+      <div class="chart-container"></div>
+    `;
+    }
+  };
+  __decorateClass([
+    n4({ type: Object })
+  ], ComponentBarLineChart.prototype, "chartData", 2);
+  __decorateClass([
+    r5()
+  ], ComponentBarLineChart.prototype, "_width", 2);
+  __decorateClass([
+    r5()
+  ], ComponentBarLineChart.prototype, "_height", 2);
+  __decorateClass([
+    r5()
+  ], ComponentBarLineChart.prototype, "_padding", 2);
+  __decorateClass([
+    e5(".chart-container")
+  ], ComponentBarLineChart.prototype, "_chartContainer", 2);
+
+  // src/components/componentBarLineChart/index.ts
+  register("component-bar-line-chart", ComponentBarLineChart);
 
   // src/components/pageUser/index.ts
   register("page-user", PageUser);
@@ -37800,11 +38408,11 @@ ${countMsg}`,
         </div>
         <div class="status-item" title="${this.translationsTexts["energyLevel"]}">
           <span class="emoji">⚡</span>
-          ${this.energyLevel > 0 ? b2`<span class="value">${this.energyLevel}/5</span>` : ""}
+          ${this.energyLevel > 0 ? b2`<span class="value">${this.energyLevel}/10</span>` : ""}
         </div>
         <div class="status-item" title="${this.translationsTexts["hungerLevel"]}">
           <span class="emoji">🍕</span>
-          ${this.hungerLevel > 0 ? b2`<span class="value">${this.hungerLevel}/5</span>` : ""}
+          ${this.hungerLevel > 0 ? b2`<span class="value">${this.hungerLevel}/10</span>` : ""}
         </div>
       </div>
 
@@ -37851,13 +38459,13 @@ ${countMsg}`,
               </div>
 
               <div class="form-group">
-                <label>⚡ ${this.translationsTexts["energyLevel"]} (${this._energyLevel}/5)</label>
+                <label>⚡ ${this.translationsTexts["energyLevel"]} (${this._energyLevel}/10)</label>
                 <div class="slider-container">
                   <component-slider
                     data-theme="${document.documentElement.getAttribute("data-theme") || "light"}"
                     .min="${0}"
-                    .max="${5}"
-                    .steps="${0.5}"
+                    .max="${10}"
+                    .steps="${1}"
                     .value="${this._energyLevel}"
                     @value-changed="${(e6) => this._energyLevel = e6.detail.value}"
                     minTag="🪫"
@@ -37867,13 +38475,13 @@ ${countMsg}`,
               </div>
 
               <div class="form-group">
-                <label>🍕 ${this.translationsTexts["hungerLevel"]} (${this._hungerLevel}/5)</label>
+                <label>🍕 ${this.translationsTexts["hungerLevel"]} (${this._hungerLevel}/10)</label>
                 <div class="slider-container">
                   <component-slider
                     data-theme="${document.documentElement.getAttribute("data-theme") || "light"}"
                     .min="${0}"
-                    .max="${5}"
-                    .steps="${0.5}"
+                    .max="${10}"
+                    .steps="${1}"
                     .value="${this._hungerLevel}"
                     @value-changed="${(e6) => this._hungerLevel = e6.detail.value}"
                     minTag="😫"
