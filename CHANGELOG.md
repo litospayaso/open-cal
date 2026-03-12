@@ -1,5 +1,11 @@
 # brote
 
+## 1.0.25
+
+### Patch Changes
+
+- Displaying week statistics in a shape chart
+
 ## 1.0.24
 
 ### Patch Changes

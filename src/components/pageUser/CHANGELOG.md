@@ -1,5 +1,11 @@
 # page-user
 
+## 0.0.11
+
+### Patch Changes
+
+- Displaying week statistics in a shape chart
+
 ## 0.0.10
 
 ### Patch Changes

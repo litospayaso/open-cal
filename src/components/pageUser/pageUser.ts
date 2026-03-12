@@ -2,6 +2,8 @@ import { html, css, type PropertyValues } from 'lit';
 import { state, property } from 'lit/decorators.js';
 import Page from '../../shared/page';
 import type { MealCategory, UserProfile } from '../../shared/db';
+import type { BarLineChartData } from '../componentBarLineChart/componentBarLineChart';
+import type { ShapeChartData } from '../componentShapeChart/componentShapeChart';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 
@@ -208,12 +210,13 @@ export default class PageUser extends Page {
   @state() showExportModal: boolean = false;
   @state() exportFormat: 'json' | 'csv' = 'json';
   @state() exportStores: Set<string> = new Set(['daily_consumption', 'user_data', 'meals', 'products', 'favorites', 'user_status']);
+  @state() private weeklyChartData: BarLineChartData | null = null;
+  @state() private radarChartData: ShapeChartData | null = null;
   @state() showImportModal: boolean = false;
   @state() importData: any = null;
   @state() importOverride: boolean = false;
   @state() importMessage: { text: string, type: 'success' | 'error' } | null = null;
   @state() statsReferenceDate: string = new Date().toISOString().split('T')[0];
-  @state() weeklyChartData: any = null;
 
   protected handleSwipe(diffX: number): void {
     if (diffX > 0) {
@@ -469,6 +472,29 @@ export default class PageUser extends Page {
           data: satietyData,
           yAxisID: 'y1',
           dotted: true
+        }
+      ]
+    };
+
+    // Radar Chart Data (0-10 scale)
+    this.radarChartData = {
+      labels: [
+        this.translations.sleepHours || 'Sueño',
+        this.translations.movement || 'Movimiento',
+        this.translations.energyLevel || 'Energía',
+        this.translations.hungerLevel || 'Saciedad',
+        this.translations.nutrition || 'Nutrición'
+      ],
+      datasets: [
+        {
+          label: '',
+          data: [
+            Math.min(10, avgSleep),          // 10 hours is max
+            Math.min(10, avgSteps / 1000),   // 10,000 steps is max
+            Math.min(10, avgEnergy),         // 0-10 scale
+            Math.min(10, avgSatiety),        // 0-10 scale
+            Math.min(10, avgConsumed / 300)  // 3000 kcal is max
+          ]
         }
       ]
     };
@@ -811,11 +837,15 @@ export default class PageUser extends Page {
           </div>
           <button @click="${() => this._changeStatsWeek(1)}">›</button>
         </div>
-        ${this.weeklyChartData ? html`
-          <component-bar-line-chart 
-            .chartData="${this.weeklyChartData}"
-          ></component-bar-line-chart>
-        ` : html`<div style="text-align: center; padding: 2rem; opacity: 0.6;">Loading statistics...</div>`}
+              ${this.weeklyChartData ? html`
+                <component-bar-line-chart .chartData="${this.weeklyChartData}"></component-bar-line-chart>
+              ` : ''}
+
+              ${this.radarChartData ? html`
+                <div style="margin-top: 20px; height: 300px;">
+                  <component-shape-chart .chartData="${this.radarChartData}"></component-shape-chart>
+                </div>
+              ` : ''}
       </div>
 
       <div class="card">

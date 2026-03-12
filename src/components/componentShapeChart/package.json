@@ -1,0 +1,7 @@
+{
+  "name": "component-shape-chart",
+  "version": "0.0.2",
+  "main": "componentShapeChart.js",
+  "module": "componentShapeChart.js",
+  "types": "componentShapeChart.d.ts"
+}
