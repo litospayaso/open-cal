@@ -149,11 +149,17 @@ export const translations: translationsType = {
     kcal: 'kcal',
     stepsSuffix: 'pasos',
     hoursSuffix: 'h',
-    dailyBasalCalories: 'Calorías basales diarias por defecto',
+    dailyBasalCalories: 'Calorías basales diarias por defecto (kcal)',
     appVersion: 'Brote - Versión de la aplicación',
     exportShareTitle: 'Brote - Exportar datos',
     exportShareText: 'Aquí tienes tus datos exportados de Brote',
-    shareData: 'Compartir datos'
+    shareData: 'Compartir datos',
+    weekOf: 'Semana del',
+    consumed: 'Consumidas',
+    burned: 'Quemadas',
+    statistics: 'Estadísticas',
+    weightEvolution: 'Evolución del peso',
+    averageCalories: 'Media calorías'
   },
   en: {
     search: 'Search',
@@ -301,11 +307,17 @@ export const translations: translationsType = {
     kcal: 'kcal',
     stepsSuffix: 'steps',
     hoursSuffix: 'h',
-    dailyBasalCalories: 'Default daily basal calories',
+    dailyBasalCalories: 'Default daily basal calories (kcal)',
     appVersion: 'Brote - App Version',
     exportShareTitle: 'Brote - Export Data',
     exportShareText: 'Here is your exported data from Brote',
-    shareData: 'Share data'
+    shareData: 'Share data',
+    weekOf: 'Week of',
+    consumed: 'Consumed',
+    burned: 'Burned',
+    statistics: 'Statistics',
+    weightEvolution: 'Weight evolution',
+    averageCalories: 'Average calories'
   },
   fr: {
     search: 'Rechercher',
@@ -448,11 +460,17 @@ export const translations: translationsType = {
     kcal: 'kcal',
     stepsSuffix: 'pas',
     hoursSuffix: 'h',
-    dailyBasalCalories: 'Calories basales quotidiennes par défaut',
+    dailyBasalCalories: 'Calories basales quotidiennes par défaut (kcal)',
     appVersion: 'Brote - Version de l\'application',
     exportShareTitle: 'Brote - Exporter les données',
     exportShareText: 'Voici vos données exportées de Brote',
-    shareData: 'Partager les données'
+    shareData: 'Partager les données',
+    weekOf: 'Semaine du',
+    consumed: 'Consommées',
+    burned: 'Brûlées',
+    statistics: 'Statistiques',
+    weightEvolution: 'Évolution du poids',
+    averageCalories: 'Moyenne calories'
   },
   de: {
     search: 'Suche',
@@ -595,11 +613,17 @@ export const translations: translationsType = {
     kcal: 'kcal',
     stepsSuffix: 'Schritte',
     hoursSuffix: 'Std.',
-    dailyBasalCalories: 'Standard-Grundumsatz',
+    dailyBasalCalories: 'Standard-Grundumsatz (kcal)',
     appVersion: 'Brote - App-Version',
     exportShareTitle: 'Brote - Daten exportieren',
     exportShareText: 'Hier sind Ihre exportierten Daten von Brote',
-    shareData: 'Daten teilen'
+    shareData: 'Daten teilen',
+    weekOf: 'Woche vom',
+    consumed: 'Verbraucht',
+    burned: 'Verbrannt',
+    statistics: 'Statistiken',
+    weightEvolution: 'Gewichtsentwicklung',
+    averageCalories: 'Durchschnittliche Kalorien'
   },
   it: {
     search: 'Cerca',
@@ -742,10 +766,16 @@ export const translations: translationsType = {
     kcal: 'kcal',
     stepsSuffix: 'passi',
     hoursSuffix: 'h',
-    dailyBasalCalories: 'Calorie basali giornaliere predefinite',
+    dailyBasalCalories: 'Calorie basali giornaliere predefinite (kcal)',
     appVersion: 'Brote - Versione dell\'applicazione',
     exportShareTitle: 'Brote - Esporta dati',
     exportShareText: 'Ecco i tuoi dati esportati da Brote',
-    shareData: 'Condividi dati'
+    shareData: 'Condividi dati',
+    weekOf: 'Settimana del',
+    consumed: 'Consumate',
+    burned: 'Bruciate',
+    statistics: 'Statistiche',
+    weightEvolution: 'Evoluzione del peso',
+    averageCalories: 'Media calorie'
   },
 };

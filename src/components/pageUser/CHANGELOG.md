@@ -1,5 +1,11 @@
 # page-user
 
+## 0.0.10
+
+### Patch Changes
+
+- Displaying weekly statistics in user page
+
 ## 0.0.9
 
 ### Patch Changes

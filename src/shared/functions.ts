@@ -64,6 +64,10 @@ export const variableStyles = css`
     --carbs-color: #ca96f8eb;
     --calories-color: #707bde;
 
+    --energy-color: #cdcd31;
+    --satiety-color: #4fb9ad;
+    --sleep-hours-color:#fe9696;
+
     --counter-border-width: 2px;
 
     --background-color: #fff;

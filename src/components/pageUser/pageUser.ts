@@ -156,6 +156,31 @@ export default class PageUser extends Page {
         opacity: 0.6;
         color: var(--app-text-color-primary, #999);
       }
+
+      .week-selector {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 10px;
+        color: var(--card-text);
+      }
+      .week-selector button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.8rem;
+        padding: 0 15px;
+        line-height: 1;
+        transition: transform 0.2s;
+      }
+      .week-selector button:active {
+        transform: scale(1.2);
+      }
+      .week-display {
+        font-size: 1.1rem;
+        font-weight: bold;
+      }
     `
   ];
 
@@ -187,6 +212,8 @@ export default class PageUser extends Page {
   @state() importData: any = null;
   @state() importOverride: boolean = false;
   @state() importMessage: { text: string, type: 'success' | 'error' } | null = null;
+  @state() statsReferenceDate: string = new Date().toISOString().split('T')[0];
+  @state() weeklyChartData: any = null;
 
   protected handleSwipe(diffX: number): void {
     if (diffX > 0) {
@@ -228,6 +255,7 @@ export default class PageUser extends Page {
     }
 
     this._loadWeightHistory();
+    this._loadWeeklyStats();
   }
 
   private async _loadWeightHistory() {
@@ -300,6 +328,169 @@ export default class PageUser extends Page {
     this.notificationTime = (e.target as HTMLInputElement).value;
     this._saveProfile();
     window.dispatchEvent(new CustomEvent('notification-settings-changed'));
+  }
+
+  private async _loadWeeklyStats() {
+    const refDate = new Date(this.statsReferenceDate);
+    const day = refDate.getDay();
+    const diff = refDate.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(new Date(refDate).setDate(diff));
+
+    const weekDates: string[] = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      weekDates.push(d.toISOString().split('T')[0]);
+    }
+
+    const promises = weekDates.map(date => Promise.all([
+      this.db.getDailyLog(date),
+      this.db.getUserStatus(date)
+    ]));
+
+    const results = await Promise.all(promises);
+
+    const labels = weekDates.map(date => {
+      const d = new Date(date);
+      return d.toLocaleDateString(this.language, { weekday: 'short' });
+    });
+
+    const consumedData: number[] = [];
+    const burnedStackedData: number[][] = [];
+    const satietyData: number[] = [];
+    const energyData: number[] = [];
+    const sleepData: number[] = [];
+    const stepsData: number[] = [];
+
+    results.forEach(([log, status]) => {
+      // Consumed
+      let eaten = 0;
+      const categories: MealCategory[] = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3'];
+      categories.forEach(cat => {
+        log[cat].forEach(item => {
+          const ratio = item.unit === 'meal' ? item.quantity : item.quantity / 100;
+          eaten += (item.product.nutriments['energy-kcal'] || 0) * ratio;
+        });
+      });
+      consumedData.push(Math.round(eaten));
+
+      // Burned (Stacked: Basal + Exercise)
+      const basal = status.basalCalories || this.defaultBasalCalories || 0;
+      const exercise = status.exerciseCalories || 0;
+      burnedStackedData.push([basal, exercise]);
+
+      // Satiety
+      satietyData.push(status.hungerLevel || 0);
+
+      // Sleep
+      sleepData.push(status.sleepHours || 0);
+
+      // Energy
+      energyData.push(status.energyLevel || 0);
+
+      // Steps
+      stepsData.push(status.steps || 0);
+    });
+
+    const getAvg = (data: number[]) => {
+      const filtered = data.filter(v => v !== 0);
+      return filtered.length > 0 ? filtered.reduce((a, b) => a + b, 0) / filtered.length : 0;
+    };
+
+    const avgConsumed = getAvg(consumedData);
+    const avgBasal = getAvg(results.map(([_, s]) => s.basalCalories || 0));
+    const avgExercise = getAvg(results.map(([_, s]) => s.exerciseCalories || 0));
+    const burnedTotals = results.map(([_, s]) => (s.basalCalories || 0) + (s.exerciseCalories || 0));
+    const avgBurnedTotal = getAvg(burnedTotals);
+    const avgSleep = getAvg(sleepData);
+    const avgEnergy = getAvg(energyData);
+    const avgSatiety = getAvg(satietyData);
+    const avgSteps = getAvg(stepsData);
+
+    const formatLabel = (label: string, avg: number, type: 'calories' | 'time' | 'level' | 'steps') => {
+      if (type === 'calories') {
+        return `${label} (${Math.round(avg)} kcal)`;
+      } else if (type === 'time') {
+        const h = Math.floor(avg);
+        const m = Math.round((avg - h) * 60);
+        const formattedTime = `${h}h ${m.toString().padStart(2, '0')}m`;
+        return `${label} (${formattedTime})`;
+      } else if (type === 'steps') {
+        return `${label} (${Math.round(avg)} pasos)`;
+      } else {
+        return `${label} (${avg.toFixed(1)})`;
+      }
+    };
+
+    this.weeklyChartData = {
+      labels,
+      datasets: [
+        {
+          label: formatLabel(this.translations.consumed || 'Consumidas', avgConsumed, 'calories'),
+          type: 'bar',
+          data: consumedData,
+          yAxisID: 'y'
+        },
+        {
+          label: this.translations.burned || 'Quemadas',
+          type: 'bar',
+          data: burnedStackedData,
+          stackLabels: [
+            formatLabel(this.translations.basalCalories || 'Basal', avgBasal, 'calories'),
+            formatLabel(this.translations.exerciseCalories || 'Deporte', avgExercise, 'calories'),
+            formatLabel(this.translations.total || 'Total', avgBurnedTotal, 'calories')
+          ],
+          yAxisID: 'y'
+        },
+        {
+          label: formatLabel(this.translations.stepsTaken || 'Pasos', avgSteps, 'steps'),
+          type: 'bar',
+          data: stepsData.map(v => v / 10),
+          color: 'var(--palette-blue)',
+          yAxisID: 'y'
+        },
+        {
+          label: formatLabel(this.translations.sleepHours || 'Sueño', avgSleep, 'time'),
+          type: 'line',
+          data: sleepData,
+          yAxisID: 'y1',
+          dashed: true,
+          color: 'var(--sleep-hours-color)'
+        },
+        {
+          label: formatLabel(this.translations.energyLevel || 'Energía', avgEnergy, 'level'),
+          type: 'line',
+          data: energyData,
+          yAxisID: 'y1'
+        },
+        {
+          label: formatLabel(this.translations.hungerLevel || 'Saciedad', avgSatiety, 'level'),
+          type: 'line',
+          data: satietyData,
+          yAxisID: 'y1',
+          dotted: true
+        }
+      ]
+    };
+  }
+
+  private _changeStatsWeek(weeks: number) {
+    const d = new Date(this.statsReferenceDate);
+    d.setDate(d.getDate() + (weeks * 7));
+    this.statsReferenceDate = d.toISOString().split('T')[0];
+    this._loadWeeklyStats();
+  }
+
+  private _getWeekRangeLabel(): string {
+    const refDate = new Date(this.statsReferenceDate);
+    const day = refDate.getDay();
+    const diff = refDate.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(new Date(refDate).setDate(diff));
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+
+    const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit' };
+    return `${monday.toLocaleDateString(this.language, options)} - ${sunday.toLocaleDateString(this.language, options)}`;
   }
 
 
@@ -589,21 +780,42 @@ export default class PageUser extends Page {
           <input type="number" .value="${this.height}" @input="${(e: Event) => this._handleNumberInput('height', e)}" placeholder="e.g. 175" />
         </div>
         <div class="form-group">
-          <label>${this.translations.weight} (kg)</label>
-          <input type="number" step="0.1" .value="${this.weight}" @input="${(e: Event) => this._handleNumberInput('weight', e)}" placeholder="e.g. 70.5" />
-        </div>
-        <div class="form-group">
-          <label>Default daily basal calories (kcal)</label>
+          <label>${this.translations.dailyBasalCalories}</label>
           <input type="number" .value="${this.defaultBasalCalories}" @input="${(e: Event) => this._handleNumberInput('defaultBasalCalories', e)}" placeholder="e.g. 1500" />
         </div>
+        <div class="form-group">
+          <label>${this.translations.weight} (kg)</label>
+          <input type="number" step="0.1" .value="${this.weight}" @input="${(e: Event) => this._handleNumberInput('weight', e)}" placeholder="e.g. 70.5" />
 
+          <button class="btn" style="margin-top: 22px;" @click="${() => this.showWeightModal = true}">
+            ${this.translations.updateHistoricalWeight}
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>${this.translations.statistics}</h2>
+        <div class="week-display">
+          <span>
+            ${this.translations.weightEvolution}
+          </span>
+        </div>
         <div class="chart-wrapper">
           <component-line-chart .data="${this.weightHistory.map(h => ({ tag: h.date, value: h.weight }))}"></component-line-chart>
         </div>
 
-        <button class="btn" @click="${() => this.showWeightModal = true}">
-          ${this.translations.updateHistoricalWeight}
-        </button>
+        <div class="week-selector">
+          <button @click="${() => this._changeStatsWeek(-1)}">‹</button>
+          <div class="week-display">
+            <span>${this.translations.weekOf} ${this._getWeekRangeLabel()}</span>
+          </div>
+          <button @click="${() => this._changeStatsWeek(1)}">›</button>
+        </div>
+        ${this.weeklyChartData ? html`
+          <component-bar-line-chart 
+            .chartData="${this.weeklyChartData}"
+          ></component-bar-line-chart>
+        ` : html`<div style="text-align: center; padding: 2rem; opacity: 0.6;">Loading statistics...</div>`}
       </div>
 
       <div class="card">

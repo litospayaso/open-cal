@@ -1,5 +1,11 @@
 # brote
 
+## 1.0.24
+
+### Patch Changes
+
+- Displaying weekly statistics in user page
+
 ## 1.0.23
 
 ### Patch Changes

@@ -215,11 +215,11 @@ export default class ComponentUserStatus extends LitElement {
         </div>
         <div class="status-item" title="${this.translationsTexts['energyLevel']}">
           <span class="emoji">⚡</span>
-          ${this.energyLevel > 0 ? html`<span class="value">${this.energyLevel}/5</span>` : ''}
+          ${this.energyLevel > 0 ? html`<span class="value">${this.energyLevel}/10</span>` : ''}
         </div>
         <div class="status-item" title="${this.translationsTexts['hungerLevel']}">
           <span class="emoji">🍕</span>
-          ${this.hungerLevel > 0 ? html`<span class="value">${this.hungerLevel}/5</span>` : ''}
+          ${this.hungerLevel > 0 ? html`<span class="value">${this.hungerLevel}/10</span>` : ''}
         </div>
       </div>
 
@@ -266,13 +266,13 @@ export default class ComponentUserStatus extends LitElement {
               </div>
 
               <div class="form-group">
-                <label>⚡ ${this.translationsTexts['energyLevel']} (${this._energyLevel}/5)</label>
+                <label>⚡ ${this.translationsTexts['energyLevel']} (${this._energyLevel}/10)</label>
                 <div class="slider-container">
                   <component-slider
                     data-theme="${document.documentElement.getAttribute('data-theme') || 'light'}"
                     .min="${0}"
-                    .max="${5}"
-                    .steps="${0.5}"
+                    .max="${10}"
+                    .steps="${1}"
                     .value="${this._energyLevel}"
                     @value-changed="${(e: CustomEvent) => this._energyLevel = e.detail.value}"
                     minTag="🪫"
@@ -282,13 +282,13 @@ export default class ComponentUserStatus extends LitElement {
               </div>
 
               <div class="form-group">
-                <label>🍕 ${this.translationsTexts['hungerLevel']} (${this._hungerLevel}/5)</label>
+                <label>🍕 ${this.translationsTexts['hungerLevel']} (${this._hungerLevel}/10)</label>
                 <div class="slider-container">
                   <component-slider
                     data-theme="${document.documentElement.getAttribute('data-theme') || 'light'}"
                     .min="${0}"
-                    .max="${5}"
-                    .steps="${0.5}"
+                    .max="${10}"
+                    .steps="${1}"
                     .value="${this._hungerLevel}"
                     @value-changed="${(e: CustomEvent) => this._hungerLevel = e.detail.value}"
                     minTag="😫"
