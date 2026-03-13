@@ -6,6 +6,7 @@ import type { BarLineChartData } from '../componentBarLineChart/componentBarLine
 import type { ShapeChartData } from '../componentShapeChart/componentShapeChart';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
+import '../componentMaintenanceCalories/componentMaintenanceCalories';
 
 
 export default class PageUser extends Page {
@@ -213,6 +214,7 @@ export default class PageUser extends Page {
   @state() private weeklyChartData: BarLineChartData | null = null;
   @state() private radarChartData: ShapeChartData | null = null;
   @state() showImportModal: boolean = false;
+  @state() showMaintenanceModal: boolean = false;
   @state() importData: any = null;
   @state() importOverride: boolean = false;
   @state() importMessage: { text: string, type: 'success' | 'error' } | null = null;
@@ -310,6 +312,29 @@ export default class PageUser extends Page {
   private _handleGenderChange(e: Event) {
     this.gender = (e.target as HTMLSelectElement).value as 'male' | 'female' | 'non-binary';
     this._saveProfile();
+  }
+
+  private async _handleSaveCalories(e: CustomEvent) {
+    const { calories, height, weight, gender, proteinRatio, carbsRatio, fatRatio } = e.detail;
+
+    this.dailyCalories = calories;
+    this.height = height;
+    this.weight = weight;
+    this.gender = gender;
+    // We don't store age and activity level in the profile currently, but we update the cals
+    this.proteinRatio = proteinRatio;
+    this.carbsRatio = carbsRatio;
+    this.fatRatio = fatRatio;
+
+    this._saveProfile();
+
+    if (this.weight) {
+      const today = new Date().toISOString().split('T')[0];
+      await this.db.saveWeightEntry(today, this.weight);
+      await this._loadWeightHistory();
+    }
+
+    this.showMaintenanceModal = false;
   }
 
   private _handleThemeChange(theme: 'light' | 'dark') {
@@ -874,6 +899,10 @@ export default class PageUser extends Page {
         <div style="font-size: 0.8rem; color: #666; margin-top: 5px; text-align: right;">
           ${this.translations.total}: ${this.proteinRatio + this.carbsRatio + this.fatRatio}%
         </div>
+        
+        <button class="btn" style="margin-top: 20px; width: 100%;" @click="${() => this.showMaintenanceModal = true}">
+          ${this.translations.calculateMaintenance || 'Calculate Maintenance Calories'}
+        </button>
       </div>
 
       <div class="card">
@@ -1089,6 +1118,25 @@ export default class PageUser extends Page {
               <button class="btn" @click="${() => this.showImportModal = false}">${this.translations.cancel}</button>
               <button class="btn" @click="${this._proceedImport}">${this.translations.import}</button>
             </div>
+          </div>
+        </div>
+      ` : ''}
+
+      ${this.showMaintenanceModal ? html`
+        <div class="modal-overlay">
+          <div class="modal" style="width: 500px; max-width: 95%; position: relative;">
+            <div class="modal-header">
+              <h3>${this.translations.calculateMaintenance || 'Calculate Maintenance Calories'}</h3>
+              <button class="close-btn" @click="${() => this.showMaintenanceModal = false}">&times;</button>
+            </div>
+            
+            <component-maintenance-calories
+              .height="${this.height}"
+              .weight="${this.weight}"
+              .gender="${this.gender}"
+              .translations="${JSON.stringify(this.translations)}"
+              @save-calories="${this._handleSaveCalories}"
+            ></component-maintenance-calories>
           </div>
         </div>
       ` : ''}

@@ -1,5 +1,11 @@
 # brote
 
+## 1.0.26
+
+### Patch Changes
+
+- Adding a maintenance calories calculator to the project.
+
 ## 1.0.25
 
 ### Patch Changes

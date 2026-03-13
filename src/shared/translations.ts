@@ -161,7 +161,22 @@ export const translations: translationsType = {
     burned: 'Quemadas',
     statistics: 'Estadísticas',
     weightEvolution: 'Evolución del peso',
-    averageCalories: 'Media calorías'
+    averageCalories: 'Media calorías',
+    sedentary: 'Sedentario (poco o nada de ejercicio)',
+    lightlyActive: 'Ligeramente activo (ejercicio ligero/deportes 1-3 días a la semana)',
+    moderatelyActive: 'Moderadamente activo (ejercicio moderado/deportes 3-5 días a la semana)',
+    veryActive: 'Muy activo (ejercicio duro/deportes 6-7 días a la semana)',
+    extraActive: 'Extra activo (ejercicio muy duro y trabajo físico)',
+    metabolicWarning: 'Consideraciones importantes: Esta estimación metabólica se basa en modelos estadísticos para la población general y no tiene en cuenta las variaciones individuales en la composición corporal (músculo vs. grasa). Estos cálculos deben utilizarse únicamente como una guía general. Para un enfoque nutricional preciso y seguro, recomendamos encarecidamente la supervisión médica o dietética profesional, ya que el control calórico sin guía puede estar asociado al desarrollo de patrones de conducta alimentaria de riesgo.',
+    maintenanceCaloriesTitle: 'Tasa Metabólica Basal',
+    mifflinStJeorSubtitle: 'Cálculo basado en el',
+    methodLabel: 'método',
+    dietType: 'Tipo de dieta',
+    balanced: 'Equilibrada',
+    lowCarb: 'Baja en carbohidratos',
+    lowFat: 'Baja en grasas',
+    highProtein: 'Alta en proteínas',
+    calculateMaintenance: 'Calcular calorías de mantenimiento'
   },
   en: {
     search: 'Search',
@@ -321,7 +336,22 @@ export const translations: translationsType = {
     burned: 'Burned',
     statistics: 'Statistics',
     weightEvolution: 'Weight evolution',
-    averageCalories: 'Average calories'
+    averageCalories: 'Average calories',
+    sedentary: 'Sedentary (little or no exercise)',
+    lightlyActive: 'Lightly active (light exercise/sports 1-3 days/week)',
+    moderatelyActive: 'Moderately active (moderate exercise/sports 3-5 days/week)',
+    veryActive: 'Very active (hard exercise/sports 6-7 days a week)',
+    extraActive: 'Extra active (very hard exercise/sports & physical job)',
+    metabolicWarning: 'Important considerations: This metabolic estimation relies on statistical models for the general population and does not account for individual variations in body composition (muscle vs. fat). These calculations should be used as general guidance only. For a precise and safe nutritional approach, we strongly recommend professional medical or dietetic supervision, as self-directed calorie monitoring can be associated with the development of disordered eating patterns.',
+    maintenanceCaloriesTitle: 'Basal Metabolic Rate',
+    mifflinStJeorSubtitle: 'Calculation based on the',
+    methodLabel: 'method',
+    dietType: 'Diet Type',
+    balanced: 'Balanced',
+    lowCarb: 'Low Carb',
+    lowFat: 'Low Fat',
+    highProtein: 'High Protein',
+    calculateMaintenance: 'Calculate maintenance calories'
   },
   fr: {
     search: 'Rechercher',
@@ -476,7 +506,16 @@ export const translations: translationsType = {
     burned: 'Brûlées',
     statistics: 'Statistiques',
     weightEvolution: 'Évolution du poids',
-    averageCalories: 'Moyenne calories'
+    averageCalories: 'Moyenne calories',
+    sedentary: 'Sédentaire (peu ou pas d\'exercice)',
+    lightlyActive: 'Légèrement actif (exercice léger/sports 1-3 jours/semaine)',
+    moderatelyActive: 'Modérément actif (exercice modéré/sports 3-5 jours/semaine)',
+    veryActive: 'Très actif (exercice intense/sports 6-7 jours/semaine)',
+    extraActive: 'Extra actif (exercice très intense et travail physique)',
+    metabolicWarning: 'Considérations importantes : Cette estimation métabolique repose sur des modèles statistiques pour la population générale et ne tient pas compte des variations individuelles de la composition corporelle (muscle vs graisse). Ces calculs ne doivent être utilisés qu\'à titre indicatif. Pour une approche nutritionnelle précise et sûre, nous recommandons vivement une supervision médicale ou diététique professionnelle, car l\'autosurveillance calorique peut être associée au développement de troubles du comportement alimentaire.',
+    maintenanceCaloriesTitle: 'Taux Métabolique de Base',
+    mifflinStJeorSubtitle: 'Calcul basé sur la',
+    methodLabel: 'méthode'
   },
   de: {
     search: 'Suche',
@@ -631,7 +670,16 @@ export const translations: translationsType = {
     burned: 'Verbrannt',
     statistics: 'Statistiken',
     weightEvolution: 'Gewichtsentwicklung',
-    averageCalories: 'Durchschnittliche Kalorien'
+    averageCalories: 'Durchschnittliche Kalorien',
+    sedentary: 'Sitzend (wenig oder gar kein Training)',
+    lightlyActive: 'Leicht aktiv (leichtes Training/Sport 1-3 Tage/Woche)',
+    moderatelyActive: 'Mäßig aktiv (mäßiges Training/Sport 3-5 Tage/Woche)',
+    veryActive: 'Sehr aktiv (hartes Training/Sport 6-7 Tage/Woche)',
+    extraActive: 'Extra aktiv (sehr hartes Training/Sport & körperlicher Job)',
+    metabolicWarning: 'Wichtige Hinweise: Diese Stoffwechselschätzung basiert auf statistischen Modellen für die Allgemeinbevölkerung und berücksichtigt keine individuellen Schwankungen der Körperzusammensetzung (Muskelmasse vs. Fett). Diese Berechnungen sollten nur als allgemeine Orientierung dienen. Für einen präzisen und sicheren Ernährungsansatz empfehlen wir dringend eine professionelle medizinische oder ernährungswissenschaftliche Betreuung, da eine eigenständige Kalorienüberwachung mit der Entwicklung von Essstörungen in Verbindung gebracht werden kann.',
+    maintenanceCaloriesTitle: 'Grundumsatz',
+    mifflinStJeorSubtitle: 'Berechnung basierend auf der',
+    methodLabel: 'Methode'
   },
   it: {
     search: 'Cerca',
@@ -786,6 +834,15 @@ export const translations: translationsType = {
     burned: 'Bruciate',
     statistics: 'Statistiche',
     weightEvolution: 'Evoluzione del peso',
-    averageCalories: 'Media calorie'
+    averageCalories: 'Media calorie',
+    sedentary: 'Sedentario (poco o niente esercizio)',
+    lightlyActive: 'Leggermente attivo (esercizio leggero/sport 1-3 giorni a settimana)',
+    moderatelyActive: 'Moderatamente attivo (esercizio moderato/sport 3-5 giorni a settimana)',
+    veryActive: 'Molto attivo (esercizio pesante/sport 6-7 giorni a settimana)',
+    extraActive: 'Extra attivo (esercizio molto pesante e lavoro fisico)',
+    metabolicWarning: 'Considerazioni importanti: Questa stima metabolica si basa su modelli statistici per la popolazione generale e non tiene conto delle variazioni individuali nella composizione corporea (muscolo vs. grasso). Questi calcoli devono essere utilizzati solo come guida generale. Per un approccio nutrizionale preciso e sicuro, raccomandiamo vivamente la supervisione medica o dietetica professionale, poiché l\'automonitoraggio calorico può essere associato allo sviluppo di disturbi del comportamento alimentare.',
+    maintenanceCaloriesTitle: 'Tasso Metabolico Basale',
+    mifflinStJeorSubtitle: 'Calcolo basato sul',
+    methodLabel: 'metodo'
   },
 };

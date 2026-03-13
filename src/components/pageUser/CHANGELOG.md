@@ -1,5 +1,11 @@
 # page-user
 
+## 0.0.12
+
+### Patch Changes
+
+- Adding a maintenance calories calculator to the project.
+
 ## 0.0.11
 
 ### Patch Changes
