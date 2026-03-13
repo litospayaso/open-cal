@@ -27508,7 +27508,22 @@
       burned: "Quemadas",
       statistics: "Estad\xEDsticas",
       weightEvolution: "Evoluci\xF3n del peso",
-      averageCalories: "Media calor\xEDas"
+      averageCalories: "Media calor\xEDas",
+      sedentary: "Sedentario (poco o nada de ejercicio)",
+      lightlyActive: "Ligeramente activo (ejercicio ligero/deportes 1-3 d\xEDas a la semana)",
+      moderatelyActive: "Moderadamente activo (ejercicio moderado/deportes 3-5 d\xEDas a la semana)",
+      veryActive: "Muy activo (ejercicio duro/deportes 6-7 d\xEDas a la semana)",
+      extraActive: "Extra activo (ejercicio muy duro y trabajo f\xEDsico)",
+      metabolicWarning: "Consideraciones importantes: Esta estimaci\xF3n metab\xF3lica se basa en modelos estad\xEDsticos para la poblaci\xF3n general y no tiene en cuenta las variaciones individuales en la composici\xF3n corporal (m\xFAsculo vs. grasa). Estos c\xE1lculos deben utilizarse \xFAnicamente como una gu\xEDa general. Para un enfoque nutricional preciso y seguro, recomendamos encarecidamente la supervisi\xF3n m\xE9dica o diet\xE9tica profesional, ya que el control cal\xF3rico sin gu\xEDa puede estar asociado al desarrollo de patrones de conducta alimentaria de riesgo.",
+      maintenanceCaloriesTitle: "Tasa Metab\xF3lica Basal",
+      mifflinStJeorSubtitle: "C\xE1lculo basado en el",
+      methodLabel: "m\xE9todo",
+      dietType: "Tipo de dieta",
+      balanced: "Equilibrada",
+      lowCarb: "Baja en carbohidratos",
+      lowFat: "Baja en grasas",
+      highProtein: "Alta en prote\xEDnas",
+      calculateMaintenance: "Calcular calor\xEDas de mantenimiento"
     },
     en: {
       search: "Search",
@@ -27668,7 +27683,22 @@
       burned: "Burned",
       statistics: "Statistics",
       weightEvolution: "Weight evolution",
-      averageCalories: "Average calories"
+      averageCalories: "Average calories",
+      sedentary: "Sedentary (little or no exercise)",
+      lightlyActive: "Lightly active (light exercise/sports 1-3 days/week)",
+      moderatelyActive: "Moderately active (moderate exercise/sports 3-5 days/week)",
+      veryActive: "Very active (hard exercise/sports 6-7 days a week)",
+      extraActive: "Extra active (very hard exercise/sports & physical job)",
+      metabolicWarning: "Important considerations: This metabolic estimation relies on statistical models for the general population and does not account for individual variations in body composition (muscle vs. fat). These calculations should be used as general guidance only. For a precise and safe nutritional approach, we strongly recommend professional medical or dietetic supervision, as self-directed calorie monitoring can be associated with the development of disordered eating patterns.",
+      maintenanceCaloriesTitle: "Basal Metabolic Rate",
+      mifflinStJeorSubtitle: "Calculation based on the",
+      methodLabel: "method",
+      dietType: "Diet Type",
+      balanced: "Balanced",
+      lowCarb: "Low Carb",
+      lowFat: "Low Fat",
+      highProtein: "High Protein",
+      calculateMaintenance: "Calculate maintenance calories"
     },
     fr: {
       search: "Rechercher",
@@ -27823,7 +27853,16 @@
       burned: "Br\xFBl\xE9es",
       statistics: "Statistiques",
       weightEvolution: "\xC9volution du poids",
-      averageCalories: "Moyenne calories"
+      averageCalories: "Moyenne calories",
+      sedentary: "S\xE9dentaire (peu ou pas d'exercice)",
+      lightlyActive: "L\xE9g\xE8rement actif (exercice l\xE9ger/sports 1-3 jours/semaine)",
+      moderatelyActive: "Mod\xE9r\xE9ment actif (exercice mod\xE9r\xE9/sports 3-5 jours/semaine)",
+      veryActive: "Tr\xE8s actif (exercice intense/sports 6-7 jours/semaine)",
+      extraActive: "Extra actif (exercice tr\xE8s intense et travail physique)",
+      metabolicWarning: "Consid\xE9rations importantes : Cette estimation m\xE9tabolique repose sur des mod\xE8les statistiques pour la population g\xE9n\xE9rale et ne tient pas compte des variations individuelles de la composition corporelle (muscle vs graisse). Ces calculs ne doivent \xEAtre utilis\xE9s qu'\xE0 titre indicatif. Pour une approche nutritionnelle pr\xE9cise et s\xFBre, nous recommandons vivement une supervision m\xE9dicale ou di\xE9t\xE9tique professionnelle, car l'autosurveillance calorique peut \xEAtre associ\xE9e au d\xE9veloppement de troubles du comportement alimentaire.",
+      maintenanceCaloriesTitle: "Taux M\xE9tabolique de Base",
+      mifflinStJeorSubtitle: "Calcul bas\xE9 sur la",
+      methodLabel: "m\xE9thode"
     },
     de: {
       search: "Suche",
@@ -27978,7 +28017,16 @@
       burned: "Verbrannt",
       statistics: "Statistiken",
       weightEvolution: "Gewichtsentwicklung",
-      averageCalories: "Durchschnittliche Kalorien"
+      averageCalories: "Durchschnittliche Kalorien",
+      sedentary: "Sitzend (wenig oder gar kein Training)",
+      lightlyActive: "Leicht aktiv (leichtes Training/Sport 1-3 Tage/Woche)",
+      moderatelyActive: "M\xE4\xDFig aktiv (m\xE4\xDFiges Training/Sport 3-5 Tage/Woche)",
+      veryActive: "Sehr aktiv (hartes Training/Sport 6-7 Tage/Woche)",
+      extraActive: "Extra aktiv (sehr hartes Training/Sport & k\xF6rperlicher Job)",
+      metabolicWarning: "Wichtige Hinweise: Diese Stoffwechselsch\xE4tzung basiert auf statistischen Modellen f\xFCr die Allgemeinbev\xF6lkerung und ber\xFCcksichtigt keine individuellen Schwankungen der K\xF6rperzusammensetzung (Muskelmasse vs. Fett). Diese Berechnungen sollten nur als allgemeine Orientierung dienen. F\xFCr einen pr\xE4zisen und sicheren Ern\xE4hrungsansatz empfehlen wir dringend eine professionelle medizinische oder ern\xE4hrungswissenschaftliche Betreuung, da eine eigenst\xE4ndige Kalorien\xFCberwachung mit der Entwicklung von Essst\xF6rungen in Verbindung gebracht werden kann.",
+      maintenanceCaloriesTitle: "Grundumsatz",
+      mifflinStJeorSubtitle: "Berechnung basierend auf der",
+      methodLabel: "Methode"
     },
     it: {
       search: "Cerca",
@@ -28133,7 +28181,16 @@
       burned: "Bruciate",
       statistics: "Statistiche",
       weightEvolution: "Evoluzione del peso",
-      averageCalories: "Media calorie"
+      averageCalories: "Media calorie",
+      sedentary: "Sedentario (poco o niente esercizio)",
+      lightlyActive: "Leggermente attivo (esercizio leggero/sport 1-3 giorni a settimana)",
+      moderatelyActive: "Moderatamente attivo (esercizio moderato/sport 3-5 giorni a settimana)",
+      veryActive: "Molto attivo (esercizio pesante/sport 6-7 giorni a settimana)",
+      extraActive: "Extra attivo (esercizio molto pesante e lavoro fisico)",
+      metabolicWarning: "Considerazioni importanti: Questa stima metabolica si basa su modelli statistici per la popolazione generale e non tiene conto delle variazioni individuali nella composizione corporea (muscolo vs. grasso). Questi calcoli devono essere utilizzati solo come guida generale. Per un approccio nutrizionale preciso e sicuro, raccomandiamo vivamente la supervisione medica o dietetica professionale, poich\xE9 l'automonitoraggio calorico pu\xF2 essere associato allo sviluppo di disturbi del comportamento alimentare.",
+      maintenanceCaloriesTitle: "Tasso Metabolico Basale",
+      mifflinStJeorSubtitle: "Calcolo basato sul",
+      methodLabel: "metodo"
     }
   };
 
@@ -29446,7 +29503,7 @@
   var package_default = {
     name: "brote",
     private: true,
-    version: "1.0.25",
+    version: "1.0.26",
     type: "module",
     scripts: {
       dev: "vite",
@@ -35826,6 +35883,411 @@
     web: () => Promise.resolve().then(() => (init_web3(), web_exports3)).then((m2) => new m2.ShareWeb())
   });
 
+  // src/components/componentMaintenanceCalories/componentMaintenanceCalories.ts
+  var ComponentMaintenanceCalories = class extends i4 {
+    constructor() {
+      super(...arguments);
+      this.height = 0;
+      this.weight = 0;
+      this.gender = "";
+      this.showWarning = true;
+      this._height = 0;
+      this._weight = 0;
+      this._gender = "";
+      this.age = 30;
+      this.activityLevel = 1.2;
+      this.dietType = "balanced";
+      this.proteinRatio = 20;
+      this.carbsRatio = 50;
+      this.fatRatio = 30;
+      this.translationsTexts = {};
+    }
+    set translations(translations2) {
+      if (translations2) {
+        this.translationsTexts = JSON.parse(translations2);
+      }
+    }
+    updated(changedProperties) {
+      if (changedProperties.has("height")) this._height = this.height;
+      if (changedProperties.has("weight")) this._weight = this.weight;
+      if (changedProperties.has("gender")) this._gender = this.gender;
+    }
+    _calculateCalories() {
+      if (!this._height || !this._weight || !this.age || !this._gender) return 0;
+      let bmr = 0;
+      if (this._gender === "male") {
+        bmr = 10 * this._weight + 6.25 * this._height - 5 * this.age + 5;
+      } else {
+        bmr = 10 * this._weight + 6.25 * this._height - 5 * this.age - 161;
+      }
+      const totalCalories = Math.round(bmr * this.activityLevel);
+      this.dispatchEvent(new CustomEvent("calories-calculated", {
+        detail: {
+          calories: totalCalories,
+          protein: Math.round(totalCalories * (this.proteinRatio / 100) / 4),
+          carbs: Math.round(totalCalories * (this.carbsRatio / 100) / 4),
+          fat: Math.round(totalCalories * (this.fatRatio / 100) / 9)
+        },
+        bubbles: true,
+        composed: true
+      }));
+      return totalCalories;
+    }
+    _onDietTypeChange(e6) {
+      this.dietType = e6.target.value;
+      switch (this.dietType) {
+        case "balanced":
+          this.proteinRatio = 20;
+          this.carbsRatio = 50;
+          this.fatRatio = 30;
+          break;
+        case "lowCarb":
+          this.proteinRatio = 25;
+          this.carbsRatio = 45;
+          this.fatRatio = 30;
+          break;
+        case "lowFat":
+          this.proteinRatio = 15;
+          this.carbsRatio = 65;
+          this.fatRatio = 20;
+          break;
+        case "highProtein":
+          this.proteinRatio = 35;
+          this.carbsRatio = 45;
+          this.fatRatio = 20;
+          break;
+      }
+    }
+    _handleSave() {
+      const calories = this._calculateCalories();
+      this.dispatchEvent(new CustomEvent("save-calories", {
+        detail: {
+          calories,
+          height: this._height,
+          weight: this._weight,
+          gender: this._gender,
+          age: this.age,
+          activityLevel: this.activityLevel,
+          proteinRatio: this.proteinRatio,
+          carbsRatio: this.carbsRatio,
+          fatRatio: this.fatRatio
+        },
+        bubbles: true,
+        composed: true
+      }));
+    }
+    render() {
+      const calories = this._calculateCalories();
+      return b2`
+      <div class="form-container">
+        <div class="header">
+          <h2>${this.translationsTexts["maintenanceCaloriesTitle"] || "Basal Metabolic Rate"}</h2>
+          <div class="subtitle">
+            ${this.translationsTexts["mifflinStJeorSubtitle"] || "Calculation based on the"}
+            <a href="https://en.wikipedia.org/wiki/Basal_metabolic_rate#Mifflin-St_Jeor_equation" target="_blank" rel="noopener">Mifflin-St Jeor</a>
+            ${this.translationsTexts["methodLabel"] || "method"}
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>📏 ${this.translationsTexts["height"] || "Height"} (cm)</label>
+            <input type="number" .value="${String(this._height)}" @input="${(e6) => this._height = Number(e6.target.value)}">
+          </div>
+          <div class="form-group">
+            <label>⚖️ ${this.translationsTexts["weight"] || "Weight"} (kg)</label>
+            <input type="number" .value="${String(this._weight)}" @input="${(e6) => this._weight = Number(e6.target.value)}">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>👤 ${this.translationsTexts["gender"] || "Gender"}</label>
+            <select .value="${this._gender}" @change="${(e6) => this._gender = e6.target.value}">
+              <option value="" disabled>${this.translationsTexts["select"] || "Select..."}</option>
+              <option value="male">${this.translationsTexts["male"] || "Male"}</option>
+              <option value="female">${this.translationsTexts["female"] || "Female"}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>🎂 ${this.translationsTexts["age"] || "Age"}</label>
+            <input type="number" .value="${String(this.age)}" @input="${(e6) => this.age = Number(e6.target.value)}">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>🏃 ${this.translationsTexts["activityLevel"] || "Activity Level"}</label>
+          <select .value="${this.activityLevel}" @change="${(e6) => this.activityLevel = e6.target.value}">
+            <option value="1.2">${this.translationsTexts["sedentary"] || "Sedentary (little or no exercise)"}</option>
+            <option value="1.375">${this.translationsTexts["lightlyActive"] || "Lightly active (light exercise/sports 1-3 days/week)"}</option>
+            <option value="1.55">${this.translationsTexts["moderatelyActive"] || "Moderately active (moderate exercise/sports 3-5 days/week)"}</option>
+            <option value="1.725">${this.translationsTexts["veryActive"] || "Very active (hard exercise/sports 6-7 days a week)"}</option>
+            <option value="1.9">${this.translationsTexts["extraActive"] || "Extra active (very hard exercise/sports & physical job)"}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>🍽️ ${this.translationsTexts["dietType"] || "Diet Type"}</label>
+          <select .value="${this.dietType}" @change="${this._onDietTypeChange}">
+            <option value="balanced">${this.translationsTexts["balanced"] || "Balanced"}</option>
+            <option value="lowCarb">${this.translationsTexts["lowCarb"] || "Low Carb"}</option>
+            <option value="lowFat">${this.translationsTexts["lowFat"] || "Low Fat"}</option>
+            <option value="highProtein">${this.translationsTexts["highProtein"] || "High Protein"}</option>
+          </select>
+        </div>
+
+        ${calories > 0 ? b2`
+          ${this.showWarning ? b2`
+            <div class="warning-message">
+              <span class="warning-icon">⚠️</span>
+              ${this.translationsTexts["metabolicWarning"] || "Important considerations: This metabolic estimation relies on statistical models for the general population and does not account for individual variations in body composition (muscle vs. fat). These calculations should be used as general guidance only. For a precise and safe nutritional approach, we strongly recommend professional medical or dietetic supervision, as self-directed calorie monitoring can be associated with the development of disordered eating patterns."}
+            </div>
+          ` : ""}
+          <div class="result-container">
+            <div class="result-label">${this.translationsTexts["dailyCalories"] || "Maintenance Calories"}</div>
+            <div class="result-value">${calories} ${this.translationsTexts["kcal"] || "kcal"}</div>
+            
+            <div class="macro-display">
+              <div class="macro-item">
+                <span class="macro-label">${this.translationsTexts["protein"] || "Protein"}</span>
+                <span class="macro-value macro-protein">${this.proteinRatio}%</span>
+                <span class="macro-label">${Math.round(calories * (this.proteinRatio / 100) / 4)}g</span>
+              </div>
+              <div class="macro-item">
+                <span class="macro-label">${this.translationsTexts["carbs"] || "Carbs"}</span>
+                <span class="macro-value macro-carbs">${this.carbsRatio}%</span>
+                <span class="macro-label">${Math.round(calories * (this.carbsRatio / 100) / 4)}g</span>
+              </div>
+              <div class="macro-item">
+                <span class="macro-label">${this.translationsTexts["fat"] || "Fat"}</span>
+                <span class="macro-value macro-fat">${this.fatRatio}%</span>
+                <span class="macro-label">${Math.round(calories * (this.fatRatio / 100) / 9)}g</span>
+              </div>
+            </div>
+          </div>
+          <button class="save-button" @click="${this._handleSave}">
+            ${this.translationsTexts["save"] || "Save"}
+          </button>
+        ` : ""}
+      </div>
+    `;
+    }
+  };
+  ComponentMaintenanceCalories.styles = [
+    Page.styles,
+    i`
+    :host {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    .form-container {
+      background: var(--card-background, #fff);
+      border: 1px solid var(--card-border, #4fb9ad);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .header {
+      margin-bottom: 4px;
+    }
+
+    .header h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: var(--primary-color, #4fb9ad);
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--text-color-secondary, #666);
+      margin-top: 4px;
+    }
+
+    .subtitle a {
+      color: var(--primary-color, #4fb9ad);
+      text-decoration: underline;
+      font-weight: 500;
+    }
+
+    .save-button {
+      margin-top: 16px;
+      padding: 12px;
+      background-color: var(--group-button-active-bg, var(--palette-green, #4fb9ad));
+      color: var(--group-button-active-text, #fff);
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: opacity 0.3s, transform 0.1s ease;
+      width: 100%;
+      font-size: 1rem;
+    }
+
+    .save-button:hover {
+      opacity: 0.9;
+    }
+
+    .save-button:active {
+      transform: scale(0.98);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-weight: bold;
+      font-size: 0.9rem;
+      color: var(--text-color, #191c25);
+    }
+
+    input, select {
+      padding: 10px;
+      border: 1px solid var(--card-border, #4fb9ad);
+      border-radius: 8px;
+      background: var(--input-background, #fff);
+      color: var(--text-color);
+      font-size: 1rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .result-container {
+      margin-top: 10px;
+      padding: 16px;
+      background: var(--primary-color-light, #e0f2f1);
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .result-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary-color, #4fb9ad);
+    }
+
+    .result-label {
+      font-size: 0.8rem;
+      color: var(--text-color-secondary, #666);
+    }
+
+    .warning-message {
+      margin-top: 16px;
+      padding: 12px;
+      background: var(--warning-background, #fff3e0);
+      border: 1px solid var(--warning-border, #ffb74d);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      color: var(--warning-text, #e65100);
+      text-align: justify;
+    }
+
+    .warning-icon {
+      font-size: 1rem;
+      margin-bottom: 4px;
+      display: block;
+      text-align: center;
+    }
+
+    .macro-display {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+      padding: 12px;
+      background: var(--card-background-secondary, #f5f5f5);
+      border-radius: 8px;
+    }
+
+    .macro-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .macro-label {
+      font-size: 0.75rem;
+      color: var(--text-color-secondary, #666);
+      font-weight: 500;
+    }
+
+    .macro-value {
+      font-size: 1rem;
+      font-weight: bold;
+      color: var(--text-color, #191c25);
+    }
+
+    .macro-protein { color: var(--protein-color, #4fb9ad); }
+    .macro-carbs { color: var(--carbs-color, #ffb74d); }
+    .macro-fat { color: var(--fat-color, #f44336); }
+  `
+  ];
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentMaintenanceCalories.prototype, "height", 2);
+  __decorateClass([
+    n4({ type: Number })
+  ], ComponentMaintenanceCalories.prototype, "weight", 2);
+  __decorateClass([
+    n4({ type: String })
+  ], ComponentMaintenanceCalories.prototype, "gender", 2);
+  __decorateClass([
+    n4({ type: Boolean })
+  ], ComponentMaintenanceCalories.prototype, "showWarning", 2);
+  __decorateClass([
+    n4({ type: String })
+  ], ComponentMaintenanceCalories.prototype, "translations", 1);
+  __decorateClass([
+    r5()
+  ], ComponentMaintenanceCalories.prototype, "_height", 2);
+  __decorateClass([
+    r5()
+  ], ComponentMaintenanceCalories.prototype, "_weight", 2);
+  __decorateClass([
+    r5()
+  ], ComponentMaintenanceCalories.prototype, "_gender", 2);
+  __decorateClass([
+    r5()
+  ], ComponentMaintenanceCalories.prototype, "age", 2);
+  __decorateClass([
+    r5()
+  ], ComponentMaintenanceCalories.prototype, "activityLevel", 2);
+  __decorateClass([
+    r5()
+  ], ComponentMaintenanceCalories.prototype, "dietType", 2);
+  __decorateClass([
+    r5()
+  ], ComponentMaintenanceCalories.prototype, "proteinRatio", 2);
+  __decorateClass([
+    r5()
+  ], ComponentMaintenanceCalories.prototype, "carbsRatio", 2);
+  __decorateClass([
+    r5()
+  ], ComponentMaintenanceCalories.prototype, "fatRatio", 2);
+  __decorateClass([
+    r5()
+  ], ComponentMaintenanceCalories.prototype, "translationsTexts", 2);
+  ComponentMaintenanceCalories = __decorateClass([
+    t3("component-maintenance-calories")
+  ], ComponentMaintenanceCalories);
+
   // src/components/pageUser/pageUser.ts
   var PageUser = class extends Page {
     constructor() {
@@ -35853,6 +36315,7 @@
       this.weeklyChartData = null;
       this.radarChartData = null;
       this.showImportModal = false;
+      this.showMaintenanceModal = false;
       this.importData = null;
       this.importOverride = false;
       this.importMessage = null;
@@ -36114,6 +36577,23 @@
     _handleGenderChange(e6) {
       this.gender = e6.target.value;
       this._saveProfile();
+    }
+    async _handleSaveCalories(e6) {
+      const { calories, height, weight, gender, proteinRatio, carbsRatio, fatRatio } = e6.detail;
+      this.dailyCalories = calories;
+      this.height = height;
+      this.weight = weight;
+      this.gender = gender;
+      this.proteinRatio = proteinRatio;
+      this.carbsRatio = carbsRatio;
+      this.fatRatio = fatRatio;
+      this._saveProfile();
+      if (this.weight) {
+        const today = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+        await this.db.saveWeightEntry(today, this.weight);
+        await this._loadWeightHistory();
+      }
+      this.showMaintenanceModal = false;
     }
     _handleThemeChange(theme) {
       this.setTheme(theme);
@@ -36625,6 +37105,10 @@ ${countMsg}`,
         <div style="font-size: 0.8rem; color: #666; margin-top: 5px; text-align: right;">
           ${this.translations.total}: ${this.proteinRatio + this.carbsRatio + this.fatRatio}%
         </div>
+        
+        <button class="btn" style="margin-top: 20px; width: 100%;" @click="${() => this.showMaintenanceModal = true}">
+          ${this.translations.calculateMaintenance || "Calculate Maintenance Calories"}
+        </button>
       </div>
 
       <div class="card">
@@ -36843,6 +37327,25 @@ ${countMsg}`,
           </div>
         </div>
       ` : ""}
+
+      ${this.showMaintenanceModal ? b2`
+        <div class="modal-overlay">
+          <div class="modal" style="width: 500px; max-width: 95%; position: relative;">
+            <div class="modal-header">
+              <h3>${this.translations.calculateMaintenance || "Calculate Maintenance Calories"}</h3>
+              <button class="close-btn" @click="${() => this.showMaintenanceModal = false}">&times;</button>
+            </div>
+            
+            <component-maintenance-calories
+              .height="${this.height}"
+              .weight="${this.weight}"
+              .gender="${this.gender}"
+              .translations="${JSON.stringify(this.translations)}"
+              @save-calories="${this._handleSaveCalories}"
+            ></component-maintenance-calories>
+          </div>
+        </div>
+      ` : ""}
     `;
     }
   };
@@ -36918,6 +37421,9 @@ ${countMsg}`,
   __decorateClass([
     r5()
   ], PageUser.prototype, "showImportModal", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "showMaintenanceModal", 2);
   __decorateClass([
     r5()
   ], PageUser.prototype, "importData", 2);
