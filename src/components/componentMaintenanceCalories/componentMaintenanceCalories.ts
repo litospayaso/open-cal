@@ -278,9 +278,7 @@ export default class ComponentMaintenanceCalories extends LitElement {
         <div class="header">
           <h2>${this.translationsTexts['maintenanceCaloriesTitle'] || 'Basal Metabolic Rate'}</h2>
           <div class="subtitle">
-            ${this.translationsTexts['mifflinStJeorSubtitle'] || 'Calculation based on the'}
-            <a href="https://en.wikipedia.org/wiki/Basal_metabolic_rate#Mifflin-St_Jeor_equation" target="_blank" rel="noopener">Mifflin-St Jeor</a>
-            ${this.translationsTexts['methodLabel'] || 'method'}
+            ${(this.translationsTexts['mifflinStJeorSubtitle'] || 'Calculation based on the {link} method').split('{link}').map((part: string, index: number, array: string[]) => html`${part}${index === array.length - 1 ? '' : html`<a href="https://en.wikipedia.org/wiki/Basal_metabolic_rate#Mifflin-St_Jeor_equation" target="_blank" rel="noopener">Mifflin-St Jeor</a>`}`)}
           </div>
         </div>
 

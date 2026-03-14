@@ -27516,7 +27516,7 @@
       extraActive: "Extra activo (ejercicio muy duro y trabajo f\xEDsico)",
       metabolicWarning: "Consideraciones importantes: Esta estimaci\xF3n metab\xF3lica se basa en modelos estad\xEDsticos para la poblaci\xF3n general y no tiene en cuenta las variaciones individuales en la composici\xF3n corporal (m\xFAsculo vs. grasa). Estos c\xE1lculos deben utilizarse \xFAnicamente como una gu\xEDa general. Para un enfoque nutricional preciso y seguro, recomendamos encarecidamente la supervisi\xF3n m\xE9dica o diet\xE9tica profesional, ya que el control cal\xF3rico sin gu\xEDa puede estar asociado al desarrollo de patrones de conducta alimentaria de riesgo.",
       maintenanceCaloriesTitle: "Tasa Metab\xF3lica Basal",
-      mifflinStJeorSubtitle: "C\xE1lculo basado en el",
+      mifflinStJeorSubtitle: "C\xE1lculo basado en el m\xE9todo {link}",
       methodLabel: "m\xE9todo",
       dietType: "Tipo de dieta",
       balanced: "Equilibrada",
@@ -27697,7 +27697,7 @@
       extraActive: "Extra active (very hard exercise/sports & physical job)",
       metabolicWarning: "Important considerations: This metabolic estimation relies on statistical models for the general population and does not account for individual variations in body composition (muscle vs. fat). These calculations should be used as general guidance only. For a precise and safe nutritional approach, we strongly recommend professional medical or dietetic supervision, as self-directed calorie monitoring can be associated with the development of disordered eating patterns.",
       maintenanceCaloriesTitle: "Basal Metabolic Rate",
-      mifflinStJeorSubtitle: "Calculation based on the",
+      mifflinStJeorSubtitle: "Calculation based on the {link} method",
       methodLabel: "method",
       dietType: "Diet Type",
       balanced: "Balanced",
@@ -27873,7 +27873,7 @@
       extraActive: "Extra actif (exercice tr\xE8s intense et travail physique)",
       metabolicWarning: "Consid\xE9rations importantes : Cette estimation m\xE9tabolique repose sur des mod\xE8les statistiques pour la population g\xE9n\xE9rale et ne tient pas compte des variations individuelles de la composition corporelle (muscle vs graisse). Ces calculs ne doivent \xEAtre utilis\xE9s qu'\xE0 titre indicatif. Pour une approche nutritionnelle pr\xE9cise et s\xFBre, nous recommandons vivement une supervision m\xE9dicale ou di\xE9t\xE9tique professionnelle, car l'autosurveillance calorique peut \xEAtre associ\xE9e au d\xE9veloppement de troubles du comportement alimentaire.",
       maintenanceCaloriesTitle: "Taux M\xE9tabolique de Base",
-      mifflinStJeorSubtitle: "Calcul bas\xE9 sur la",
+      mifflinStJeorSubtitle: "Calcul bas\xE9 sur la m\xE9thode {link}",
       methodLabel: "m\xE9thode",
       enableWarnings: "Activer les messages d'avertissement",
       enableStatistics: "Activer les statistiques",
@@ -28043,7 +28043,7 @@
       extraActive: "Extra aktiv (sehr hartes Training/Sport & k\xF6rperlicher Job)",
       metabolicWarning: "Wichtige Hinweise: Diese Stoffwechselsch\xE4tzung basiert auf statistischen Modellen f\xFCr die Allgemeinbev\xF6lkerung und ber\xFCcksichtigt keine individuellen Schwankungen der K\xF6rperzusammensetzung (Muskelmasse vs. Fett). Diese Berechnungen sollten nur als allgemeine Orientierung dienen. F\xFCr einen pr\xE4zisen und sicheren Ern\xE4hrungsansatz empfehlen wir dringend eine professionelle medizinische oder ern\xE4hrungswissenschaftliche Betreuung, da eine eigenst\xE4ndige Kalorien\xFCberwachung mit der Entwicklung von Essst\xF6rungen in Verbindung gebracht werden kann.",
       maintenanceCaloriesTitle: "Grundumsatz",
-      mifflinStJeorSubtitle: "Berechnung basierend auf der",
+      mifflinStJeorSubtitle: "Berechnung basierend auf der {link}-Methode",
       methodLabel: "Methode",
       enableWarnings: "Warnmeldungen aktivieren",
       enableStatistics: "Statistiken aktivieren",
@@ -28213,7 +28213,7 @@
       extraActive: "Extra attivo (esercizio molto pesante e lavoro fisico)",
       metabolicWarning: "Considerazioni importanti: Questa stima metabolica si basa su modelli statistici per la popolazione generale e non tiene conto delle variazioni individuali nella composizione corporea (muscolo vs. grasso). Questi calcoli devono essere utilizzati solo come guida generale. Per un approccio nutrizionale preciso e sicuro, raccomandiamo vivamente la supervisione medica o dietetica professionale, poich\xE9 l'automonitoraggio calorico pu\xF2 essere associato allo sviluppo di disturbi del comportamento alimentare.",
       maintenanceCaloriesTitle: "Tasso Metabolico Basale",
-      mifflinStJeorSubtitle: "Calcolo basato sul",
+      mifflinStJeorSubtitle: "Calcolo basato sul metodo {link}",
       methodLabel: "metodo",
       enableWarnings: "Abilita i messaggi di avviso",
       enableStatistics: "Abilita le statistiche",
@@ -36059,9 +36059,7 @@
         <div class="header">
           <h2>${this.translationsTexts["maintenanceCaloriesTitle"] || "Basal Metabolic Rate"}</h2>
           <div class="subtitle">
-            ${this.translationsTexts["mifflinStJeorSubtitle"] || "Calculation based on the"}
-            <a href="https://en.wikipedia.org/wiki/Basal_metabolic_rate#Mifflin-St_Jeor_equation" target="_blank" rel="noopener">Mifflin-St Jeor</a>
-            ${this.translationsTexts["methodLabel"] || "method"}
+            ${(this.translationsTexts["mifflinStJeorSubtitle"] || "Calculation based on the {link} method").split("{link}").map((part, index, array) => b2`${part}${index === array.length - 1 ? "" : b2`<a href="https://en.wikipedia.org/wiki/Basal_metabolic_rate#Mifflin-St_Jeor_equation" target="_blank" rel="noopener">Mifflin-St Jeor</a>`}`)}
           </div>
         </div>
 
