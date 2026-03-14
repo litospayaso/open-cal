@@ -1,6 +1,8 @@
 # Brote (Open Cal)
 
-![Brote_banner](./assets/brote_banner.png)
+<p align="center">
+  <img src="./android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" alt="Brote icon"/>
+</p>
 
 Brote is a modern, privacy-focused calorie and macronutrient tracking application built with Web Components and Lit. It allows users to track their daily food intake, manage personal meals, and monitor their progress against nutritional goals.
 
@@ -142,6 +144,11 @@ npm run deploy:pages
 ## Releases
 
 You can find the release notes in the `releases/` directory.
+
+## Third Party Libraries
+
+The project uses a connection to Open Food Facts API to get food data.
+It also uses the library html5-qrcode to scan barcodes.
 
 ## License
 
