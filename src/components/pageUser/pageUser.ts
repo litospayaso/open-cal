@@ -878,6 +878,19 @@ export default class PageUser extends Page {
 
   render() {
     return html`
+      ${this._renderPersonaDetails()}
+      ${this.enableStatistics ? this._renderStatistics() : ''}
+      ${this._renderNutritionalGoals()}
+      ${this._renderSettings()}
+      ${this._renderDataManagement()}
+      ${this._renderDangerZone()}
+      ${this._renderAppVersion()}
+      ${this._renderModals()}
+    `;
+  }
+
+  private _renderPersonaDetails() {
+    return html`
       <div class="card">
         <h2>${this.translations.personalDetails}</h2>
         
@@ -913,8 +926,11 @@ export default class PageUser extends Page {
           </button>
         </div>
       </div>
+    `;
+  }
 
-      ${this.enableStatistics ? html`
+  private _renderStatistics() {
+    return html`
       <div class="card">
         <h2>${this.translations.statistics}</h2>
         <div class="week-display">
@@ -937,17 +953,20 @@ export default class PageUser extends Page {
             ${this.weeklyChartData ? html`
               <component-bar-line-chart .chartData="${this.weeklyChartData}"></component-bar-line-chart>
             ` : ''}
-  
+
             ${this.radarChartData ? html`
               <div style="margin-top: 20px; height: 300px;">
                 <component-shape-chart .chartData="${this.radarChartData}"></component-shape-chart>
               </div>
             ` : ''}
-          
+        
         </div>
       </div>
-      ` : ''}
+    `;
+  }
 
+  private _renderNutritionalGoals() {
+    return html`
       <div class="card">
         <h2>${this.translations.nutritionalGoals}</h2>
         
@@ -979,7 +998,11 @@ export default class PageUser extends Page {
           ${this.translations.calculateMaintenance || 'Calculate Maintenance Calories'}
         </button>
       </div>
+    `;
+  }
 
+  private _renderSettings() {
+    return html`
       <div class="card">
         <h2>${this.translations.settings}</h2>
         <div class="form-group">
@@ -1054,7 +1077,11 @@ export default class PageUser extends Page {
           </div>
         </div>
       </div>
+    `;
+  }
 
+  private _renderDataManagement() {
+    return html`
       <div class="card">
         <h2>${this.translations.dataManagement}</h2>
         <p style="margin-bottom: 10px;">${this.translations.exportDataDesc}</p>
@@ -1075,7 +1102,11 @@ export default class PageUser extends Page {
           </div>
         ` : ''}
       </div>
+    `;
+  }
 
+  private _renderDangerZone() {
+    return html`
       <div class="card danger-zone">
         <h2>${this.translations.dangerZone}</h2>
         <p style="margin-bottom: 10px;">${this.translations.clearDataWarning}</p>
@@ -1083,7 +1114,11 @@ export default class PageUser extends Page {
           ${this.translations.clearAllData}
         </button>
       </div>
+    `;
+  }
 
+  private _renderAppVersion() {
+    return html`
       ${this.version ? html`
         <div class="app-version">
           ${this.translations.appVersion}: ${this.version}
@@ -1094,199 +1129,225 @@ export default class PageUser extends Page {
           </div>
         </div>
       ` : ''}
+    `;
+  }
 
-      ${this.showAboutModal ? html`
-        <div class="modal-overlay">
-          <div class="modal" style="width: 500px; max-width: 95%;">
-            <div class="modal-header">
-              <h3>${this.translations.aboutApp || 'About Brote'}</h3>
-              <button class="close-btn" @click="${() => this.showAboutModal = false}">&times;</button>
-            </div>
-            <div style="text-align: justify; line-height: 1.6; font-size: 0.95rem; margin-top: 10px;">
-              <p>${this.translations.aboutMessage}</p>
-            </div>
+  private _renderModals() {
+    return html`
+      ${this.showAboutModal ? this._renderAboutModal() : ''}
+      ${this.showClearModal ? this._renderClearModal() : ''}
+      ${this.showWeightModal ? this._renderWeightModal() : ''}
+      ${this.showExportModal ? this._renderExportModal() : ''}
+      ${this.showImportModal ? this._renderImportModal() : ''}
+      ${this.showMaintenanceModal ? this._renderMaintenanceModal() : ''}
+      ${this.showStatisticsModal ? this._renderStatisticsModal() : ''}
+    `;
+  }
+
+  private _renderAboutModal() {
+    return html`
+      <div class="modal-overlay">
+        <div class="modal" style="width: 500px; max-width: 95%;">
+          <div class="modal-header">
+            <h3>${this.translations.aboutApp || 'About Brote'}</h3>
+            <button class="close-btn" @click="${() => this.showAboutModal = false}">&times;</button>
+          </div>
+          <div style="text-align: justify; line-height: 1.6; font-size: 0.95rem; margin-top: 10px;">
+            <p>${this.translations.aboutMessage}</p>
           </div>
         </div>
-      ` : ''}
+      </div>
+    `;
+  }
 
-      ${this.showClearModal ? html`
-        <div class="modal-overlay">
-          <div class="modal">
-            <div class="modal-header">
-              <h3>${this.translations.confirmClearData || 'Confirm Clear Data'}</h3>
-              <button class="close-btn" @click="${() => this.showClearModal = false}">&times;</button>
-            </div>
-            <p>${this.translations.clearDataMsg || 'Are you sure you want to clear all app data? This action cannot be undone.'}</p>
-            <div class="modal-buttons">
-              <button class="btn" @click="${() => this.showClearModal = false}">${this.translations.cancel || 'Cancel'}</button>
-              <button class="btn-danger" @click="${this._clearAllData}">${this.translations.clear || 'Clear'}</button>
-            </div>
+  private _renderClearModal() {
+    return html`
+      <div class="modal-overlay">
+        <div class="modal">
+          <div class="modal-header">
+            <h3>${this.translations.confirmClearData || 'Confirm Clear Data'}</h3>
+            <button class="close-btn" @click="${() => this.showClearModal = false}">&times;</button>
+          </div>
+          <p>${this.translations.clearDataMsg || 'Are you sure you want to clear all app data? This action cannot be undone.'}</p>
+          <div class="modal-buttons">
+            <button class="btn" @click="${() => this.showClearModal = false}">${this.translations.cancel || 'Cancel'}</button>
+            <button class="btn-danger" @click="${this._clearAllData}">${this.translations.clear || 'Clear'}</button>
           </div>
         </div>
-      ` : ''}
+      </div>
+    `;
+  }
 
-      ${this.showWeightModal ? html`
-        <div class="modal-overlay">
-          <div class="modal" style="width: 500px; max-width: 95%;">
-            <div class="modal-header">
-              <h3>${this.translations.weightHistory || 'Weight History'}</h3>
-              <button class="close-btn" @click="${() => this.showWeightModal = false}">&times;</button>
-            </div>
-            
-            <div class="weight-history-list">
-              ${this.weightHistory.length === 0 ? html`<p style="text-align: center;">${this.translations.noResultsFound || 'No history found'}</p>` : ''}
-              ${this.weightHistory.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(entry => html`
-                <div class="weight-history-item">
-                  <span>${this._formatDate(entry.date)}</span>
-                  <div style="display: flex; align-items: center; gap: 12px; padding-right: 8px;">
-                    <strong>${entry.weight} kg</strong>
-                    ${this._renderTrashIcon(entry)}
-                  </div>
+  private _renderWeightModal() {
+    return html`
+      <div class="modal-overlay">
+        <div class="modal" style="width: 500px; max-width: 95%;">
+          <div class="modal-header">
+            <h3>${this.translations.weightHistory || 'Weight History'}</h3>
+            <button class="close-btn" @click="${() => this.showWeightModal = false}">&times;</button>
+          </div>
+          
+          <div class="weight-history-list">
+            ${this.weightHistory.length === 0 ? html`<p style="text-align: center;">${this.translations.noResultsFound || 'No history found'}</p>` : ''}
+            ${this.weightHistory.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(entry => html`
+              <div class="weight-history-item">
+                <span>${this._formatDate(entry.date)}</span>
+                <div style="display: flex; align-items: center; gap: 12px; padding-right: 8px;">
+                  <strong>${entry.weight} kg</strong>
+                  ${this._renderTrashIcon(entry)}
                 </div>
-              `)}
-            </div>
-
-            <div class="weight-history-form">
-              <div class="form-group" style="text-align: left;">
-                <label>${this.translations.date || 'Date'}</label>
-                <input type="date" .value="${this.newWeightDate}" @change="${(e: any) => this.newWeightDate = e.target.value}" />
               </div>
-              <div class="form-group" style="text-align: left;">
-                <label>${this.translations.weight || 'Weight'} (kg)</label>
-                <input type="number" step="0.1" .value="${this.newWeightValue}" @input="${(e: any) => this.newWeightValue = Number(e.target.value)}" />
-              </div>
-              <button class="btn" @click="${this._saveNewWeightEntry}">
-                ${this.translations.saveEntry || 'Save Entry'}
-              </button>
-            </div>
+            `)}
           </div>
-        </div>
-      ` : ''}
 
-      ${this.showExportModal ? html`
-        <div class="modal-overlay">
-          <div class="modal" style="width: 450px; max-width: 95%;">
-            <div class="modal-header">
-              <h3>${this.translations.exportData}</h3>
-              <button class="close-btn" @click="${() => this.showExportModal = false}">&times;</button>
+          <div class="weight-history-form">
+            <div class="form-group" style="text-align: left;">
+              <label>${this.translations.date || 'Date'}</label>
+              <input type="date" .value="${this.newWeightDate}" @change="${(e: any) => this.newWeightDate = e.target.value}" />
             </div>
-
-            <div style="text-align: left; margin-bottom: 20px;">
-              <p style="font-weight: bold; margin-bottom: 10px;">${this.translations.selectDataToExport}:</p>
-              
-              <label class="checkbox-label">
-                <input type="checkbox" ?checked="${this.exportStores.has('daily_consumption')}" @change="${() => this._toggleExportStore('daily_consumption')}">
-                ${this.translations.dailyConsumption}
-              </label>
-              
-              <label class="checkbox-label">
-                <input type="checkbox" ?checked="${this.exportStores.has('user_data')}" @change="${() => this._toggleExportStore('user_data')}">
-                ${this.translations.userData}
-              </label>
-
-              <label class="checkbox-label">
-                <input type="checkbox" ?checked="${this.exportStores.has('meals')}" @change="${() => this._toggleExportStore('meals')}">
-                ${this.translations.savedMeals}
-              </label>
-
-              <label class="checkbox-label">
-                <input type="checkbox" ?checked="${this.exportStores.has('products')}" @change="${() => this._toggleExportStore('products')}">
-                ${this.translations.cachedProducts}
-              </label>
-
-              <label class="checkbox-label">
-                <input type="checkbox" ?checked="${this.exportStores.has('favorites')}" @change="${() => this._toggleExportStore('favorites')}">
-                ${this.translations.favorites}
-              </label>
-
-              <label class="checkbox-label">
-                <input type="checkbox" ?checked="${this.exportStores.has('user_status')}" @change="${() => this._toggleExportStore('user_status')}">
-                ${this.translations.dailyStatus}
-              </label>
-
-              <p style="font-weight: bold; margin: 20px 0 10px;">${this.translations.selectExportFormat}:</p>
-              
-              <div style="display: flex; gap: 20px; justify-content: center;">
-                <label class="radio-label">
-                  <input type="radio" name="format" value="json" ?checked="${this.exportFormat === 'json'}" @change="${() => this.exportFormat = 'json'}">
-                  JSON
-                </label>
-                <label class="radio-label">
-                  <input type="radio" name="format" value="csv" ?checked="${this.exportFormat === 'csv'}" @change="${() => this.exportFormat = 'csv'}">
-                  CSV
-                </label>
-              </div>
+            <div class="form-group" style="text-align: left;">
+              <label>${this.translations.weight || 'Weight'} (kg)</label>
+              <input type="number" step="0.1" .value="${this.newWeightValue}" @input="${(e: any) => this.newWeightValue = Number(e.target.value)}" />
             </div>
-
-            <button class="btn" style="width: 100%;" ?disabled="${this.exportStores.size === 0}" @click="${this._handleExport}">
-              ${this.translations.exportConfirm}
+            <button class="btn" @click="${this._saveNewWeightEntry}">
+              ${this.translations.saveEntry || 'Save Entry'}
             </button>
           </div>
         </div>
-      ` : ''}
+      </div>
+    `;
+  }
 
-      ${this.showImportModal ? html`
-        <div class="modal-overlay">
-          <div class="modal" style="width: 400px; max-width: 95%;">
-            <div class="modal-header">
-              <h3>${this.translations.confirmImport}</h3>
-              <button class="close-btn" @click="${() => this.showImportModal = false}">&times;</button>
-            </div>
-            <p>${this.translations.confirmOverrideMsg}</p>
+  private _renderExportModal() {
+    return html`
+      <div class="modal-overlay">
+        <div class="modal" style="width: 450px; max-width: 95%;">
+          <div class="modal-header">
+            <h3>${this.translations.exportData}</h3>
+            <button class="close-btn" @click="${() => this.showExportModal = false}">&times;</button>
+          </div>
+
+          <div style="text-align: left; margin-bottom: 20px;">
+            <p style="font-weight: bold; margin-bottom: 10px;">${this.translations.selectDataToExport}:</p>
             
-            <label class="checkbox-label" style="justify-content: center; margin: 20px 0;">
-              <input type="checkbox" .checked="${this.importOverride}" @change="${(e: any) => this.importOverride = e.target.checked}">
-              ${this.translations.overrideCurrentData}
+            <label class="checkbox-label">
+              <input type="checkbox" ?checked="${this.exportStores.has('daily_consumption')}" @change="${() => this._toggleExportStore('daily_consumption')}">
+              ${this.translations.dailyConsumption}
+            </label>
+            
+            <label class="checkbox-label">
+              <input type="checkbox" ?checked="${this.exportStores.has('user_data')}" @change="${() => this._toggleExportStore('user_data')}">
+              ${this.translations.userData}
             </label>
 
-            <div class="modal-buttons">
-              <button class="btn" @click="${() => this.showImportModal = false}">${this.translations.cancel}</button>
-              <button class="btn" @click="${this._proceedImport}">${this.translations.import}</button>
-            </div>
-          </div>
-        </div>
-      ` : ''}
+            <label class="checkbox-label">
+              <input type="checkbox" ?checked="${this.exportStores.has('meals')}" @change="${() => this._toggleExportStore('meals')}">
+              ${this.translations.savedMeals}
+            </label>
 
-      ${this.showMaintenanceModal ? html`
-        <div class="modal-overlay">
-          <div class="modal" style="width: 500px; max-width: 95%; position: relative;">
-            <div class="modal-header">
-              <h3>${this.translations.calculateMaintenance || 'Calculate Maintenance Calories'}</h3>
-              <button class="close-btn" @click="${() => this.showMaintenanceModal = false}">&times;</button>
-            </div>
+            <label class="checkbox-label">
+              <input type="checkbox" ?checked="${this.exportStores.has('products')}" @change="${() => this._toggleExportStore('products')}">
+              ${this.translations.cachedProducts}
+            </label>
+
+            <label class="checkbox-label">
+              <input type="checkbox" ?checked="${this.exportStores.has('favorites')}" @change="${() => this._toggleExportStore('favorites')}">
+              ${this.translations.favorites}
+            </label>
+
+            <label class="checkbox-label">
+              <input type="checkbox" ?checked="${this.exportStores.has('user_status')}" @change="${() => this._toggleExportStore('user_status')}">
+              ${this.translations.dailyStatus}
+            </label>
+
+            <p style="font-weight: bold; margin: 20px 0 10px;">${this.translations.selectExportFormat}:</p>
             
-            <component-maintenance-calories
-              .height="${this.height}"
-              .weight="${this.weight}"
-              .gender="${this.gender}"
-              .age="${this.age}"
-              .showWarning="${this.enableWarnings}"
-              .translations="${JSON.stringify(this.translations)}"
-              @save-calories="${this._handleSaveCalories}"
-            ></component-maintenance-calories>
+            <div style="display: flex; gap: 20px; justify-content: center;">
+              <label class="radio-label">
+                <input type="radio" name="format" value="json" ?checked="${this.exportFormat === 'json'}" @change="${() => this.exportFormat = 'json'}">
+                JSON
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="format" value="csv" ?checked="${this.exportFormat === 'csv'}" @change="${() => this.exportFormat = 'csv'}">
+                CSV
+              </label>
+            </div>
           </div>
-        </div>
-      ` : ''}
 
-      ${this.showStatisticsModal ? html`
-        <div class="modal-overlay">
-          <div class="modal">
-            <div class="modal-header">
-              <h3 style="color: var(--palette-green);">${this.translations.statisticsWarningTitle || 'Warning regarding statistical tracking'}</h3>
-              <button class="close-btn" @click="${() => this.showStatisticsModal = false}">&times;</button>
-            </div>
-            <div class="warning-message">
-              <span>
-                <span class="warning-icon">⚠️</span>${this.translations.statisticsWarningMessage || 'Please be careful...'}
-              </span>
-            </div>
-            <div class="modal-buttons" style="justify-content: space-around;">
-              <button class="btn btn-cancel" @click="${() => this.showStatisticsModal = false}">${this.translations.cancel || 'Cancel'}</button>
-              <button class="btn btn-confirm" @click="${this._confirmEnableStatistics}">${this.translations.confirm || 'Confirm'}</button>
-            </div>
+          <button class="btn" style="width: 100%;" ?disabled="${this.exportStores.size === 0}" @click="${this._handleExport}">
+            ${this.translations.exportConfirm}
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  private _renderImportModal() {
+    return html`
+      <div class="modal-overlay">
+        <div class="modal" style="width: 400px; max-width: 95%;">
+          <div class="modal-header">
+            <h3>${this.translations.confirmImport}</h3>
+            <button class="close-btn" @click="${() => this.showImportModal = false}">&times;</button>
+          </div>
+          <p>${this.translations.confirmOverrideMsg}</p>
+          
+          <label class="checkbox-label" style="justify-content: center; margin: 20px 0;">
+            <input type="checkbox" .checked="${this.importOverride}" @change="${(e: any) => this.importOverride = e.target.checked}">
+            ${this.translations.overrideCurrentData}
+          </label>
+
+          <div class="modal-buttons">
+            <button class="btn" @click="${() => this.showImportModal = false}">${this.translations.cancel}</button>
+            <button class="btn" @click="${this._proceedImport}">${this.translations.import}</button>
           </div>
         </div>
-      ` : ''}
+      </div>
+    `;
+  }
+
+  private _renderMaintenanceModal() {
+    return html`
+      <div class="modal-overlay">
+        <div class="modal" style="width: 500px; max-width: 95%; position: relative;">
+          <div class="modal-header">
+            <h3>${this.translations.calculateMaintenance || 'Calculate Maintenance Calories'}</h3>
+            <button class="close-btn" @click="${() => this.showMaintenanceModal = false}">&times;</button>
+          </div>
+          
+          <component-maintenance-calories
+            .height="${this.height}"
+            .weight="${this.weight}"
+            .gender="${this.gender}"
+            .age="${this.age}"
+            .showWarning="${this.enableWarnings}"
+            .translations="${JSON.stringify(this.translations)}"
+            @save-calories="${this._handleSaveCalories}"
+          ></component-maintenance-calories>
+        </div>
+      </div>
+    `;
+  }
+
+  private _renderStatisticsModal() {
+    return html`
+      <div class="modal-overlay">
+        <div class="modal">
+          <div class="modal-header">
+            <h3 style="color: var(--palette-green);">${this.translations.statisticsWarningTitle || 'Warning regarding statistical tracking'}</h3>
+            <button class="close-btn" @click="${() => this.showStatisticsModal = false}">&times;</button>
+          </div>
+          <div class="warning-message">
+            <span>
+              <span class="warning-icon">⚠️</span>${this.translations.statisticsWarningMessage || 'Please be careful...'}
+            </span>
+          </div>
+          <div class="modal-buttons" style="justify-content: space-around;">
+            <button class="btn btn-cancel" @click="${() => this.showStatisticsModal = false}">${this.translations.cancel || 'Cancel'}</button>
+            <button class="btn btn-confirm" @click="${this._confirmEnableStatistics}">${this.translations.confirm || 'Confirm'}</button>
+          </div>
+        </div>
+      </div>
     `;
   }
 }
