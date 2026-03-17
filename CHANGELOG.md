@@ -1,5 +1,11 @@
 # brote
 
+## 1.0.32
+
+### Patch Changes
+
+- fixing camera display on reading bar code in device and web
+
 ## 1.0.31
 
 ### Patch Changes

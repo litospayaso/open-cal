@@ -29,7 +29,7 @@ describe('PageCodeScanner Spec:', () => {
 
   it('should render reader element', async () => {
     await component.updateComplete;
-    const reader = element.querySelector('#reader');
+    const reader = element.querySelector('#video');
     expect(reader).to.exist;
   });
 

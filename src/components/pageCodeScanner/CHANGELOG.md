@@ -1,5 +1,11 @@
 # page-code-scanner
 
+## 0.0.7
+
+### Patch Changes
+
+- fixing camera display on reading bar code in device and web
+
 ## 0.0.6
 
 ### Patch Changes
