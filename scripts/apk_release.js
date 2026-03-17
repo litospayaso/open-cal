@@ -29,10 +29,20 @@ try {
     run('chmod +x gradlew', androidDir);
     const sdkPath = path.join(process.env.HOME, 'Android', 'Sdk');
     let javaHome = process.env.JAVA_HOME;
+    
+    if (javaHome) {
+      console.log(`🔍 Current JAVA_HOME: "${javaHome}"`);
+    }
 
-    // Validate JAVA_HOME: if it doesn't exist or points to a likely invalid path (e.g. /run/host/...)
-    if (javaHome && (!fs.existsSync(javaHome) || javaHome.startsWith('/run/host/'))) {
-      console.log(`⚠️ JAVA_HOME (${javaHome}) appears to be invalid or a host-level path. Attempting to resolve...`);
+    // Validate JAVA_HOME: if it doesn't exist or matches known problematic patterns
+    const isInvalidPath = javaHome && (
+      !fs.existsSync(javaHome.replace(/['"]/g, '')) || 
+      /\/run\/host\//.test(javaHome) || 
+      /flatpak/i.test(javaHome)
+    );
+
+    if (isInvalidPath) {
+      console.log(`⚠️ JAVA_HOME appears to be invalid or a host-level path. Attempting to resolve...`);
       try {
         const resolvedJava = execSync('readlink -f $(which java)', { encoding: 'utf8' }).trim();
         // The resolved path usually ends with /bin/java, we want the home directory
@@ -40,7 +50,11 @@ try {
         console.log(`✅ Resolved JAVA_HOME to: ${javaHome}`);
       } catch (e) {
         console.warn('⚠️ Could not resolve JAVA_HOME automatically.');
-        javaHome = null;
+        // Don't set to null here, we might want to try without it if it's really broken
+        // but for now let's keep it as is if we can't resolve, or set to null if it's definitely invalid
+        if (!fs.existsSync(javaHome.replace(/['"]/g, ''))) {
+           javaHome = null;
+        }
       }
     }
 

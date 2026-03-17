@@ -1,5 +1,11 @@
 # page-code-scanner
 
+## 0.0.5
+
+### Patch Changes
+
+- fixing issue on detecting camera permission on apk
+
 ## 0.0.4
 
 ### Patch Changes

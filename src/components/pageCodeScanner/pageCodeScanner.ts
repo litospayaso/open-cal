@@ -3,6 +3,7 @@ import { state } from 'lit/decorators.js';
 import Page from '../../shared/page';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { Camera } from '@capacitor/camera';
+import { Capacitor } from '@capacitor/core';
 import { loadCss } from '../../shared/functions';
 
 export class PageCodeScanner extends Page {
@@ -112,13 +113,33 @@ export class PageCodeScanner extends Page {
     this.stopScanning();
   }
 
+  private async checkCameraPermission(): Promise<boolean> {
+    if (Capacitor.isNativePlatform()) {
+      let permission = await Camera.checkPermissions();
+      
+      if (permission.camera !== 'granted') {
+        permission = await Camera.requestPermissions();
+      }
+      
+      return permission.camera === 'granted';
+    } else {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+        stream.getTracks().forEach(track => track.stop());
+        return true;
+      } catch (err) {
+        console.error("Web camera permission error:", err);
+        return false;
+      }
+    }
+  }
+
   async startScanning() {
     this.error = null;
     try {
-      // Check/request camera permission using Capacitor Camera plugin
-      const permission = await Camera.requestPermissions();
+      const hasPermission = await this.checkCameraPermission();
       
-      if (permission.camera !== 'granted') {
+      if (!hasPermission) {
         this.hasPermission = false;
         this.error = this.translations.cameraError || "Camera access denied or error starting scanner. Please check permissions.";
         return;

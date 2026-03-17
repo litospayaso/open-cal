@@ -29564,7 +29564,7 @@
   var package_default = {
     name: "brote",
     private: true,
-    version: "1.0.29",
+    version: "1.0.30",
     type: "module",
     scripts: {
       dev: "vite",
@@ -34112,6 +34112,7 @@
   });
 
   // src/components/pageCodeScanner/pageCodeScanner.ts
+  init_dist();
   var _PageCodeScanner = class _PageCodeScanner extends Page {
     constructor() {
       super(...arguments);
@@ -34219,11 +34220,29 @@
       super.disconnectedCallback();
       this.stopScanning();
     }
+    async checkCameraPermission() {
+      if (Capacitor.isNativePlatform()) {
+        let permission = await Camera2.checkPermissions();
+        if (permission.camera !== "granted") {
+          permission = await Camera2.requestPermissions();
+        }
+        return permission.camera === "granted";
+      } else {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+          stream.getTracks().forEach((track) => track.stop());
+          return true;
+        } catch (err) {
+          console.error("Web camera permission error:", err);
+          return false;
+        }
+      }
+    }
     async startScanning() {
       this.error = null;
       try {
-        const permission = await Camera2.requestPermissions();
-        if (permission.camera !== "granted") {
+        const hasPermission = await this.checkCameraPermission();
+        if (!hasPermission) {
           this.hasPermission = false;
           this.error = this.translations.cameraError || "Camera access denied or error starting scanner. Please check permissions.";
           return;

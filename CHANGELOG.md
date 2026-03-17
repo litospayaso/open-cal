@@ -1,5 +1,11 @@
 # brote
 
+## 1.0.30
+
+### Patch Changes
+
+- fixing issue on detecting camera permission on apk
+
 ## 1.0.29
 
 ### Patch Changes
