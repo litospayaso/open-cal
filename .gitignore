@@ -24,6 +24,9 @@ dist-ssr
 *.sln
 *.sw?
 
+coverage
+.op*
+
 *storybook.log
 storybook-static
 
