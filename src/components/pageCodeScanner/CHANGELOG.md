@@ -1,5 +1,11 @@
 # page-code-scanner
 
+## 0.0.8
+
+### Patch Changes
+
+- fixing issues for camera bar code scanner in web and device
+
 ## 0.0.7
 
 ### Patch Changes

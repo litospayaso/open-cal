@@ -1,5 +1,11 @@
 # brote
 
+## 1.0.33
+
+### Patch Changes
+
+- fixing issues for camera bar code scanner in web and device
+
 ## 1.0.32
 
 ### Patch Changes

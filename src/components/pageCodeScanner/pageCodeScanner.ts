@@ -1,7 +1,6 @@
 import { html, css } from 'lit';
 import { state } from 'lit/decorators.js';
 import Page from '../../shared/page';
-import { BrowserMultiFormatReader } from '@zxing/library';
 import { Capacitor } from '@capacitor/core';
 import { loadCss } from '../../shared/functions';
 
@@ -10,10 +9,6 @@ export class PageCodeScanner extends Page {
   @state() error: string | null = null;
   @state() scanning: boolean = false;
 
-  private videoElement: HTMLVideoElement | null = null;
-  private codeReader: BrowserMultiFormatReader | null = null;
-  private stream: MediaStream | null = null;
-  private controls: any = null;
   private html5QrCode: any = null;
 
   static styles = [
@@ -36,23 +31,27 @@ export class PageCodeScanner extends Page {
       #scanner-container {
         width: 100%;
         height: 100%;
-        position: relative;
+        position: absolute;
+        top: 0;
+        left: 0;
         background: black;
       }
 
-      #video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
       #qr-reader {
-        width: 100%;
-        height: 100%;
+        width: 100% !important;
+        height: 100% !important;
         background: black;
         position: absolute;
         top: 0;
         left: 0;
+        border: none !important;
+      }
+
+      /* Fix internal html5-qrcode video element */
+      #qr-reader video {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
       }
 
       .overlay {
@@ -72,10 +71,11 @@ export class PageCodeScanner extends Page {
       .scan-area {
         width: 250px;
         height: 250px;
-        border: 3px solid rgba(255, 255, 255, 0.8);
-        border-radius: 10px;
-        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        border-radius: 12px;
+        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4);
         position: relative;
+        background: transparent;
       }
 
       .scan-line {
@@ -84,19 +84,19 @@ export class PageCodeScanner extends Page {
         left: 0;
         right: 0;
         height: 2px;
-        background: var(--group-button-active-bg, var(--palette-green));
+        background: var(--palette-green, #4fb9ad);
+        box-shadow: 0 0 8px var(--palette-green, #4fb9ad);
         animation: scan 2s linear infinite;
       }
 
       @keyframes scan {
         0% { top: 0; }
-        50% { top: 100%; }
-        100% { top: 0; }
+        100% { top: 100%; }
       }
 
       .controls {
         position: fixed;
-        bottom: 25px;
+        bottom: 40px;
         left: 0;
         width: 100%;
         display: flex;
@@ -107,22 +107,14 @@ export class PageCodeScanner extends Page {
 
       .back-btn {
         border: none;
-        background-color: var(--group-button-active-bg, var(--palette-green));
-        color: var(--group-button-active-text, #fff);
-        padding: 10px 20px;
-        border-radius: 20px;
+        background-color: var(--palette-green, #4fb9ad);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 25px;
         font-weight: bold;
         cursor: pointer;
-      }
-
-      .error-msg {
-        color: white;
-        background: rgba(255, 0, 0, 0.8);
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 20px;
-        text-align: center;
-        pointer-events: auto;
+        font-size: 1rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
       }
 
       .permission-request {
@@ -138,8 +130,20 @@ export class PageCodeScanner extends Page {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        background: black;
+        background: #121212;
         z-index: 30;
+      }
+
+      .permission-request h2 {
+        color: var(--palette-green, #4fb9ad);
+        margin-bottom: 15px;
+      }
+
+      .permission-request p {
+        margin-bottom: 25px;
+        max-width: 80%;
+        line-height: 1.5;
+        opacity: 0.8;
       }
     `
   ];
@@ -158,17 +162,22 @@ export class PageCodeScanner extends Page {
 
   private async checkCameraPermission(): Promise<boolean> {
     if (Capacitor.isNativePlatform()) {
-      const { Camera } = await import('@capacitor/camera');
-      let permission = await Camera.checkPermissions();
-      
-      if (permission.camera !== 'granted') {
-        permission = await Camera.requestPermissions();
+      try {
+        const { Camera } = await import('@capacitor/camera');
+        const permission = await Camera.checkPermissions();
+        
+        if (permission.camera === 'granted') return true;
+        
+        const request = await Camera.requestPermissions();
+        return request.camera === 'granted';
+      } catch (err) {
+        console.error("Native permission check error:", err);
+        // Fallback: try to let getUserMedia handle it if plugin fails
+        return true; 
       }
-      
-      return permission.camera === 'granted';
     } else {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         stream.getTracks().forEach(track => track.stop());
         return true;
       } catch (err) {
@@ -180,94 +189,43 @@ export class PageCodeScanner extends Page {
 
   async startScanning() {
     this.error = null;
+    this.hasPermission = null;
+    
     try {
       const hasPermission = await this.checkCameraPermission();
       
       if (!hasPermission) {
         this.hasPermission = false;
-        this.error = this.translations.cameraError || "Camera access denied or error starting scanner. Please check permissions.";
+        this.error = this.translations.cameraError || "Camera access denied. Please check permissions.";
         return;
       }
 
       this.hasPermission = true;
-      await this.setupCamera();
+      await this.setupScanner();
       this.scanning = true;
 
     } catch (err) {
       console.error("Error starting scanner:", err);
       this.hasPermission = false;
-      this.error = this.translations.cameraError || "Camera access denied or error starting scanner. Please check permissions.";
+      this.error = this.translations.cameraError || "Error starting scanner.";
     }
   }
 
-  private async setupCamera() {
-    console.log('setupCamera - isNativePlatform:', Capacitor.isNativePlatform());
-    
-    this.videoElement = this.querySelector('#video');
-
-    if (!this.videoElement) {
-      console.error("Video element not found");
-      return;
-    }
-
-    if (Capacitor.isNativePlatform()) {
-      await this.setupNativeScanner();
-    } else {
-      await this.setupWebScanner();
-    }
-  }
-
-  private async setupNativeScanner() {
-    const constraints: MediaStreamConstraints = {
-      video: {
-        facingMode: "environment",
-        width: { ideal: 1280 },
-        height: { ideal: 720 }
-      }
-    };
-
-    this.stream = await navigator.mediaDevices.getUserMedia(constraints);
-    this.videoElement!.srcObject = this.stream;
-    await this.videoElement!.play();
-
-    this.codeReader = new BrowserMultiFormatReader();
-    
-    try {
-      this.controls = await this.codeReader.decodeFromVideoDevice(
-        null, 
-        this.videoElement!, 
-        (result, _error) => {
-          if (result) {
-            console.log(`Scan result: ${result.getText()}`);
-            this.stopScanning();
-            this.triggerPageNavigation({ page: 'food', code: result.getText() });
-          }
-        }
-      );
-    } catch (err) {
-      console.error("Error setting up native barcode reader:", err);
-    }
-  }
-
-  private async setupWebScanner() {
-    console.log('setupWebScanner - starting');
+  private async setupScanner() {
+    console.log('setupScanner - starting');
     const { Html5Qrcode, Html5QrcodeSupportedFormats } = await import("html5-qrcode");
-    console.log('setupWebScanner - imported html5-qrcode');
     
     const qrReader = this.querySelector('#qr-reader') as HTMLElement;
-    console.log('setupWebScanner - qrReader:', qrReader);
     if (qrReader) {
       qrReader.style.display = 'block';
-      qrReader.style.width = '100%';
-      qrReader.style.height = '100%';
     }
     
     this.html5QrCode = new Html5Qrcode("qr-reader");
-    console.log('setupWebScanner - html5QrCode created');
     
     const config = {
-      fps: 10,
+      fps: 15,
       qrbox: { width: 250, height: 250 },
+      aspectRatio: 1.0,
       formatsToSupport: [
         Html5QrcodeSupportedFormats.EAN_13,
         Html5QrcodeSupportedFormats.EAN_8,
@@ -278,7 +236,6 @@ export class PageCodeScanner extends Page {
     };
 
     try {
-      console.log('setupWebScanner - starting camera...');
       await this.html5QrCode.start(
         { facingMode: "environment" },
         config,
@@ -287,62 +244,55 @@ export class PageCodeScanner extends Page {
           this.stopScanning();
           this.triggerPageNavigation({ page: 'food', code: decodedText });
         },
-        () => {}
+        () => {} // Ignore scan errors
       );
       
-      // Fix video positioning after html5-qrcode starts
-      setTimeout(() => {
-        const video = this.querySelector('#qr-reader video') as HTMLVideoElement;
-        const qrReader = this.querySelector('#qr-reader');
-        if (video && qrReader) {
-          (video as any).style.cssText = 'position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; object-fit: cover !important;';
-          (qrReader as any).style.cssText = 'position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; background: black !important;';
-        }
+      // Ensure video fills the screen after start
+      this.fixVideoStyles();
+      console.log('Scanner started successfully');
+    } catch (err) {
+      console.error("Error starting scanner implementation:", err);
+      this.hasPermission = false;
+      this.error = String(err);
+    }
+  }
+
+  private fixVideoStyles() {
+    setTimeout(() => {
+      const video = this.querySelector('#qr-reader video') as HTMLVideoElement;
+      if (video) {
+        video.style.cssText = 'width: 100% !important; height: 100% !important; object-fit: cover !important; position: absolute; top: 0; left: 0;';
         
-        // Hide unwanted elements
+        // Hide internal dashboard and other elements if present
         const dashboard = this.querySelector('#qr-reader__dashboard');
         if (dashboard) (dashboard as HTMLElement).style.display = 'none';
-      }, 500);
-      
-      console.log('setupWebScanner - camera started successfully');
-    } catch (err) {
-      console.error("Error starting web scanner:", err);
-    }
+        
+        const region = this.querySelector('#qr-reader__scan_region');
+        if (region) {
+            (region as HTMLElement).style.width = '100%';
+            (region as HTMLElement).style.height = '100%';
+        }
+      }
+    }, 300);
   }
 
   async stopScanning() {
     this.scanning = false;
     
-    if (Capacitor.isNativePlatform()) {
-      if (this.controls) {
-        this.controls.stop();
-        this.controls = null;
-      }
-
-      if (this.stream) {
-        this.stream.getTracks().forEach(track => track.stop());
-        this.stream = null;
-      }
-
-      if (this.videoElement) {
-        this.videoElement.srcObject = null;
-      }
-
-      this.codeReader = null;
-    } else {
-      if (this.html5QrCode) {
-        try {
-          await this.html5QrCode.stop();
-          this.html5QrCode.clear();
-        } catch (err) {
-          console.error("Error stopping web scanner:", err);
+    if (this.html5QrCode) {
+      try {
+        if (this.html5QrCode.isScanning) {
+            await this.html5QrCode.stop();
         }
-        this.html5QrCode = null;
-        
-        const qrReader = this.querySelector('#qr-reader') as HTMLElement;
-        if (qrReader) {
-          qrReader.style.display = 'none';
-        }
+        this.html5QrCode.clear();
+      } catch (err) {
+        console.error("Error stopping scanner:", err);
+      }
+      this.html5QrCode = null;
+      
+      const qrReader = this.querySelector('#qr-reader') as HTMLElement;
+      if (qrReader) {
+        qrReader.style.display = 'none';
       }
     }
   }
@@ -359,30 +309,28 @@ export class PageCodeScanner extends Page {
   render() {
     return html`
       <div id="scanner-container">
-        <video id="video" playsinline></video>
-        <div id="qr-reader" style="display: none;"></div>
+        <div id="qr-reader"></div>
         
         ${this.hasPermission === false ? html`
           <div class="permission-request">
-            <h2>${this.translations.cameraPermissionRequired}</h2>
-            <p>${this.error || this.translations.cameraPermissionDesc}</p>
-            <button class="back-btn" @click="${() => this.startScanning()}">${this.translations.retry}</button>
+            <h2>${this.translations.cameraPermissionRequired || 'Camera Permission Required'}</h2>
+            <p>${this.error || this.translations.cameraPermissionDesc || 'Camera access is needed to scan barcodes.'}</p>
+            <button class="back-btn" @click="${() => this.startScanning()}">${this.translations.retry || 'Retry'}</button>
             <br><br>
-            <button class="back-btn" @click="${this.handleBack}">${this.translations.goBack}</button>
+            <button class="back-btn" @click="${this.handleBack}">${this.translations.goBack || 'Go Back'}</button>
           </div>
         ` : ''}
 
-        <div class="overlay">
-          ${this.error && this.hasPermission !== false ? html`<div class="error-msg">${this.error}</div>` : ''}
-          ${this.scanning ? html`
+        ${this.scanning ? html`
+          <div class="overlay">
             <div class="scan-area">
               <div class="scan-line"></div>
             </div>
-          ` : ''}
-        </div>
+          </div>
+        ` : ''}
 
         <div class="controls">
-          <button class="back-btn" @click="${this.handleBack}">${this.translations.cancel}</button>
+          <button class="back-btn" @click="${this.handleBack}">${this.translations.cancel || 'Cancel'}</button>
         </div>
       </div>
     `;
