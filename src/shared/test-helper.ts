@@ -2,6 +2,7 @@ import type { Result } from 'axe-core';
 import { loadScript } from './functions';
 import type { AxePlugin, AxeResults } from 'axe-core';
 import type { IDBService } from './db';
+import type { LitElement } from 'lit';
 // import removed
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/await-thenable */
@@ -39,7 +40,7 @@ export interface ComponentData {
 }
 
 export interface ComponentObject {
-  element: HTMLElement;
+  element: LitElement;
   shadow: ShadowRoot;
   state: (state: string) => any;
   uid: string;
@@ -148,7 +149,13 @@ export const createComponent: CreateComponentType = async component => {
   const element = document.createElement(component.class ? uid : component.name);
   if (component.properties) {
     Object.keys(component.properties).forEach(property => {
-      element.setAttribute(property, component.properties ? component.properties[property] : '');
+      // @ts-ignore
+      if (typeof component.properties[property] === 'string' || typeof component.properties[property] === 'number') {
+        element.setAttribute(property, component.properties ? component.properties[property] : '');
+      } else {
+        // @ts-ignore
+        component.class.prototype[property] = component.properties[property];
+      }
     });
   }
   if (component.listeners) {
@@ -172,7 +179,7 @@ export const createComponent: CreateComponentType = async component => {
   await document.body.append(element);
   const elem = document.querySelector(component.class ? uid : component.name) as HTMLElement;
   return {
-    element: elem,
+    element: elem as LitElement,
     shadow: elem?.shadowRoot as ShadowRoot,
     uid,
     state: (state: string): any => ((elem as unknown) as any)[`__${state}`],
