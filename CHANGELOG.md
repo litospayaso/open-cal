@@ -1,5 +1,12 @@
 # brote
 
+## 1.0.35
+
+### Patch Changes
+
+- Updating emojis to return a black and white version of the emoji for a clean UI.
+- Updating UI of componentSearchResult to match the new clean UI.
+
 ## 1.0.34
 
 ### Patch Changes

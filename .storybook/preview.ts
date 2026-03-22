@@ -1,4 +1,17 @@
 import type { Preview } from '@storybook/web-components-vite'
+import variablesCss from '../src/shared/variables.css?raw';
+
+const injectVariablesCss = () => {
+  const style = document.createElement('style');
+  style.textContent = variablesCss;
+  document.head.appendChild(style);
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', injectVariablesCss);
+} else {
+  injectVariablesCss();
+}
 
 const preview: Preview = {
   parameters: {

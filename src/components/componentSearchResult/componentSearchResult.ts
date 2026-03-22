@@ -36,18 +36,19 @@ export class ComponentSearchResult extends LitElement {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border: 1px solid var(--card-border);
-      background: var(--card-background, #fff);
+      background: var(--card-background-color, #fff);
       border-radius: 8px;
       padding: 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: rgba(0, 0, 0, 0.2) 2px 8px 12px;
       margin-bottom: 8px;
     }
 
     .icon-section {
-      border: 1px solid var(--card-border);
-      background: var(--card-background, #fff);
-      padding: 14px 10px;
+      background: var(--icon-section-color, #fff);
+      /* padding: 14px 10px; */
+      width: 48px;
+      height: 48px;
+      border: solid 1px var(--card-border-color);
       border-radius: 8px;
       flex: 0 0 auto;
       margin-right: 16px;
@@ -110,7 +111,7 @@ export class ComponentSearchResult extends LitElement {
     return html`
       <div class="result-card">
         <div class="icon-section" @click="${this._handleElementClick}">
-          <component-emoji text="${this.name}" size="s"></component-emoji>
+          <component-emoji text="${this.name}" width="28px" height="28px"></component-emoji>
         </div>
         <div class="name-section" @click="${this._handleElementClick}">
           <div>${this.name}</div>

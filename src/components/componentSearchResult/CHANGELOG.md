@@ -1,5 +1,11 @@
 # search-result
 
+## 0.0.2
+
+### Patch Changes
+
+- Updating UI of componentSearchResult to match the new clean UI.
+
 ## 0.0.1
 
 ### Patch Changes

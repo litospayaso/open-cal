@@ -149,5 +149,25 @@ export const emojiList: EmojiItem[] = [
   { emoji: '🐡', keywords: ['blowfish', 'fish', 'animal', 'pez globo', 'poisson-globe', 'kugelfisch', 'pesce palla'] },
   { emoji: '🐙', keywords: ['octopus', 'animal', 'pulpo', 'pieuvre', 'poulpe', 'oktopus', 'krake', 'polpo'] },
   { emoji: '🐚', keywords: ['spiral shell', 'shellfish', 'animal', 'concha', 'caracola', 'coquillage', 'schneckenhaus', 'conchiglia'] },
-  { emoji: '🐌', keywords: ['snail', 'escargot', 'animal', 'caracol', 'escargot', 'schnecke', 'lumaca'] }
+  { emoji: '🐌', keywords: ['snail', 'escargot', 'animal', 'caracol', 'escargot', 'schnecke', 'lumaca'] },
+];
+
+export const utilityEmojiList: EmojiItem[] = [
+  { emoji: '🤤', keywords: ['drooling'] },
+  { emoji: '😴', keywords: ['sleeping'] },
+  { emoji: '😫', keywords: ['weary'] },
+  { emoji: '🔥', keywords: ['fire'] },
+  { emoji: '🔍', keywords: ['search'] },
+  { emoji: '📏', keywords: ['ruler'] },
+  { emoji: '💪', keywords: ['strong'] },
+  { emoji: '👤', keywords: ['user'] },
+  { emoji: '👣', keywords: ['footprints'] },
+  { emoji: '🏠', keywords: ['home'] },
+  { emoji: '🏃', keywords: ['running'] },
+  { emoji: '❌', keywords: ['cancel'] },
+  { emoji: '⚡', keywords: ['lightning'] },
+  { emoji: '⚠️', keywords: ['warning'] },
+  { emoji: '⚖️', keywords: ['balance'] },
+  { emoji: '🪫', keywords: ['battery'] },
+  { emoji: '✏️', keywords: ['pencil'] }
 ];
