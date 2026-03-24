@@ -1,5 +1,11 @@
 # component-line-chart
 
+## 0.0.6
+
+### Patch Changes
+
+- adding neon ui style to boxes and charts
+
 ## 0.0.5
 
 ### Patch Changes

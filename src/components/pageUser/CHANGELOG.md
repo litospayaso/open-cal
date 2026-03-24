@@ -1,5 +1,11 @@
 # page-user
 
+## 0.0.14
+
+### Patch Changes
+
+- adding neon ui style to boxes and charts
+
 ## 0.0.13
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # home-page
 
+## 0.0.16
+
+### Patch Changes
+
+- adding neon ui style to boxes and charts
+
 ## 0.0.15
 
 ### Patch Changes

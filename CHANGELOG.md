@@ -1,5 +1,11 @@
 # brote
 
+## 1.0.38
+
+### Patch Changes
+
+- adding neon ui style to boxes and charts
+
 ## 1.0.37
 
 ### Patch Changes

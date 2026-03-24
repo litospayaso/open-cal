@@ -48,6 +48,7 @@ export default class ComponentShapeChart extends LitElement {
       fill-opacity: 0.4;
       stroke: var(--chart-line-color, var(--palette-green, #4fb9ad));
       stroke-width: 2;
+      filter: drop-shadow(2px 2px 4px var(--chart-line-color, var(--palette-green, #4fb9ad)));
     }
 
     .axis-label {

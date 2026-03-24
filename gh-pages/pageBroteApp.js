@@ -33366,7 +33366,7 @@ body {
       width: 100%;
       padding: 0.5rem 1rem;
       border-radius: 40px;
-      background-color: var(--input-background);
+      background-color: var(--card-background);
       color: var(--input-text);
       border: 1px solid var(--input-border, #a19fa2);
       font-size: 1rem;
@@ -33895,7 +33895,7 @@ body {
   var package_default = {
     name: "brote",
     private: true,
-    version: "1.0.37",
+    version: "1.0.38",
     type: "module",
     scripts: {
       dev: "vite",
@@ -37039,7 +37039,6 @@ body {
                     id="category" 
                     .value="${this.selectedCategory}" 
                     @change="${(e6) => this.selectedCategory = e6.target.value}"
-                    style="padding: 8px; background: var(--input-background); color: var(--input-text); border: 1px solid var(--input-border, #ccc); border-radius: 4px; width: 100%; box-sizing: border-box;"
                   >
                     <option value="breakfast">${this.translations.breakfast}</option>
                     <option value="snack1">${this.translations.snackMorning}</option>
@@ -37220,11 +37219,8 @@ body {
       }
       .input-group input,
       .input-group select {
-        padding: 8px;
-        background: var(--input-background);
         color: var(--input-text);
         border: 1px solid var(--input-border, #ccc);
-        border-radius: 4px;
         width: 100%;
         box-sizing: border-box;
       }
@@ -37244,18 +37240,22 @@ body {
       .nutrient-item.calories {
         border-color: var(--calories-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--calories-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .nutrient-item.carbs {
         border-color: var(--carbs-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--carbs-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .nutrient-item.fat {
         border-color: var(--fat-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--fat-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .nutrient-item.protein {
         border-color: var(--protein-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--protein-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .nutrient-value {
         font-size: 1.25rem;
@@ -38798,11 +38798,11 @@ ${countMsg}`,
 
         <div class="week-statistics-container" @touchstart="${this._handleStatsTouchStart}" @touchend="${this._handleStatsTouchEnd}">
           <div class="week-selector">
-            <button @click="${() => this._changeStatsWeek(-1)}">‹</button>
+            <button @click="${() => this._changeStatsWeek(-1)}" style="color: var(--card-text)">‹</button>
             <div class="week-display">
               <span>${this.translations.weekOf} ${this._getWeekRangeLabel()}</span>
             </div>
-            <button @click="${() => this._changeStatsWeek(1)}">›</button>
+            <button @click="${() => this._changeStatsWeek(1)}" style="color: var(--card-text)">›</button>
           </div>
             ${this.weeklyChartData ? b2`
               <component-bar-line-chart .chartData="${this.weeklyChartData}"></component-bar-line-chart>
@@ -39339,6 +39339,7 @@ ${countMsg}`,
       stroke-linecap: round;
       stroke-linejoin: round;
       transition: stroke-dashoffset 1s ease-in-out;
+      filter: drop-shadow(2px 2px 4px var(--chart-line-color, var(--palette-green, #4caf50)));
     }
 
     .axis {
@@ -40004,6 +40005,7 @@ ${countMsg}`,
       fill-opacity: 0.4;
       stroke: var(--chart-line-color, var(--palette-green, #4fb9ad));
       stroke-width: 2;
+      filter: drop-shadow(2px 2px 4px var(--chart-line-color, var(--palette-green, #4fb9ad)));
     }
 
     .axis-label {
@@ -40274,18 +40276,22 @@ ${countMsg}`,
       .summary-card.calories {
         border-color: var(--calories-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--calories-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .summary-card.carbs {
         border-color: var(--carbs-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--carbs-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .summary-card.fat {
         border-color: var(--fat-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--fat-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .summary-card.protein {
         border-color: var(--protein-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--protein-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .summary-card .value {
         font-size: 1.2rem;
@@ -41872,15 +41878,12 @@ ${countMsg}`,
       }
       input, textarea {
         width: 100%;
-        padding: 0.5rem;
         border: 1px solid var(--input-border, #ccc);
-        border-radius: 4px;
         box-sizing: border-box;
         font-family: inherit;
       }
       .foods-list {
         margin-top: 1rem;
-        background: var(--card-background);
       }
       .food-item-container {
         display: flex;
@@ -41949,18 +41952,22 @@ ${countMsg}`,
       .summary-card.calories {
         border-color: var(--calories-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--calories-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .summary-card.carbs {
         border-color: var(--carbs-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--carbs-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .summary-card.fat {
         border-color: var(--fat-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--fat-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .summary-card.protein {
         border-color: var(--protein-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--protein-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .summary-card .value {
         font-size: 1.1rem;
@@ -42291,7 +42298,6 @@ ${countMsg}`,
                    id="category" 
                    .value="${this.selectedCategory}" 
                    @change="${(e6) => this.selectedCategory = e6.target.value}"
-                   style="padding: 8px; background: var(--input-background); color: var(--input-text); border: 1px solid var(--input-border, #ccc); border-radius: 4px; width: 100%; box-sizing: border-box;"
                  >
                    <option value="breakfast">${this.translations.breakfast}</option>
                    <option value="snack1">${this.translations.snackMorning}</option>

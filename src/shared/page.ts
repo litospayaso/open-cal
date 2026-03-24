@@ -56,7 +56,7 @@ export default class Page<api = {}> extends LitElement {
       width: 100%;
       padding: 0.5rem 1rem;
       border-radius: 40px;
-      background-color: var(--input-background);
+      background-color: var(--card-background);
       color: var(--input-text);
       border: 1px solid var(--input-border, #a19fa2);
       font-size: 1rem;

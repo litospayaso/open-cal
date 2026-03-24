@@ -76,18 +76,22 @@ export default class PageHome extends Page {
       .summary-card.calories {
         border-color: var(--calories-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--calories-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .summary-card.carbs {
         border-color: var(--carbs-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--carbs-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .summary-card.fat {
         border-color: var(--fat-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--fat-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .summary-card.protein {
         border-color: var(--protein-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--protein-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .summary-card .value {
         font-size: 1.2rem;

@@ -30,6 +30,7 @@ export default class ComponentLineChart extends LitElement {
       stroke-linecap: round;
       stroke-linejoin: round;
       transition: stroke-dashoffset 1s ease-in-out;
+      filter: drop-shadow(2px 2px 4px var(--chart-line-color, var(--palette-green, #4caf50)));
     }
 
     .axis {

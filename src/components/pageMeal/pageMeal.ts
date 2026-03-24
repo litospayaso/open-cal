@@ -34,15 +34,12 @@ export default class PageMeal extends Page {
       }
       input, textarea {
         width: 100%;
-        padding: 0.5rem;
         border: 1px solid var(--input-border, #ccc);
-        border-radius: 4px;
         box-sizing: border-box;
         font-family: inherit;
       }
       .foods-list {
         margin-top: 1rem;
-        background: var(--card-background);
       }
       .food-item-container {
         display: flex;
@@ -111,18 +108,22 @@ export default class PageMeal extends Page {
       .summary-card.calories {
         border-color: var(--calories-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--calories-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .summary-card.carbs {
         border-color: var(--carbs-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--carbs-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .summary-card.fat {
         border-color: var(--fat-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--fat-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .summary-card.protein {
         border-color: var(--protein-color);
         border-width: var(--counter-border-width);
+        box-shadow: 0 0 10px var(--protein-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .summary-card .value {
         font-size: 1.1rem;
@@ -490,7 +491,6 @@ export default class PageMeal extends Page {
                    id="category" 
                    .value="${this.selectedCategory}" 
                    @change="${(e: Event) => this.selectedCategory = (e.target as HTMLInputElement).value as any}"
-                   style="padding: 8px; background: var(--input-background); color: var(--input-text); border: 1px solid var(--input-border, #ccc); border-radius: 4px; width: 100%; box-sizing: border-box;"
                  >
                    <option value="breakfast">${this.translations.breakfast}</option>
                    <option value="snack1">${this.translations.snackMorning}</option>

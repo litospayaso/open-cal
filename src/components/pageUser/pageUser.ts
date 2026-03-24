@@ -944,11 +944,11 @@ export default class PageUser extends Page {
 
         <div class="week-statistics-container" @touchstart="${this._handleStatsTouchStart}" @touchend="${this._handleStatsTouchEnd}">
           <div class="week-selector">
-            <button @click="${() => this._changeStatsWeek(-1)}">‹</button>
+            <button @click="${() => this._changeStatsWeek(-1)}" style="color: var(--card-text)">‹</button>
             <div class="week-display">
               <span>${this.translations.weekOf} ${this._getWeekRangeLabel()}</span>
             </div>
-            <button @click="${() => this._changeStatsWeek(1)}">›</button>
+            <button @click="${() => this._changeStatsWeek(1)}" style="color: var(--card-text)">›</button>
           </div>
             ${this.weeklyChartData ? html`
               <component-bar-line-chart .chartData="${this.weeklyChartData}"></component-bar-line-chart>

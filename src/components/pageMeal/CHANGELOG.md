@@ -1,5 +1,11 @@
 # page-meal
 
+## 0.0.7
+
+### Patch Changes
+
+- adding neon ui style to boxes and charts
+
 ## 0.0.6
 
 ### Patch Changes
