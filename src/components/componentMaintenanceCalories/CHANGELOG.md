@@ -1,5 +1,11 @@
 # component-maintenance-calories
 
+## 0.0.3
+
+### Patch Changes
+
+- updating ui for modal and daily tip
+
 ## 0.0.2
 
 ### Patch Changes

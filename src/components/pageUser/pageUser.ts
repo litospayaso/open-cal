@@ -6,7 +6,6 @@ import type { BarLineChartData } from '../componentBarLineChart/componentBarLine
 import type { ShapeChartData } from '../componentShapeChart/componentShapeChart';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
-import '../componentMaintenanceCalories/componentMaintenanceCalories';
 
 
 export default class PageUser extends Page {
@@ -1335,8 +1334,7 @@ export default class PageUser extends Page {
       <div class="modal-overlay">
         <div class="modal" style="width: 500px; max-width: 95%; position: relative;">
           <div class="modal-header">
-            <h3>${this.translations.calculateMaintenance || 'Calculate Maintenance Calories'}</h3>
-            <button class="close-btn" @click="${() => this.showMaintenanceModal = false}">&times;</button>
+            <button class="close-btn" @click="${() => this.showMaintenanceModal = false}" style="margin-left: auto;">&times;</button>
           </div>
           
           <component-maintenance-calories

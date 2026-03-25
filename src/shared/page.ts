@@ -213,9 +213,8 @@ export default class Page<api = {}> extends LitElement {
       border-radius: 12px;
       max-width: 90%;
       width: 400px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      box-shadow: var(--modal-box-shadow);
       text-align: center;
-      border: 1px solid var(--card-border);
       position: relative;
       max-height: 90vh;
       overflow-y: auto;

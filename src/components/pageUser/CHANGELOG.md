@@ -1,5 +1,11 @@
 # page-user
 
+## 0.0.16
+
+### Patch Changes
+
+- updating ui for modal and daily tip
+
 ## 0.0.15
 
 ### Patch Changes

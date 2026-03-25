@@ -300,21 +300,16 @@ export default class ComponentDayTip extends LitElement {
         display: block;
         margin: 16px 0;
       }
-      .tip-card {
-        background: var(--card-background);
-        border: 2px dashed var(--card-border);
-        border-radius: 8px;
-        padding: 16px;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        box-sizing: border-box;
+      .card {
+        box-shadow: 0 0 10px var(--carbs-color), inset 0 0 20px rgba(184, 255, 61, 0.1);
       }
       .tip-title {
         font-weight: bold;
         color: var(--palette-purple);
         font-size: 0.9rem;
+        padding-bottom: 16px;
+        width: 100%;
+        text-align: center;
         text-transform: uppercase;
       }
       :host-context([data-theme="light"]) .tip-title {
@@ -355,7 +350,7 @@ export default class ComponentDayTip extends LitElement {
     }[this.language] || 'Tip of the day';
 
     return html`
-      <div class="tip-card">
+      <div class="card">
         <div class="tip-title">${tipTitle}</div>
         <div class="tip-text">${this.selectedTip}</div>
       </div>

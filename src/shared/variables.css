@@ -47,6 +47,7 @@
   --selected-group-button-color: #272a33;
   --unselected-group-button-color: #dbdddc;
 
+  --modal-box-shadow: inset 0 0 10px var(--protein-color);
 }
 
 [data-theme="dark"] {
@@ -77,6 +78,7 @@
   --selected-group-button-color: #a285bb;
   --unselected-group-button-color: #272c34;
 
+  --modal-box-shadow: inset 0 0 10px white;
 }
 
 body {

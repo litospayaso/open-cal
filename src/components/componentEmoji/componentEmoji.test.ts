@@ -74,4 +74,15 @@ describe('ComponentEmoji Spec:', () => {
     expect(element.getAttribute('size')).to.equal('xl');
     expect(element.hasAttribute('size')).to.be.true;
   });
+
+  it('should return warning SVG for "warning" text', async () => {
+    element.setAttribute('text', 'warning');
+    await (element as ComponentEmoji).updateComplete;
+    const shadow = element.shadowRoot;
+    const svg = shadow?.querySelector('.emoji svg');
+    expect(svg).to.exist;
+    console.log('Actual SVG innerHTML:', svg?.innerHTML?.substring(0, 200));
+    const innerHTML = svg?.innerHTML || '';
+    expect(innerHTML).to.contain('viewBox="25.390625 -951.171875 1218.75 1218.75"');
+  });
 });

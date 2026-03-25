@@ -1,8 +1,7 @@
-import { property, state, customElement } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
 import { type PropertyValues, LitElement, html, css } from 'lit';
 import Page from '../../shared/page';
 
-@customElement('component-maintenance-calories')
 export default class ComponentMaintenanceCalories extends LitElement {
   @property({ type: Number }) height = 0;
   @property({ type: Number }) weight = 0;
@@ -32,19 +31,13 @@ export default class ComponentMaintenanceCalories extends LitElement {
     :host {
       display: block;
       width: 100%;
-      padding: 16px;
       box-sizing: border-box;
     }
 
     .form-container {
-      background: var(--card-background, #fff);
-      border: 1px solid var(--card-border, #4fb9ad);
-      border-radius: 12px;
-      padding: 20px;
       display: flex;
       flex-direction: column;
       gap: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
     .header {
@@ -109,16 +102,6 @@ export default class ComponentMaintenanceCalories extends LitElement {
       color: var(--text-color, #191c25);
     }
 
-    input, select {
-      padding: 10px;
-      border: 1px solid var(--card-border, #4fb9ad);
-      border-radius: 8px;
-      background: var(--input-background, #fff);
-      color: var(--text-color);
-      font-size: 1rem;
-      width: 100%;
-      box-sizing: border-box;
-    }
 
     .result-container {
       margin-top: 10px;
@@ -164,7 +147,7 @@ export default class ComponentMaintenanceCalories extends LitElement {
       gap: 8px;
       margin-top: 12px;
       padding: 12px;
-      background: var(--card-background-secondary, #f5f5f5);
+      background: var(--card-background, #f5f5f5);
       border-radius: 8px;
     }
 
@@ -177,7 +160,6 @@ export default class ComponentMaintenanceCalories extends LitElement {
 
     .macro-label {
       font-size: 0.75rem;
-      color: var(--text-color-secondary, #666);
       font-weight: 500;
     }
 
@@ -284,18 +266,18 @@ export default class ComponentMaintenanceCalories extends LitElement {
 
         <div class="form-row">
           <div class="form-group">
-            <label>📏 ${this.translationsTexts['height'] || 'Height'} (cm)</label>
+            <label>${this.translationsTexts['height'] || 'Height'} (cm)</label>
             <input type="number" .value="${String(this._height)}" @input="${(e: any) => this._height = Number(e.target.value)}">
           </div>
           <div class="form-group">
-            <label>⚖️ ${this.translationsTexts['weight'] || 'Weight'} (kg)</label>
+            <label>${this.translationsTexts['weight'] || 'Weight'} (kg)</label>
             <input type="number" .value="${String(this._weight)}" @input="${(e: any) => this._weight = Number(e.target.value)}">
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label>👤 ${this.translationsTexts['gender'] || 'Gender'}</label>
+            <label>${this.translationsTexts['gender'] || 'Gender'}</label>
             <select .value="${this._gender}" @change="${(e: any) => this._gender = e.target.value}">
               <option value="" disabled>${this.translationsTexts['select'] || 'Select...'}</option>
               <option value="male">${this.translationsTexts['male'] || 'Male'}</option>
@@ -303,13 +285,13 @@ export default class ComponentMaintenanceCalories extends LitElement {
             </select>
           </div>
           <div class="form-group">
-            <label>🎂 ${this.translationsTexts['age'] || 'Age'}</label>
+            <label>${this.translationsTexts['age'] || 'Age'}</label>
             <input type="number" .value="${String(this._age)}" @input="${(e: any) => this._age = Number(e.target.value)}">
           </div>
         </div>
 
         <div class="form-group">
-          <label>🏃 ${this.translationsTexts['activityLevel'] || 'Activity Level'}</label>
+          <label>${this.translationsTexts['activityLevel'] || 'Activity Level'}</label>
           <select .value="${this.activityLevel}" @change="${(e: any) => this.activityLevel = e.target.value}">
             <option value="1.2">${this.translationsTexts['sedentary'] || 'Sedentary (little or no exercise)'}</option>
             <option value="1.375">${this.translationsTexts['lightlyActive'] || 'Lightly active (light exercise/sports 1-3 days/week)'}</option>
@@ -320,7 +302,7 @@ export default class ComponentMaintenanceCalories extends LitElement {
         </div>
 
         <div class="form-group">
-          <label>🍽️ ${this.translationsTexts['dietType'] || 'Diet Type'}</label>
+          <label>${this.translationsTexts['dietType'] || 'Diet Type'}</label>
           <select .value="${this.dietType}" @change="${this._onDietTypeChange}">
             <option value="balanced">${this.translationsTexts['balanced'] || 'Balanced'}</option>
             <option value="lowCarb">${this.translationsTexts['lowCarb'] || 'Low Carb'}</option>
@@ -332,7 +314,7 @@ export default class ComponentMaintenanceCalories extends LitElement {
         ${calories > 0 ? html`
           ${this.showWarning ? html`
             <div class="warning-message">
-              <span class="warning-icon">⚠️</span>
+              <span class="warning-icon"> <component-emoji text="warning"></component-emoji></span>
               ${this.translationsTexts['metabolicWarning'] || 'Important considerations: This metabolic estimation relies on statistical models for the general population and does not account for individual variations in body composition (muscle vs. fat). These calculations should be used as general guidance only. For a precise and safe nutritional approach, we strongly recommend professional medical or dietetic supervision, as self-directed calorie monitoring can be associated with the development of disordered eating patterns.'}
             </div>
           ` : ''}
