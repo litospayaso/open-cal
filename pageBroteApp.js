@@ -31859,6 +31859,7 @@
       calculateMaintenance: "Calcular calor\xEDas de mantenimiento",
       enableWarnings: "Habilitar mensajes de advertencia",
       enableStatistics: "Habilitar estad\xEDsticas",
+      displayColorEmojis: "Mostrar emojis en color",
       statisticsWarningTitle: "Advertencia sobre el seguimiento estad\xEDstico",
       statisticsWarningMessage: "Cuidado: el uso continuo del seguimiento diario puede desencadenar actitudes obsesivas y de control que, pueden favorecer el desarrollo de trastornos psicol\xF3gicos o de conducta alimentaria. Utiliza esta herramienta con cuidado y responsabilidad. Se recomienda consultar con un especialista (psic\xF3logo y/o nutricionista) para establecer h\xE1bitos de seguimiento saludables. Considere desactivar esta funci\xF3n si te abruma, tu valor no disminuye por no llevar un registro.",
       aboutApp: "Acerca de Brote",
@@ -32040,6 +32041,7 @@
       calculateMaintenance: "Calculate maintenance calories",
       enableWarnings: "Enable warning messages",
       enableStatistics: "Enable statistics",
+      displayColorEmojis: "Display color emojis",
       statisticsWarningTitle: "Warning regarding statistical tracking",
       statisticsWarningMessage: "Be careful: continuous use of daily tracking can trigger obsessive and controlling attitudes which may favor the development of psychological or eating disorders. Use this tool with care and responsibility. It is recommended to consult with a specialist (psychologist and/or nutritionist) to establish healthy tracking habits. Consider disabling this feature if it overwhelms you, your value does not diminish by not keeping a record.",
       aboutApp: "About Brote",
@@ -32210,6 +32212,7 @@
       methodLabel: "m\xE9thode",
       enableWarnings: "Activer les messages d'avertissement",
       enableStatistics: "Activer les statistiques",
+      displayColorEmojis: "Afficher les \xE9mojis en couleur",
       statisticsWarningTitle: "Avertissement concernant le suivi statistique",
       statisticsWarningMessage: "Attention : l'utilisation continue du suivi quotidien peut d\xE9clencher des attitudes obsessionnelles et de contr\xF4le qui peuvent favoriser le d\xE9veloppement de troubles psychologiques ou du comportement alimentaire. Utilisez cet outil avec soin et responsabilit\xE9. Il est recommand\xE9 de consulter un sp\xE9cialiste (psychologue et/ou nutritionniste) pour \xE9tablir de saines habitudes de suivi. Pensez \xE0 d\xE9sactiver cette fonctionnalit\xE9 si elle vous submerge, votre valeur ne diminue pas si vous ne tenez pas de registre.",
       aboutApp: "\xC0 propos de Brote",
@@ -32380,6 +32383,7 @@
       methodLabel: "Methode",
       enableWarnings: "Warnmeldungen aktivieren",
       enableStatistics: "Statistiken aktivieren",
+      displayColorEmojis: "Farbe-Emojis anzeigen",
       statisticsWarningTitle: "Warnung bez\xFCglich der statistischen Erfassung",
       statisticsWarningMessage: "Achtung: Die kontinuierliche Nutzung des t\xE4glichen Trackings kann zwanghafte und kontrollierende Verhaltensweisen ausl\xF6sen, die die Entwicklung von psychischen oder Essst\xF6rungen beg\xFCnstigen k\xF6nnen. Nutzen Sie dieses Tool mit Sorgfalt und Verantwortung. Es wird empfohlen, einen Spezialisten (Psychologe und/oder Ern\xE4hrungsberater) zu konsultieren, um gesunde Tracking-Gewohnheiten zu etablieren. Erw\xE4gen Sie die Deaktivierung dieser Funktion, wenn sie Sie \xFCberfordert, Ihr Wert verringert sich nicht dadurch, dass Sie keine Aufzeichnungen f\xFChren.",
       aboutApp: "\xDCber Brote",
@@ -32550,6 +32554,7 @@
       methodLabel: "metodo",
       enableWarnings: "Abilita i messaggi di avviso",
       enableStatistics: "Abilita le statistiche",
+      displayColorEmojis: "Mostra emoji a colori",
       statisticsWarningTitle: "Avvertenza sul tracciamento statistico",
       statisticsWarningMessage: "Attenzione: l'uso continuo del tracciamento giornaliero pu\xF2 innescare atteggiamenti ossessivi e di controllo che possono favorire lo sviluppo di disturbi psicologici o alimentari. Usa questo strumento con cura e responsabilit\xE0. Si consiglia di consultare uno specialista (psicologo e/o nutrizionista) per stabilire abitudini di tracciamento sane. Considera la disattivazione di questa funzione se ti opprime, il tuo valore non diminuisce non tenendo un registro.",
       aboutApp: "Informazioni su Brote",
@@ -33895,7 +33900,7 @@ body {
   var package_default = {
     name: "brote",
     private: true,
-    version: "1.0.38",
+    version: "1.0.39",
     type: "module",
     scripts: {
       dev: "vite",
@@ -33982,9 +33987,9 @@ body {
       this._notificationTimeout = null;
       this.page = "home";
       this.groupButtonOptions = [
-        { text: "home", id: "home", active: true, emoji: true },
-        { text: "search", id: "search", active: false, emoji: true },
-        { text: "user", id: "user", active: false, emoji: true }
+        { text: "home", id: "home", active: true, emoji: true, forcedsvg: true },
+        { text: "search", id: "search", active: false, emoji: true, forcedsvg: true },
+        { text: "user", id: "user", active: false, emoji: true, forcedsvg: true }
       ];
     }
     static {
@@ -34285,7 +34290,7 @@ body {
             @click="${() => this._handleClick(option.id)}"
             type="button"
           >
-            ${option.emoji ? b2`<component-emoji text="${option.text}"></component-emoji>` : option.text}
+            ${option.emoji ? b2`<component-emoji text="${option.text}" forcedsvg="${option.forcedsvg}"></component-emoji>` : option.text}
           </button>
         `)}
       </div>
@@ -35206,9 +35211,7 @@ body {
 </svg>`;
 
   // src/assets/svg_emojis/house.ts
-  var svg148 = `<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="16.015625 -960.546875 1237.5 1237.5" width="100%" height="100%">
-  <path d="M258.30-325.68L161.13-325.68Q144.53-325.68 131.84-332.52Q119.14-339.36 119.14-355.96L119.14-355.96Q119.14-372.56 134.28-386.72L134.28-386.72L562.99-810.55Q583.98-831.54 599.85-840.58Q615.72-849.61 634.77-849.61L634.77-849.61Q653.81-849.61 669.68-840.58Q685.55-831.54 706.54-810.55L706.54-810.55L1135.25-386.72Q1150.39-372.56 1150.39-355.96L1150.39-355.96Q1150.39-339.36 1137.94-332.52Q1125.49-325.68 1108.40-325.68L1108.40-325.68L1011.23-325.68L634.77-696.78L258.30-325.68ZM506.84 90.33L349.61 90.33Q335.45 90.33 322.27 89.60Q309.08 88.87 297.36 88.87L297.36 88.87Q245.61 88.87 228.76 81.05Q211.91 73.24 211.91 51.27L211.91 51.27Q211.91 6.35 234.62-20.51Q257.32-47.36 291.50-47.36L291.50-47.36Q310.06-47.36 322.27-41.75Q334.47-36.13 349.61-36.13L349.61-36.13Q364.75-36.13 376.46-41.50Q388.18-46.88 407.23-46.88L407.23-46.88Q428.71-46.88 451.66-37.60Q474.61-28.32 490.72-15.14Q506.84-1.95 506.84 9.28L506.84 9.28L506.84 90.33ZM393.07-108.89L338.87-108.89Q331.05-108.89 325.44-114.50Q319.82-120.12 319.82-127.93L319.82-127.93L319.82-182.13L393.07-182.13L393.07-108.89ZM506.84 100.10L506.84 127.93L762.70 127.93L762.70 100.10L506.84 100.10ZM514.16 44.92L514.16 71.78L755.37 71.78L755.37 44.92L514.16 44.92ZM480.47-108.89L426.27-108.89L426.27-182.13L499.51-182.13L499.51-127.93Q499.51-120.12 493.90-114.50Q488.28-108.89 480.47-108.89L480.47-108.89ZM393.07-216.31L319.82-216.31L319.82-270.51Q319.82-278.32 325.44-283.94Q331.05-289.55 338.87-289.55L338.87-289.55L393.07-289.55L393.07-216.31ZM499.51-216.31L426.27-216.31L426.27-289.55L480.47-289.55Q488.28-289.55 493.90-283.94Q499.51-278.32 499.51-270.51L499.51-270.51L499.51-216.31ZM801.76 166.02L467.77 166.02L467.77 88.87L475.10 88.87L475.10 44.92L223.63 44.92L223.63-347.66L262.70-377.44L262.70 6.84L1006.84 6.84L1006.84-377.44L1045.90-347.66L1045.90 44.92L794.43 44.92L794.43 88.87L801.76 88.87L801.76 166.02ZM726.07 16.60L543.46 16.60L543.46-248.54Q543.46-283.20 571.29-307.86Q599.12-332.52 634.77-332.52L634.77-332.52Q670.90-332.52 698.49-307.86Q726.07-283.20 726.07-248.54L726.07-248.54L726.07 16.60ZM686.52-134.77L686.52-134.77Q693.85-134.77 698.97-139.89Q704.10-145.02 704.10-152.34L704.10-152.34Q704.10-159.67 698.97-164.79Q693.85-169.92 686.52-169.92L686.52-169.92Q679.20-169.92 674.07-164.79Q668.95-159.67 668.95-152.34L668.95-152.34Q668.95-145.02 674.07-139.89Q679.20-134.77 686.52-134.77ZM919.92 90.33L762.70 90.33L762.70 9.28Q762.70-1.95 778.81-15.14Q794.92-28.32 818.12-37.60Q841.31-46.88 862.30-46.88L862.30-46.88Q881.35-46.88 893.07-41.50Q904.79-36.13 919.92-36.13L919.92-36.13Q935.55-36.13 947.51-41.75Q959.47-47.36 978.03-47.36L978.03-47.36Q1012.70-47.36 1035.16-20.51Q1057.62 6.35 1057.62 51.27L1057.62 51.27Q1057.62 73.24 1041.02 81.05Q1024.41 88.87 972.17 88.87L972.17 88.87Q960.45 88.87 947.27 89.60Q934.08 90.33 919.92 90.33L919.92 90.33ZM843.26-108.89L789.06-108.89Q781.25-108.89 775.63-114.50Q770.02-120.12 770.02-127.93L770.02-127.93L770.02-182.13L843.26-182.13L843.26-108.89ZM371.58-596.19L278.81-499.51L278.81-698.73L264.16-698.73L264.16-795.90L386.23-796.88L386.23-698.73L371.58-698.73L371.58-596.19ZM930.66-108.89L876.46-108.89L876.46-182.13L949.71-182.13L949.71-127.93Q949.71-120.12 944.09-114.50Q938.48-108.89 930.66-108.89L930.66-108.89ZM843.26-216.31L770.02-216.31L770.02-270.51Q770.02-278.32 775.63-283.94Q781.25-289.55 789.06-289.55L789.06-289.55L843.26-289.55L843.26-216.31ZM949.71-216.31L876.46-216.31L876.46-289.55L930.66-289.55Q938.48-289.55 944.09-283.94Q949.71-278.32 949.71-270.51L949.71-270.51L949.71-216.31ZM178.22-363.77L178.22-363.77L242.19-363.77L634.77-751.95L1027.34-363.77L1091.31-363.77Q1095.21-363.77 1095.70-367.19Q1096.19-370.61 1092.77-374.02L1092.77-374.02L679.20-782.71Q662.11-799.80 653.08-805.66Q644.04-811.52 634.77-811.52L634.77-811.52Q625.49-811.52 616.46-805.66Q607.42-799.80 590.33-782.71L590.33-782.71L176.76-374.02Q173.34-370.61 173.83-367.19Q174.32-363.77 178.22-363.77Z"/>
-</svg>`;
+  var svg148 = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="96px" height="96px"><path d="M 23.951172 4 A 1.50015 1.50015 0 0 0 23.072266 4.3222656 L 8.859375 15.519531 C 7.0554772 16.941163 6 19.113506 6 21.410156 L 6 40.5 C 6 41.863594 7.1364058 43 8.5 43 L 18.5 43 C 19.863594 43 21 41.863594 21 40.5 L 21 30.5 C 21 30.204955 21.204955 30 21.5 30 L 26.5 30 C 26.795045 30 27 30.204955 27 30.5 L 27 40.5 C 27 41.863594 28.136406 43 29.5 43 L 39.5 43 C 40.863594 43 42 41.863594 42 40.5 L 42 21.410156 C 42 19.113506 40.944523 16.941163 39.140625 15.519531 L 24.927734 4.3222656 A 1.50015 1.50015 0 0 0 23.951172 4 z M 24 7.4101562 L 37.285156 17.876953 C 38.369258 18.731322 39 20.030807 39 21.410156 L 39 40 L 30 40 L 30 30.5 C 30 28.585045 28.414955 27 26.5 27 L 21.5 27 C 19.585045 27 18 28.585045 18 30.5 L 18 40 L 9 40 L 9 21.410156 C 9 20.030807 9.6307412 18.731322 10.714844 17.876953 L 24 7.4101562 z"/></svg>`;
 
   // src/assets/svg_emojis/personRunning.ts
   var svg149 = `<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="25.390625 -951.171875 1218.75 1218.75" width="100%" height="100%">
@@ -35410,6 +35413,7 @@ body {
       this.size = "m";
       this.width = "";
       this.height = "";
+      this.forcedsvg = false;
     }
     static {
       this.styles = i`
@@ -35474,11 +35478,23 @@ body {
     }
     render() {
       const emoji = this._getEmoji();
-      const svg156 = this._getSvg(emoji);
+      const profile = localStorage.getItem("user_profile");
+      let displayColorEmojis = false;
+      if (profile) {
+        try {
+          const parsed = JSON.parse(profile);
+          displayColorEmojis = !!parsed.displayColorEmojis;
+        } catch (e6) {
+        }
+      }
       const style = [
         this.width ? `--emoji-width: ${this.width}` : "",
         this.height ? `--emoji-height: ${this.height}` : ""
       ].filter(Boolean).join(";");
+      if (displayColorEmojis && !this.forcedsvg) {
+        return b2`<span class="emoji" role="img" aria-label="${this.text}" style="${style}; font-size: calc(var(--emoji-size, 2rem) * 0.75);">${emoji}</span>`;
+      }
+      const svg156 = this._getSvg(emoji);
       return b2`<span class="emoji" role="img" aria-label="${this.text}" style="${style}">${this._unsafeSvg(svg156)}</span>`;
     }
     _unsafeSvg(svg156) {
@@ -35499,6 +35515,9 @@ body {
   __decorateClass([
     n4({ type: String })
   ], ComponentEmoji.prototype, "height", 2);
+  __decorateClass([
+    n4({ type: Boolean })
+  ], ComponentEmoji.prototype, "forcedsvg", 2);
 
   // src/components/componentEmoji/index.ts
   register("component-emoji", ComponentEmoji);
@@ -37970,6 +37989,7 @@ body {
       this.language = "en";
       this.enableWarnings = true;
       this.enableStatistics = false;
+      this.displayColorEmojis = false;
       this.showClearModal = false;
       this.showStatisticsModal = false;
       this.showWeightModal = false;
@@ -38212,6 +38232,7 @@ body {
           this.notificationTime = profile.notificationTime || "20:00";
           this.enableWarnings = profile.enableWarnings !== false;
           this.enableStatistics = !!profile.enableStatistics;
+          this.displayColorEmojis = !!profile.displayColorEmojis;
         } catch (e6) {
           console.error("Failed to parse user profile", e6);
         }
@@ -38254,7 +38275,8 @@ body {
         notificationsEnabled: this.notificationsEnabled,
         notificationTime: this.notificationTime,
         enableWarnings: this.enableWarnings,
-        enableStatistics: this.enableStatistics
+        enableStatistics: this.enableStatistics,
+        displayColorEmojis: this.displayColorEmojis
       };
       localStorage.setItem("user_profile", JSON.stringify(profile));
     }
@@ -38907,6 +38929,22 @@ ${countMsg}`,
 
         <div class="form-group" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--card-border);">
           <div style="flex: 1;">
+            <label style="margin-bottom: 2px;">${this.translations.displayColorEmojis || "Display color emojis"}</label>
+          </div>
+          <div style="display: flex; align-items: center; gap: 24px;">
+            <label class="switch">
+              <input 
+                type="checkbox" 
+                .checked="${this.displayColorEmojis}" 
+                @change="${this._handleDisplayColorEmojisToggle}"
+              />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--card-border);">
+          <div style="flex: 1;">
             <label style="margin-bottom: 2px;">${this.translations.dailyStatusReminder}</label>
             <span style="font-size: 0.8rem; opacity: 0.8;">${this.translations.reminderTime}</span>
           </div>
@@ -38920,7 +38958,7 @@ ${countMsg}`,
             />
             <label class="switch">
               <input 
-                type="checkbox" c
+                type="checkbox"
                 ?checked="${this.notificationsEnabled}" 
                 @change="${this._handleNotificationToggle}"
               />
@@ -38930,6 +38968,10 @@ ${countMsg}`,
         </div>
       </div>
     `;
+    }
+    _handleDisplayColorEmojisToggle(e6) {
+      this.displayColorEmojis = e6.target.checked;
+      this._saveProfile();
     }
     _renderDataManagement() {
       return b2`
@@ -39243,6 +39285,9 @@ ${countMsg}`,
   __decorateClass([
     r5()
   ], PageUser.prototype, "enableStatistics", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "displayColorEmojis", 2);
   __decorateClass([
     r5()
   ], PageUser.prototype, "showClearModal", 2);
