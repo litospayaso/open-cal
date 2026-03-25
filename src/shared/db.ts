@@ -54,6 +54,7 @@ export interface UserProfile {
   notificationTime?: string;
   enableWarnings?: boolean;
   enableStatistics?: boolean;
+  displayColorEmojis?: boolean;
 }
 
 export interface IDBService {

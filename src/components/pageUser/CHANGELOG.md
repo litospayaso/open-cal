@@ -1,5 +1,11 @@
 # page-user
 
+## 0.0.15
+
+### Patch Changes
+
+- Setting a property to change emojis styles
+
 ## 0.0.14
 
 ### Patch Changes

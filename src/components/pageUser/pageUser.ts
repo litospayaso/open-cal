@@ -206,6 +206,7 @@ export default class PageUser extends Page {
   @state() language: string = 'en';
   @state() enableWarnings: boolean = true;
   @state() enableStatistics: boolean = false;
+  @state() displayColorEmojis: boolean = false;
   @state() showClearModal: boolean = false;
   @state() showStatisticsModal: boolean = false;
   @state() showWeightModal: boolean = false;
@@ -257,6 +258,7 @@ export default class PageUser extends Page {
         this.notificationTime = profile.notificationTime || '20:00';
         this.enableWarnings = profile.enableWarnings !== false;
         this.enableStatistics = !!profile.enableStatistics;
+        this.displayColorEmojis = !!profile.displayColorEmojis;
       } catch (e) {
         console.error('Failed to parse user profile', e);
       }
@@ -305,7 +307,8 @@ export default class PageUser extends Page {
       notificationsEnabled: this.notificationsEnabled,
       notificationTime: this.notificationTime,
       enableWarnings: this.enableWarnings,
-      enableStatistics: this.enableStatistics
+      enableStatistics: this.enableStatistics,
+      displayColorEmojis: this.displayColorEmojis
     };
     localStorage.setItem('user_profile', JSON.stringify(profile));
   }
@@ -1055,6 +1058,22 @@ export default class PageUser extends Page {
 
         <div class="form-group" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--card-border);">
           <div style="flex: 1;">
+            <label style="margin-bottom: 2px;">${this.translations.displayColorEmojis || 'Display color emojis'}</label>
+          </div>
+          <div style="display: flex; align-items: center; gap: 24px;">
+            <label class="switch">
+              <input 
+                type="checkbox" 
+                .checked="${this.displayColorEmojis}" 
+                @change="${this._handleDisplayColorEmojisToggle}"
+              />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--card-border);">
+          <div style="flex: 1;">
             <label style="margin-bottom: 2px;">${this.translations.dailyStatusReminder}</label>
             <span style="font-size: 0.8rem; opacity: 0.8;">${this.translations.reminderTime}</span>
           </div>
@@ -1068,7 +1087,7 @@ export default class PageUser extends Page {
             />
             <label class="switch">
               <input 
-                type="checkbox" c
+                type="checkbox"
                 ?checked="${this.notificationsEnabled}" 
                 @change="${this._handleNotificationToggle}"
               />
@@ -1078,6 +1097,11 @@ export default class PageUser extends Page {
         </div>
       </div>
     `;
+  }
+
+  private _handleDisplayColorEmojisToggle(e: Event) {
+    this.displayColorEmojis = (e.target as HTMLInputElement).checked;
+    this._saveProfile();
   }
 
   private _renderDataManagement() {

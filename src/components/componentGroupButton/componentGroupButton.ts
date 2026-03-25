@@ -6,6 +6,7 @@ export interface GroupButtonOption {
   id: string;
   active: boolean;
   emoji?: boolean;
+  forcedsvg?: boolean;
 }
 
 export class ComponentGroupButton extends LitElement {
@@ -88,7 +89,7 @@ export class ComponentGroupButton extends LitElement {
             @click="${() => this._handleClick(option.id)}"
             type="button"
           >
-            ${option.emoji ? html`<component-emoji text="${option.text}"></component-emoji>` : option.text}
+            ${option.emoji ? html`<component-emoji text="${option.text}" forcedsvg="${option.forcedsvg}"></component-emoji>` : option.text}
           </button>
         `)}
       </div>

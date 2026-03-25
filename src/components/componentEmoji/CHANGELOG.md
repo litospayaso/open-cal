@@ -1,5 +1,11 @@
 # component-emoji
 
+## 0.0.4
+
+### Patch Changes
+
+- Setting a property to change emojis styles
+
 ## 0.0.3
 
 ### Patch Changes

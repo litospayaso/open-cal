@@ -1,5 +1,11 @@
 # brote
 
+## 1.0.39
+
+### Patch Changes
+
+- Setting a property to change emojis styles
+
 ## 1.0.38
 
 ### Patch Changes

@@ -39,9 +39,9 @@ export default class PageBroteApp extends Page {
 
   @state() page: string = 'home';
   @state() groupButtonOptions: GroupButtonOption[] = [
-    { text: 'home', id: 'home', active: true, emoji: true },
-    { text: 'search', id: 'search', active: false, emoji: true },
-    { text: 'user', id: 'user', active: false, emoji: true },
+    { text: 'home', id: 'home', active: true, emoji: true, forcedsvg: true },
+    { text: 'search', id: 'search', active: false, emoji: true, forcedsvg: true },
+    { text: 'user', id: 'user', active: false, emoji: true, forcedsvg: true },
   ];
 
   createRenderRoot() {

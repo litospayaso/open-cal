@@ -321,6 +321,7 @@ export type ComponentEmojiProps = {
   size?: 'xs' | 's' | 'm' | 'l' | 'xl';
   width?: string;
   height?: string;
+  forcedsvg?: boolean;
 }
 
 export class ComponentEmoji extends LitElement {
@@ -328,6 +329,7 @@ export class ComponentEmoji extends LitElement {
   @property({ type: String, reflect: true }) size = 'm';
   @property({ type: String }) width = '';
   @property({ type: String }) height = '';
+  @property({ type: Boolean }) forcedsvg = false;
 
   static styles = css`
     :host {
@@ -398,11 +400,28 @@ export class ComponentEmoji extends LitElement {
 
   render() {
     const emoji = this._getEmoji();
-    const svg = this._getSvg(emoji);
+
+    const profile = localStorage.getItem('user_profile');
+    let displayColorEmojis = false;
+    if (profile) {
+      try {
+        const parsed = JSON.parse(profile);
+        displayColorEmojis = !!parsed.displayColorEmojis;
+      } catch (e) {
+        // Fallback or log error
+      }
+    }
+
     const style = [
       this.width ? `--emoji-width: ${this.width}` : '',
       this.height ? `--emoji-height: ${this.height}` : '',
     ].filter(Boolean).join(';');
+
+    if (displayColorEmojis && !this.forcedsvg) {
+      return html`<span class="emoji" role="img" aria-label="${this.text}" style="${style}; font-size: calc(var(--emoji-size, 2rem) * 0.75);">${emoji}</span>`;
+    }
+
+    const svg = this._getSvg(emoji);
     return html`<span class="emoji" role="img" aria-label="${this.text}" style="${style}">${this._unsafeSvg(svg)}</span>`;
   }
 
