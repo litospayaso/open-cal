@@ -10,6 +10,16 @@
 
 Brote is a modern, privacy-focused calorie and macronutrient tracking application built with Web Components and Lit. It allows users to track their daily food intake, manage personal meals, and monitor their progress against nutritional goals.
 
+## Download
+
+<a href="https://github-store.org/app?repo=litospayaso/brote" rel="nofollow">
+  <img src="/assets/ghs_download_badge.png" alt="Get it on GitHub Store" height="64" style="max-width: 100%; height: auto; max-height: 64px;">
+</a>
+
+<a href="https://github.com/litospayaso/brote/releases">
+   <img src="/assets/get-it-on-github.png" height="70" style="max-width: 100%; height: auto; max-height: 70px;">
+</a>
+
 ## Core Technology Stack
 
 - **[Lit](https://lit.dev/)**: Lightweight base class for creating fast, lightweight Web Components.
