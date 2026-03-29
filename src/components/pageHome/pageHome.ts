@@ -268,8 +268,9 @@ export default class PageHome extends Page {
   }
 
   changeDate(days: number) {
-    const date = new Date(this.currentDate);
-    date.setDate(date.getDate() + days);
+    const [year, month, day] = this.currentDate.split('-').map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
+    date.setUTCDate(date.getUTCDate() + days);
     this.currentDate = date.toISOString().split('T')[0];
     this.loadData();
   }

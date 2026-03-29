@@ -118,7 +118,7 @@ export class ComponentSearchResult extends LitElement {
           ${this.brands ? html`<div class="brand-section">${this.brands}</div>` : ''}
           ${this.quantity ? html`<div class="quantity-section">${this.quantity}</div>` : ''}
         </div>
-        ${this.calories && Number(this.calories) > 0 ? html`
+        ${this.calories && Number(this.calories) >= 0 ? html`
           <div class="calories-section">
             ${Math.trunc(Number(this.calories))} Kcal
           </div>

@@ -1,5 +1,11 @@
 # search-page
 
+## 0.0.8
+
+### Patch Changes
+
+- Adding calories of the product on product search
+
 ## 0.0.7
 
 ### Patch Changes

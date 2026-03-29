@@ -16,7 +16,7 @@ export const searchProduct = async (query: string): Promise<SearchProductInterfa
 
   if (!cachedPopularProducts[lang]) {
     try {
-      const response = await fetch(`https://raw.githubusercontent.com/litospayaso/brote/refs/heads/main/assets/data/popular_${lang}.json`);
+      const response = await fetch(`https://raw.githubusercontent.com/litospayaso/brote/refs/heads/main/assets/data/products_${lang}.json`);
       if (response.ok) {
         cachedPopularProducts[lang] = await response.json();
       } else {
@@ -33,25 +33,37 @@ export const searchProduct = async (query: string): Promise<SearchProductInterfa
 
   const filtered = popularProducts.filter(item => item.toLowerCase().includes(lowerQuery));
 
-  const products: SearchProductItemInterface[] = filtered.slice(0, 35).map(item => {
-    const parts = item.split(' :: ');
-    const code = parts[0];
-    const rest = parts[1] || '';
-    const lastDashIndex = rest.lastIndexOf(' - ');
-
-    let productName = rest;
+  const products: SearchProductItemInterface[] = filtered.map(item => {
+    const code = item.split(' :: ')[0];
+    const lastDashIndex = item.lastIndexOf(' - ');
+    const colonIndex = item.indexOf(' :: ');
+    const firstBracketsIndex = item.lastIndexOf('[');
+    const lastBracketsIndex = item.lastIndexOf(']');
+    let productName = '';
     let brands = '';
+    let kcal;
 
-    if (lastDashIndex !== -1) {
-      productName = rest.substring(0, lastDashIndex);
-      brands = rest.substring(lastDashIndex + 3);
+    if (lastDashIndex !== -1 && firstBracketsIndex !== -1) {
+      productName = item.substring(colonIndex + 4, lastDashIndex);
+      brands = item.substring(lastDashIndex + 3, firstBracketsIndex);
+      kcal = item.substring(firstBracketsIndex + 1, lastBracketsIndex);
+    } else if (lastDashIndex !== -1) {
+      productName = item.substring(colonIndex + 4, lastDashIndex);
+      brands = item.substring(lastDashIndex + 3);
+    } else if (lastBracketsIndex !== -1) {
+      productName = item.substring(colonIndex + 4, firstBracketsIndex);
+      kcal = item.substring(firstBracketsIndex + 1, lastBracketsIndex);
+    } else {
+      productName = item.substring(colonIndex + 4);
     }
 
     return {
       code,
       product_name: productName,
       brands: brands,
-      nutriments: {} as any,
+      nutriments: {
+        'energy-kcal': Number(kcal),
+      } as any,
       nutrition_data: '',
       nutrition_data_per: '',
       nutrition_data_prepared_per: ''

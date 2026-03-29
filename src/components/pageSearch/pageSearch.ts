@@ -412,7 +412,7 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
                   name="${product.product_name}" 
                   code="${product.code}" 
                   brands="${product.brands || ''}"
-                  calories="${product.nutriments && product.nutriments['energy-kcal'] ? product.nutriments['energy-kcal'] : -1}" 
+                  calories="${(product.nutriments && product.nutriments['energy-kcal'] !== undefined && product.nutriments['energy-kcal'] !== null) ? product.nutriments['energy-kcal'] : -1}" 
                   favorite="${product.isFavorite}"
                   @favorite-click="${this._handleFavoriteClick}"
                   @element-click="${this._handleElementClick}"

@@ -1,5 +1,12 @@
 # brote
 
+## 1.0.41
+
+### Patch Changes
+
+- fixing error handling dates on home page
+- Adding calories of the product on product search
+
 ## 1.0.40
 
 ### Patch Changes

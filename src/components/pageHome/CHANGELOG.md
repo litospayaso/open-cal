@@ -1,5 +1,11 @@
 # home-page
 
+## 0.0.17
+
+### Patch Changes
+
+- fixing error handling dates on home page
+
 ## 0.0.16
 
 ### Patch Changes
