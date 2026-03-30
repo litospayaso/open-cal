@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">Brote</string>
     <string name="title_activity_main">Brote</string>
-    <string name="package_name">com.brote.app</string>
-    <string name="custom_url_scheme">com.brote.app</string>
+    <string name="package_name">angelitapp.brote</string>
+    <string name="custom_url_scheme">angelitapp.brote</string>
 </resources>

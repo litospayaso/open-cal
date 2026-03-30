@@ -19,6 +19,10 @@ function findAndFixBuildGradle(dir) {
       content = content.replace(/jvmTarget\s*=\s*['"]?1\.8['"]?/g, "jvmTarget = '17'");
       content = content.replace(/jvmToolchain\(21\)/g, 'jvmToolchain(17)');
 
+      // Fix Gradle 9.0 deprecations in auto-generated plugins
+      content = content.replace(/namespace\s+"capacitor\.cordova\.android\.plugins"/g, 'namespace = "capacitor.cordova.android.plugins"');
+      content = content.replace(/abortOnError\s+false/g, 'abortOnError = false');
+
       if (content !== originalContent) {
         console.log(`Fixing Java version in ${fullPath}`);
         fs.writeFileSync(fullPath, content);

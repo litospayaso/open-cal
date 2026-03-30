@@ -304,7 +304,7 @@ export default class PageHome extends Page {
     const dDate = resetTime(date);
 
     const diffTime = dDate.getTime() - dToday.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffDays === 0) return this.translations.today;
     if (diffDays === 1) return this.translations.tomorrow;

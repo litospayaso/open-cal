@@ -26,6 +26,7 @@ dist-ssr
 
 coverage
 .op*
+.sign
 
 *storybook.log
 storybook-static

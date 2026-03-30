@@ -1,4 +1,4 @@
-package com.brote.app;
+package angelitapp.brote;
 
 import android.os.Bundle;
 import androidx.core.splashscreen.SplashScreen;

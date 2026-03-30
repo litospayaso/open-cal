@@ -537,7 +537,11 @@ export default class PageUser extends Page {
           yAxisID: 'y1',
           dotted: true
         }
-      ]
+      ],
+      yAxisLabels: {
+        left: this.translations.axisCalories || 'Calorías ({unit})',
+        right: this.translations.axisLevelHours || 'Nivel / Horas (0-{max})'
+      }
     };
 
     // Radar Chart Data (0-10 scale)

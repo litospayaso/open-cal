@@ -58,7 +58,7 @@ describe('PageHome Component Spec:', () => {
       name: 'page-home',
       db: createMockDb(sampleDailyLog, sampleUserStatus),
       mock: {
-        firstUpdated: () => {}
+        firstUpdated: () => { }
       }
     });
     element = component.element;
@@ -67,7 +67,7 @@ describe('PageHome Component Spec:', () => {
   afterEach(() => {
     try {
       document.body.removeChild(element);
-    } catch (e) {}
+    } catch (e) { }
   });
 
   it('should contain shadow root', () => {
@@ -125,7 +125,7 @@ describe('PageHome Component Spec:', () => {
     el.loading = false;
     el.totals = { calories: 200, carbs: 20, fat: 10, protein: 5 };
     await el.updateComplete;
-    
+
     const categorySections = element.shadowRoot?.querySelectorAll('.category-section');
     expect(categorySections?.length).to.be.greaterThan(0);
   });
@@ -134,11 +134,11 @@ describe('PageHome Component Spec:', () => {
     const el = element as any;
     el.loading = false;
     await el.updateComplete;
-    
+
     const prevButton = el.shadowRoot.querySelector('.date-selector button:first-child') as HTMLButtonElement;
     prevButton?.click();
     await el.updateComplete;
-    
+
     expect(el.currentDate).to.not.equal(new Date().toISOString().split('T')[0]);
   });
 
@@ -146,11 +146,11 @@ describe('PageHome Component Spec:', () => {
     const el = element as any;
     el.loading = false;
     await el.updateComplete;
-    
+
     const nextButton = el.shadowRoot.querySelector('.date-selector button:last-child') as HTMLButtonElement;
     nextButton?.click();
     await el.updateComplete;
-    
+
     expect(el.currentDate).to.not.equal(new Date().toISOString().split('T')[0]);
   });
 
@@ -159,12 +159,12 @@ describe('PageHome Component Spec:', () => {
     el.loading = false;
     el.loadData = () => Promise.resolve();
     await el.updateComplete;
-    
+
     const dateInput = el.shadowRoot.querySelector('input[type="date"]') as HTMLInputElement;
     dateInput.value = '2024-01-15';
     dateInput.dispatchEvent(new Event('change'));
     await el.updateComplete;
-    
+
     expect(el.currentDate).to.equal('2024-01-15');
   });
 
@@ -174,7 +174,7 @@ describe('PageHome Component Spec:', () => {
       name: 'page-home-empty',
       db: createMockDb(null, null),
       mock: {
-        firstUpdated: () => {}
+        firstUpdated: () => { }
       }
     });
     const el = emptyComponent.element as any;
@@ -194,7 +194,7 @@ describe('PageHome Component Spec:', () => {
       name: 'page-home-add-click',
       db: createMockDb(null, null),
       mock: {
-        firstUpdated: () => {}
+        firstUpdated: () => { }
       }
     });
     const el = emptyComponent.element as any;
@@ -235,7 +235,7 @@ describe('PageHome Component Spec:', () => {
       name: 'page-home-profile',
       db: createMockDb(sampleDailyLog, null),
       mock: {
-        firstUpdated: () => {}
+        firstUpdated: () => { }
       }
     });
     const el = component.element;
@@ -255,7 +255,7 @@ describe('PageHome Component Spec:', () => {
     const el = element as any;
     el.dailyLog = sampleDailyLog;
     el.loading = false;
-    
+
     el.calculateTotals();
 
     expect(el.totals.calories).to.be.greaterThan(0);
@@ -265,7 +265,7 @@ describe('PageHome Component Spec:', () => {
     const el = element as any;
     el.dailyLog = sampleDailyLog;
     el.loading = false;
-    
+
     let removeCalled = false;
     el.db.removeFoodItem = () => {
       removeCalled = true;
@@ -281,7 +281,7 @@ describe('PageHome Component Spec:', () => {
     const el = element as any;
     el.dailyLog = sampleDailyLog;
     el.loading = false;
-    
+
     let saveCalled = false;
     el.db.saveUserStatus = () => {
       saveCalled = true;
@@ -308,7 +308,7 @@ describe('PageHome Component Spec:', () => {
 
   it('should handle element click for food navigation', async () => {
     const el = element as any;
-    
+
     let navigated = false;
     el.triggerPageNavigation = (params: any) => {
       if (params.page === 'food' && params.code === '123') {
@@ -324,7 +324,7 @@ describe('PageHome Component Spec:', () => {
 
   it('should handle element click for meal navigation', async () => {
     const el = element as any;
-    
+
     let navigated = false;
     el.triggerPageNavigation = (params: any) => {
       if (params.page === 'meal' && params.mealId === 'meal123') {
@@ -344,7 +344,7 @@ describe('PageHome Component Spec:', () => {
       name: 'page-home-status-modal',
       db: createMockDb(sampleDailyLog, null),
       mock: {
-        firstUpdated: () => {}
+        firstUpdated: () => { }
       }
     });
     const el = component.element as any;
@@ -352,7 +352,7 @@ describe('PageHome Component Spec:', () => {
     mockQueryParams(el, { openStatus: 'true' });
 
     await el.onPageInit();
-    
+
     await new Promise(resolve => setTimeout(resolve, 150));
 
     expect(el.openStatusModal).to.be.true;
@@ -382,9 +382,10 @@ describe('PageHome Component Spec:', () => {
 
   it('should display correct formatted date for yesterday', async () => {
     const el = element as any;
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    el.currentDate = yesterday.toISOString().split('T')[0];
+    const [year, month, day] = el.currentDate.split('-').map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
+    date.setUTCDate(date.getUTCDate() - 1);
+    el.currentDate = date.toISOString().split('T')[0];
     await el.updateComplete;
 
     const dateText = el.shadowRoot.querySelector('.date-display span');
@@ -393,9 +394,10 @@ describe('PageHome Component Spec:', () => {
 
   it('should display correct formatted date for tomorrow', async () => {
     const el = element as any;
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    el.currentDate = tomorrow.toISOString().split('T')[0];
+    const [year, month, day] = el.currentDate.split('-').map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
+    date.setUTCDate(date.getUTCDate() + 1);
+    el.currentDate = date.toISOString().split('T')[0];
     await el.updateComplete;
 
     const dateText = el.shadowRoot.querySelector('.date-display span');
@@ -409,14 +411,14 @@ describe('PageHome Component Spec:', () => {
     el.loading = false;
     el.totals = { calories: 200, carbs: 20, fat: 10, protein: 5 };
     await el.updateComplete;
-    
+
     const searchResults = element.shadowRoot?.querySelectorAll('component-search-result');
     expect(searchResults?.length).to.be.greaterThan(0);
   });
 
   it('should handle date display click', async () => {
     const el = element as any;
-    
+
     el._handleDateDisplayClick();
 
     const dateInput = el.shadowRoot.querySelector('input[type="date"]');
@@ -430,7 +432,7 @@ describe('PageHome Component Spec:', () => {
     el.loading = false;
     el.totals = { calories: 200, carbs: 20, fat: 10, protein: 5 };
     await el.updateComplete;
-    
+
     const categoryHeaders = element.shadowRoot?.querySelectorAll('.category-header');
     expect(categoryHeaders?.length).to.be.greaterThan(0);
 
@@ -445,7 +447,7 @@ describe('PageHome Component Spec:', () => {
     el.loading = false;
     el.totals = { calories: 200, carbs: 20, fat: 10, protein: 5 };
     await el.updateComplete;
-    
+
     let navigatedWithCategory = false;
     el.triggerPageNavigation = (params: any) => {
       if (params.page === 'search' && params.category === 'breakfast') {
@@ -477,7 +479,7 @@ describe('PageHome Component Spec:', () => {
         getAllMeals: () => Promise.resolve([])
       },
       mock: {
-        firstUpdated: () => {}
+        firstUpdated: () => { }
       }
     });
     const el = component.element as any;
@@ -494,7 +496,7 @@ describe('PageHome Component Spec:', () => {
       name: 'page-home-tip',
       db: createMockDb(null, null),
       mock: {
-        firstUpdated: () => {}
+        firstUpdated: () => { }
       }
     });
     const el = component.element as any;
@@ -526,7 +528,7 @@ describe('PageHome Component Spec:', () => {
       name: 'page-home-no-tip',
       db: createMockDb(null, null),
       mock: {
-        firstUpdated: () => {}
+        firstUpdated: () => { }
       }
     });
     const el = component.element as any;
@@ -546,7 +548,7 @@ describe('PageHome Component Spec:', () => {
     el.loading = false;
     el.totals = { calories: 200, carbs: 20, fat: 10, protein: 5 };
     await el.updateComplete;
-    
+
     const addButton = element.shadowRoot?.querySelector('.category-container .btn');
     expect(addButton).to.not.exist;
   });
@@ -564,16 +566,16 @@ describe('PageHome Component Spec:', () => {
     el.currentDate = new Date().toISOString().split('T')[0];
     const initialDate = el.currentDate;
     await el.updateComplete;
-    
+
     const header = el.shadowRoot.querySelector('.header') as HTMLElement;
     const mockEvent = {
       composedPath: () => [header],
-      preventDefault: () => {}
+      preventDefault: () => { }
     };
-    
+
     el.handleSwipe(-5, 0, mockEvent as any);
     await el.updateComplete;
-    
+
     expect(el.currentDate).to.not.equal(initialDate);
   });
 
@@ -582,32 +584,32 @@ describe('PageHome Component Spec:', () => {
     el.loading = false;
     el.dailyLog = sampleDailyLog;
     await el.updateComplete;
-    
+
     let navigated = false;
     el.triggerPageNavigation = (params: any) => {
       if (params.page === 'search') {
         navigated = true;
       }
     };
-    
+
     const container = el.shadowRoot.querySelector('.category-container') as HTMLElement;
     const mockEvent = {
       composedPath: () => [container],
-      preventDefault: () => {}
+      preventDefault: () => { }
     };
-    
+
     el.handleSwipe(-10, 0, mockEvent as any);
     await el.updateComplete;
-    
+
     expect(navigated).to.be.true;
   });
 
   it('should calculate totals with zero when dailyLog is null', async () => {
     const el = element as any;
     el.dailyLog = null;
-    
+
     el.calculateTotals();
-    
+
     expect(el.totals.calories).to.equal(0);
     expect(el.totals.carbs).to.equal(0);
     expect(el.totals.fat).to.equal(0);
@@ -633,9 +635,9 @@ describe('PageHome Component Spec:', () => {
       dinner: [],
       snack3: []
     };
-    
+
     el.calculateTotals();
-    
+
     expect(el.totals.calories).to.equal(500);
   });
 
@@ -652,7 +654,7 @@ describe('PageHome Component Spec:', () => {
     const el = element as any;
     el.dailyLog = null;
     el.loadData = () => { throw new Error('loadData should not be called'); };
-    
+
     await el._handleRemoveItem('breakfast', 0);
   });
 
@@ -660,14 +662,14 @@ describe('PageHome Component Spec:', () => {
     const el = element as any;
     el.dailyLog = sampleDailyLog;
     let loadDataCalled = false;
-    el.loadData = () => { 
-      loadDataCalled = true; 
-      return Promise.resolve(); 
+    el.loadData = () => {
+      loadDataCalled = true;
+      return Promise.resolve();
     };
     el.db.removeFoodItem = () => Promise.resolve();
-    
+
     await el._handleRemoveItem('breakfast', 0);
-    
+
     expect(loadDataCalled).to.be.true;
   });
 
@@ -676,11 +678,11 @@ describe('PageHome Component Spec:', () => {
     el.dailyLog = sampleDailyLog;
     el.userStatus = null;
     let saveCalled = false;
-    el.db.saveUserStatus = () => { 
-      saveCalled = true; 
-      return Promise.resolve(); 
+    el.db.saveUserStatus = () => {
+      saveCalled = true;
+      return Promise.resolve();
     };
-    
+
     const mockEvent = new CustomEvent('status-changed', {
       detail: {
         exerciseCalories: 300,
@@ -692,9 +694,9 @@ describe('PageHome Component Spec:', () => {
         thoughts: 'Test'
       }
     });
-    
+
     await el._handleStatusChanged(mockEvent);
-    
+
     expect(saveCalled).to.be.true;
   });
 
@@ -702,14 +704,14 @@ describe('PageHome Component Spec:', () => {
     const el = element as any;
     el.loading = false;
     let loadDataCalled = false;
-    el.loadData = () => { 
-      loadDataCalled = true; 
-      return Promise.resolve(); 
+    el.loadData = () => {
+      loadDataCalled = true;
+      return Promise.resolve();
     };
-    
+
     el.changeDate(1);
     await el.updateComplete;
-    
+
     expect(loadDataCalled).to.be.true;
   });
 
@@ -717,16 +719,16 @@ describe('PageHome Component Spec:', () => {
     const el = element as any;
     el.loading = false;
     let loadDataCalled = false;
-    el.loadData = () => { 
-      loadDataCalled = true; 
-      return Promise.resolve(); 
+    el.loadData = () => {
+      loadDataCalled = true;
+      return Promise.resolve();
     };
-    
+
     const dateInput = el.shadowRoot.querySelector('input[type="date"]') as HTMLInputElement;
     dateInput.value = '2024-12-25';
     dateInput.dispatchEvent(new Event('change'));
     await el.updateComplete;
-    
+
     expect(loadDataCalled).to.be.true;
     expect(el.currentDate).to.equal('2024-12-25');
   });
@@ -737,25 +739,25 @@ describe('PageHome Component Spec:', () => {
     el.currentDate = new Date().toISOString().split('T')[0];
     const initialDate = el.currentDate;
     await el.updateComplete;
-    
+
     const header = el.shadowRoot.querySelector('.header') as HTMLElement;
     const mockEvent = {
       composedPath: () => [header],
-      preventDefault: () => {}
+      preventDefault: () => { }
     };
-    
+
     el.handleSwipe(10, 0, mockEvent as any);
     await el.updateComplete;
-    
+
     expect(el.currentDate).to.not.equal(initialDate);
   });
 
   it('should handle loadUserProfile with invalid JSON', async () => {
     localStorage.setItem('user_profile', 'invalid json');
-    
+
     const el = element as any;
     el.loadUserProfile();
-    
+
     localStorage.removeItem('user_profile');
   });
 
@@ -776,13 +778,13 @@ describe('PageHome Component Spec:', () => {
         getAllMeals: () => Promise.resolve([])
       },
       mock: {
-        firstUpdated: () => {}
+        firstUpdated: () => { }
       }
     });
     const el = component.element as any;
-    
+
     await el.loadData();
-    
+
     expect(el.loading).to.be.false;
     document.body.removeChild(el);
   });
@@ -802,7 +804,7 @@ describe('PageHome Component Spec:', () => {
       name: 'page-home-profile-no-macros',
       db: createMockDb(sampleDailyLog, null),
       mock: {
-        firstUpdated: () => {}
+        firstUpdated: () => { }
       }
     });
     const el = component.element;
@@ -820,7 +822,7 @@ describe('PageHome Component Spec:', () => {
     el.dailyLog = sampleDailyLog;
     el.userStatus = null;
     el.db.saveUserStatus = () => Promise.reject(new Error('Save failed'));
-    
+
     const mockEvent = new CustomEvent('status-changed', {
       detail: {
         exerciseCalories: 300,
@@ -832,7 +834,7 @@ describe('PageHome Component Spec:', () => {
         thoughts: 'Test'
       }
     });
-    
+
     await el._handleStatusChanged(mockEvent);
   });
 });

@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.brote.app',
+  appId: 'angelitapp.brote',
   appName: 'Brote',
   webDir: 'gh-pages',
   plugins: {

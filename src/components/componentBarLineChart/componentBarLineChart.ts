@@ -15,6 +15,10 @@ export interface BarLineChartData {
     dotted?: boolean;
     hidden?: boolean;
   }[];
+  yAxisLabels?: {
+    left?: string;
+    right?: string;
+  };
 }
 
 export default class ComponentBarLineChart extends LitElement {
@@ -238,13 +242,16 @@ export default class ComponentBarLineChart extends LitElement {
     }
 
     // Axis Labels
+    const leftText = this.chartData.yAxisLabels?.left || 'Calorías ({unit})';
+    const rightText = this.chartData.yAxisLabels?.right || 'Nivel / Horas (0-{max})';
+
     const leftLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     leftLabel.setAttribute('x', '15');
     leftLabel.setAttribute('y', (height / 2).toString());
     leftLabel.setAttribute('transform', `rotate(-90, 15, ${height / 2})`);
     leftLabel.setAttribute('text-anchor', 'middle');
     leftLabel.setAttribute('class', 'axis-label');
-    leftLabel.textContent = 'Calorías (kcal)';
+    leftLabel.textContent = leftText.replace('{unit}', 'kcal');
     svg.appendChild(leftLabel);
 
     const rightLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -253,7 +260,7 @@ export default class ComponentBarLineChart extends LitElement {
     rightLabel.setAttribute('transform', `rotate(90, ${width - 15}, ${height / 2})`);
     rightLabel.setAttribute('text-anchor', 'middle');
     rightLabel.setAttribute('class', 'axis-label');
-    rightLabel.textContent = `Nivel / Horas (0-${y1Range.max})`;
+    rightLabel.textContent = rightText.replace('{max}', y1Range.max.toString());
     svg.appendChild(rightLabel);
 
     // Draw Bars
