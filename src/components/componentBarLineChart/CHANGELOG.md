@@ -1,5 +1,11 @@
 # component-bar-line-chart
 
+## 0.0.4
+
+### Patch Changes
+
+- 1f56111: fixing issue with translations on charts
+
 ## 0.0.3
 
 ### Patch Changes

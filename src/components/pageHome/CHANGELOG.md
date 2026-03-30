@@ -1,5 +1,11 @@
 # home-page
 
+## 0.0.18
+
+### Patch Changes
+
+- 1f56111: fixing issue with translations on charts
+
 ## 0.0.17
 
 ### Patch Changes
