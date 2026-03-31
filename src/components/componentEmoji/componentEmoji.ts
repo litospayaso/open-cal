@@ -157,6 +157,7 @@ import { svg as warningSvg } from '../../assets/svg_emojis/warning';
 import { svg as balanceScaleSvg } from '../../assets/svg_emojis/balanceScale';
 import { svg as lowBatterySvg } from '../../assets/svg_emojis/lowBattery';
 import { svg as pencilSvg } from '../../assets/svg_emojis/pencil';
+import { svg as noteSvg } from '../../assets/svg_emojis/note';
 
 const emojiSvgMap: Record<string, string> = {
   '🍇': grapeSvg,
@@ -314,6 +315,7 @@ const emojiSvgMap: Record<string, string> = {
   '⚖️': balanceScaleSvg,
   '🪫': lowBatterySvg,
   '✏️': pencilSvg,
+  '📝': noteSvg,
 };
 
 export type ComponentEmojiProps = {

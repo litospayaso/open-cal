@@ -169,5 +169,6 @@ export const utilityEmojiList: EmojiItem[] = [
   { emoji: '⚠️', keywords: ['warning'] },
   { emoji: '⚖️', keywords: ['balance'] },
   { emoji: '🪫', keywords: ['battery'] },
-  { emoji: '✏️', keywords: ['pencil'] }
+  { emoji: '✏️', keywords: ['pencil'] },
+  { emoji: '📝', keywords: ['note'] }
 ];
