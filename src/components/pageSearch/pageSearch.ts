@@ -13,7 +13,6 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
     css`
       :host {
         display: block;
-        padding: 20px;
         font-family: sans-serif;
         color: var(--text-color);
       }
@@ -72,6 +71,7 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
       }
       .search-result-container {
         min-height: calc(100vh - 450px);
+        padding: 0px 8px;
       }
       .tabs-slider {
         display: grid;

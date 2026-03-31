@@ -183,6 +183,46 @@ export default class PageUser extends Page {
         font-size: 1.1rem;
         font-weight: bold;
       }
+      .tabs-slider {
+        display: grid;
+        grid-template-columns: 100%;
+        grid-template-rows: 100%;
+        position: relative;
+        overflow-x: hidden;
+      }
+      .tab-content-wrapper {
+        grid-area: 1 / 1 / 2 / 2;
+        width: 100%;
+        background-color: transparent;
+      }
+      .tab-enter-forward {
+        animation: slideInRight 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+      }
+      .tab-leave-forward {
+        animation: slideOutLeft 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+      }
+      .tab-enter-backward {
+        animation: slideInLeft 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+      }
+      .tab-leave-backward {
+        animation: slideOutRight 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+      }
+      @keyframes slideInRight {
+        from { transform: translateX(100%); }
+        to { transform: translateX(0); }
+      }
+      @keyframes slideOutLeft {
+        from { transform: translateX(0); }
+        to { transform: translateX(-100%); }
+      }
+      @keyframes slideInLeft {
+        from { transform: translateX(-100%); }
+        to { transform: translateX(0); }
+      }
+      @keyframes slideOutRight {
+        from { transform: translateX(0); }
+        to { transform: translateX(100%); }
+      }
     `
   ];
 
@@ -224,6 +264,12 @@ export default class PageUser extends Page {
   @state() importMessage: { text: string, type: 'success' | 'error' } | null = null;
   @state() statsReferenceDate: string = new Date().toISOString().split('T')[0];
   @state() showAboutModal: boolean = false;
+
+  @state() previousStatsDate: string | null = null;
+  @state() transitionDirection: 'forward' | 'backward' | null = null;
+  @state() previousWeeklyChartData: BarLineChartData | null = null;
+  @state() previousRadarChartData: ShapeChartData | null = null;
+  private _transitionTimeout: any = null;
 
   private _statsTouchStartX: number = 0;
   private _statsTouchStartY: number = 0;
@@ -568,10 +614,33 @@ export default class PageUser extends Page {
     };
   }
 
+  private _animateIfNeeded(newDateStr: string) {
+    if (this.statsReferenceDate !== newDateStr) {
+      const oldTime = new Date(this.statsReferenceDate).getTime();
+      const newTime = new Date(newDateStr).getTime();
+
+      this.transitionDirection = newTime > oldTime ? 'forward' : 'backward';
+      this.previousStatsDate = this.statsReferenceDate;
+      this.previousWeeklyChartData = this.weeklyChartData;
+      this.previousRadarChartData = this.radarChartData;
+
+      if (this._transitionTimeout) clearTimeout(this._transitionTimeout);
+      this._transitionTimeout = setTimeout(() => {
+        this.previousStatsDate = null;
+        this.transitionDirection = null;
+        this.previousWeeklyChartData = null;
+        this.previousRadarChartData = null;
+        this.requestUpdate();
+      }, 300);
+    }
+  }
+
   private _changeStatsWeek(delta: number) {
     const d = new Date(this.statsReferenceDate);
     d.setDate(d.getDate() + (delta * 7));
-    this.statsReferenceDate = d.toISOString().split('T')[0];
+    const newDateStr = d.toISOString().split('T')[0];
+    this._animateIfNeeded(newDateStr);
+    this.statsReferenceDate = newDateStr;
     this._loadWeeklyStats();
   }
 
@@ -602,8 +671,8 @@ export default class PageUser extends Page {
     }
   };
 
-  private _getWeekRangeLabel(): string {
-    const refDate = new Date(this.statsReferenceDate);
+  private _getWeekRangeLabel(dateToUse: string): string {
+    const refDate = new Date(dateToUse);
     const day = refDate.getDay();
     const diff = refDate.getDate() - day + (day === 0 ? -6 : 1);
     const monday = new Date(new Date(refDate).setDate(diff));
@@ -612,6 +681,30 @@ export default class PageUser extends Page {
 
     const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit' };
     return `${monday.toLocaleDateString(this.language, options)} - ${sunday.toLocaleDateString(this.language, options)}`;
+  }
+
+  private _renderStatisticsPanel(weeklyData: BarLineChartData | null, radarData: ShapeChartData | null, dateStr: string) {
+    return html`
+      <div class="week-selector">
+        <button @click="${() => this._changeStatsWeek(-1)}" style="color: var(--card-text)">‹</button>
+        <div class="week-display">
+          <span>${this.translations.weekOf} ${this._getWeekRangeLabel(dateStr)}</span>
+        </div>
+        <button @click="${() => this._changeStatsWeek(1)}" style="color: var(--card-text)">›</button>
+      </div>
+
+      ${weeklyData ? html`
+        <div>
+          <component-bar-line-chart .chartData="${weeklyData}"></component-bar-line-chart>
+        </div>
+      ` : ''}
+
+      ${radarData ? html`
+        <div style="margin-top: 20px; height: 300px;">
+          <component-shape-chart .chartData="${radarData}"></component-shape-chart>
+        </div>
+      ` : ''}
+    `;
   }
 
 
@@ -949,23 +1042,16 @@ export default class PageUser extends Page {
         </div>
 
         <div class="week-statistics-container" @touchstart="${this._handleStatsTouchStart}" @touchend="${this._handleStatsTouchEnd}">
-          <div class="week-selector">
-            <button @click="${() => this._changeStatsWeek(-1)}" style="color: var(--card-text)">‹</button>
-            <div class="week-display">
-              <span>${this.translations.weekOf} ${this._getWeekRangeLabel()}</span>
-            </div>
-            <button @click="${() => this._changeStatsWeek(1)}" style="color: var(--card-text)">›</button>
-          </div>
-            ${this.weeklyChartData ? html`
-              <component-bar-line-chart .chartData="${this.weeklyChartData}"></component-bar-line-chart>
-            ` : ''}
-
-            ${this.radarChartData ? html`
-              <div style="margin-top: 20px; height: 300px;">
-                <component-shape-chart .chartData="${this.radarChartData}"></component-shape-chart>
+          <div class="tabs-slider">
+            ${this.previousStatsDate ? html`
+              <div class="tab-content-wrapper tab-leave-${this.transitionDirection}">
+                ${this._renderStatisticsPanel(this.previousWeeklyChartData, this.previousRadarChartData, this.previousStatsDate)}
               </div>
             ` : ''}
-        
+            <div class="tab-content-wrapper ${this.previousStatsDate ? `tab-enter-${this.transitionDirection}` : ''}">
+              ${this._renderStatisticsPanel(this.weeklyChartData, this.radarChartData, this.statsReferenceDate)}
+            </div>
+          </div>
         </div>
       </div>
     `;

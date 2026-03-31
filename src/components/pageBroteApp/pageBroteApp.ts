@@ -38,10 +38,14 @@ export default class PageBroteApp extends Page {
         touch-action: pan-y;
         overflow-x: hidden;
       }
+      .page-container {
+        background-color: var(--background-color);
+        padding: 0 12px;
+      }
       .page-wrapper {
         grid-area: 1 / 1 / 2 / 2;
         width: 100%;
-        background-color: var(--back-color, #fff); /* Fallback to prevent transparency issues */
+        background-color: var(--background-color, #fff); /* Fallback to prevent transparency issues */
       }
       .page-enter-forward {
         animation: slideInRight 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
@@ -283,27 +287,33 @@ export default class PageBroteApp extends Page {
       case 'search':
         return html`<page-search 
           @page-navigation="${({ detail }: CustomEvent<{ [key: string]: string }>) => this.navigateToPage(detail)}"
+          class="page-container"
         ></page-search>`;
       case 'home':
         return html`<page-home
           @page-navigation="${({ detail }: CustomEvent<{ [key: string]: string }>) => this.navigateToPage(detail)}"
+          class="page-container"
         ></page-home>`;
       case 'food':
         return html`<page-food 
           @page-navigation="${({ detail }: CustomEvent<{ [key: string]: string }>) => this.navigateToPage(detail)}"
+          class="page-container"
         ></page-food>`;
       case 'user':
         return html`<page-user 
           .version="${packageJson.version}"
           @page-navigation="${({ detail }: CustomEvent<{ [key: string]: string }>) => this.navigateToPage(detail)}"
+          class="page-container"
         ></page-user>`;
       case 'scanner':
         return html`<page-code-scanner 
           @page-navigation="${({ detail }: CustomEvent<{ [key: string]: string }>) => this.navigateToPage(detail)}"
+          class="page-container"
         ></page-code-scanner>`;
       case 'meal':
         return html`<page-meal 
           @page-navigation="${({ detail }: CustomEvent<{ [key: string]: string }>) => this.navigateToPage(detail)}"
+          class="page-container"
         ></page-meal>`;
       default:
         return html`<page-home></page-home>`;

@@ -9,7 +9,6 @@ export default class PageHome extends Page {
     css`
       :host {
         display: block;
-        padding: 20px;
       }
       .header {
         display: flex;
@@ -138,6 +137,7 @@ export default class PageHome extends Page {
 
       .tabs-slider {
         display: grid;
+        padding: 0 12px;
         grid-template-columns: 100%;
         grid-template-rows: 100%;
         position: relative;
@@ -211,7 +211,7 @@ export default class PageHome extends Page {
     if (this.currentDate !== newDateStr) {
       const oldTime = new Date(this.currentDate).getTime();
       const newTime = new Date(newDateStr).getTime();
-      
+
       this.transitionDirection = newTime > oldTime ? 'forward' : 'backward';
       this.previousDate = this.currentDate;
       this.previousDailyLog = this.dailyLog;
