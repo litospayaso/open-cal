@@ -30,14 +30,55 @@ export default class PageBroteApp extends Page {
         width: fit-content;
       }
       .app-container {
+        display: grid;
+        grid-template-columns: 100%;
+        grid-template-rows: 100%;
         padding-top: env(safe-area-inset-top);
         padding-bottom: 80px; 
         touch-action: pan-y;
+        overflow-x: hidden;
+      }
+      .page-wrapper {
+        grid-area: 1 / 1 / 2 / 2;
+        width: 100%;
+        background-color: var(--back-color, #fff); /* Fallback to prevent transparency issues */
+      }
+      .page-enter-forward {
+        animation: slideInRight 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+      }
+      .page-leave-forward {
+        animation: slideOutLeft 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+      }
+      .page-enter-backward {
+        animation: slideInLeft 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+      }
+      .page-leave-backward {
+        animation: slideOutRight 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+      }
+      @keyframes slideInRight {
+        from { transform: translateX(100%); }
+        to { transform: translateX(0); }
+      }
+      @keyframes slideOutLeft {
+        from { transform: translateX(0); }
+        to { transform: translateX(-100%); }
+      }
+      @keyframes slideInLeft {
+        from { transform: translateX(-100%); }
+        to { transform: translateX(0); }
+      }
+      @keyframes slideOutRight {
+        from { transform: translateX(0); }
+        to { transform: translateX(100%); }
       }
     `
   ];
 
   @state() page: string = 'home';
+  @state() previousPage: string | null = null;
+  @state() transitionDirection: 'forward' | 'backward' | null = null;
+  private _transitionTimeout: any = null;
+
   @state() groupButtonOptions: GroupButtonOption[] = [
     { text: 'home', id: 'home', active: true, emoji: true, forcedsvg: true },
     { text: 'search', id: 'search', active: false, emoji: true, forcedsvg: true },
@@ -50,13 +91,38 @@ export default class PageBroteApp extends Page {
 
 
 
+  private _getTabIndex(page: string): number {
+    const tabs = ['home', 'search', 'user'];
+    return tabs.indexOf(page);
+  }
+
+  private _animateIfNeeded(newPage: string) {
+    const oldIndex = this._getTabIndex(this.page);
+    const newIndex = this._getTabIndex(newPage);
+
+    if (this.page !== newPage && oldIndex !== -1 && newIndex !== -1) {
+      this.transitionDirection = newIndex > oldIndex ? 'forward' : 'backward';
+      this.previousPage = this.page;
+      if (this._transitionTimeout) clearTimeout(this._transitionTimeout);
+      this._transitionTimeout = setTimeout(() => {
+        this.previousPage = null;
+        this.transitionDirection = null;
+        this.requestUpdate();
+      }, 300);
+    }
+  }
+
   navigateToPage(params: { [key: string]: string }, maintainParams: boolean = true): void {
     delete (params.isTrusted);
     const currentParams = Object.fromEntries(this.getQueryParamsURL());
     maintainParams = params.maintainParams === 'false' ? false : maintainParams;
     const oldPage = this.page;
+    const newPage = params.page || 'home';
+
+    this._animateIfNeeded(newPage);
+
     if (params.page) {
-      this.page = params.page || 'home';
+      this.page = newPage;
     }
     if (maintainParams) {
       params = { ...currentParams, ...params };
@@ -66,6 +132,7 @@ export default class PageBroteApp extends Page {
     const usePushState = oldPage === 'home' && this.page !== 'home';
 
     this.setQueryParamsURL(params, usePushState);
+    this.updateGroupButtonOptions();
     this.requestUpdate();
   }
 
@@ -96,6 +163,11 @@ export default class PageBroteApp extends Page {
     });
 
     window.addEventListener('popstate', () => {
+      const params = this.getQueryParamsURL();
+      const newPage = params.get('page') || 'home';
+      this._animateIfNeeded(newPage);
+      this.page = newPage;
+      this.updateGroupButtonOptions();
       this.requestUpdate();
     });
   }
@@ -194,11 +266,20 @@ export default class PageBroteApp extends Page {
   }
 
   pageRender() {
-    const params = this.getQueryParamsURL();
-    this.page = params.get('page') || 'home';
-    this.updateGroupButtonOptions();
+    return html`
+      ${this.previousPage ? html`
+        <div class="page-wrapper page-leave-${this.transitionDirection}">
+          ${this._renderPageContent(this.previousPage)}
+        </div>
+      ` : ''}
+      <div class="page-wrapper ${this.previousPage ? `page-enter-${this.transitionDirection}` : ''}">
+        ${this._renderPageContent(this.page)}
+      </div>
+    `;
+  }
 
-    switch (this.page) {
+  private _renderPageContent(pageName: string) {
+    switch (pageName) {
       case 'search':
         return html`<page-search 
           @page-navigation="${({ detail }: CustomEvent<{ [key: string]: string }>) => this.navigateToPage(detail)}"

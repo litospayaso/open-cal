@@ -73,6 +73,46 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
       .search-result-container {
         min-height: calc(100vh - 450px);
       }
+      .tabs-slider {
+        display: grid;
+        grid-template-columns: 100%;
+        grid-template-rows: 100%;
+        position: relative;
+        overflow-x: hidden;
+      }
+      .tab-content-wrapper {
+        grid-area: 1 / 1 / 2 / 2;
+        width: 100%;
+        background-color: var(--back-color, transparent);
+      }
+      .tab-enter-forward {
+        animation: slideInRight 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+      }
+      .tab-leave-forward {
+        animation: slideOutLeft 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+      }
+      .tab-enter-backward {
+        animation: slideInLeft 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+      }
+      .tab-leave-backward {
+        animation: slideOutRight 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+      }
+      @keyframes slideInRight {
+        from { transform: translateX(100%); }
+        to { transform: translateX(0); }
+      }
+      @keyframes slideOutLeft {
+        from { transform: translateX(0); }
+        to { transform: translateX(-100%); }
+      }
+      @keyframes slideInLeft {
+        from { transform: translateX(-100%); }
+        to { transform: translateX(0); }
+      }
+      @keyframes slideOutRight {
+        from { transform: translateX(0); }
+        to { transform: translateX(100%); }
+      }
       h1 {
         text-align: center;
       }
@@ -123,6 +163,12 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
   }
 
   @state() viewMode: 'cached' | 'favorites' | 'search' | 'meals' = 'cached';
+  @state() previousViewMode: 'cached' | 'favorites' | 'search' | 'meals' | null = null;
+  @state() previousSearchResult: any[] = [];
+  @state() previousLoading: boolean = false;
+  @state() transitionDirection: 'forward' | 'backward' | null = null;
+  private _transitionTimeout: any = null;
+
   @state() groupButtonOptions = [
     { text: this.translations.recents, id: 'cached', active: true },
     { text: this.translations.favorites, id: 'favorites', active: false },
@@ -308,6 +354,25 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
   }
 
   private _switchMode(mode: 'cached' | 'favorites' | 'search' | 'meals') {
+    const modes = ['cached', 'favorites', 'search', 'meals'];
+    const oldIndex = modes.indexOf(this.viewMode);
+    const newIndex = modes.indexOf(mode);
+
+    if (this.viewMode !== mode && oldIndex !== -1 && newIndex !== -1) {
+      this.transitionDirection = newIndex > oldIndex ? 'forward' : 'backward';
+      this.previousViewMode = this.viewMode;
+      this.previousSearchResult = [...this.searchResult];
+      this.previousLoading = this.loading;
+
+      if (this._transitionTimeout) clearTimeout(this._transitionTimeout);
+      this._transitionTimeout = setTimeout(() => {
+        this.previousViewMode = null;
+        this.transitionDirection = null;
+        this.previousSearchResult = [];
+        this.requestUpdate();
+      }, 300);
+    }
+
     this.viewMode = mode;
     this.groupButtonOptions = this.groupButtonOptions.map(opt => ({
       ...opt,
@@ -358,6 +423,51 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
     }
   }
 
+  private _renderTabContent(mode: string, resultItems: any[], isLoading: boolean) {
+    return html`
+      ${mode === 'meals' ? html`
+        <button class="btn btn-create" @click="${() => this.triggerPageNavigation({ page: 'meal', mealId: this._generateId() })}">
+            ${this.translations.createNewMeal}
+        </button>
+      ` : html``}
+
+      <div class="search-result-container">
+      ${isLoading ? html`
+        <component-spinner class="loading-spinner"></component-spinner>
+      ` : html`
+        ${resultItems.length > 0 ? html`
+          ${mode === 'search' ? html`
+            <button class="btn btn-create" @click="${() => this.triggerPageNavigation({ page: 'food', code: this._generateId(), query: this.query })}">
+              ${this.translations.createNewProduct}
+            </button>
+          ` : ''}
+          <div>
+            ${resultItems.map(product => html`
+              <component-search-result 
+                name="${product.product_name}" 
+                code="${product.code}" 
+                brands="${product.brands || ''}"
+                calories="${(product.nutriments && product.nutriments['energy-kcal'] !== undefined && product.nutriments['energy-kcal'] !== null) ? product.nutriments['energy-kcal'] : -1}" 
+                favorite="${product.isFavorite}"
+                @favorite-click="${this._handleFavoriteClick}"
+                @element-click="${this._handleElementClick}"
+              ></component-search-result>
+            `)}
+          </div>
+        ` : ''}
+        ${resultItems.length === 0 && this.query.length > 0 ? html`
+          <p>${this.translations.noResultsFound}</p>
+          ${mode === 'search' ? html`
+            <button class="btn btn-create" @click="${() => this.triggerPageNavigation({ page: 'food', code: this._generateId(), query: this.query })}">
+              ${this.translations.createNewProduct}
+            </button>
+          ` : ''}
+        ` : ''}
+      `}
+      </div>
+    `;
+  }
+
   render() {
     return html`
       <div class="page-container">
@@ -390,46 +500,15 @@ export default class PageSearch extends Page<{ searchProduct: typeof searchProdu
              ></component-group-button>
         </div>
 
-        ${this.viewMode === 'meals' ? html`
-          <button class="btn btn-create" @click="${() => this.triggerPageNavigation({ page: 'meal', mealId: this._generateId() })}">
-              ${this.translations.createNewMeal}
-          </button>
-        ` : html``}
-
-        <div class="search-result-container">
-        ${this.loading ? html`
-          <component-spinner class="loading-spinner"></component-spinner>
-        ` : html`
-          ${this.searchResult.length > 0 ? html`
-            ${this.viewMode === 'search' ? html`
-              <button class="btn btn-create" @click="${() => this.triggerPageNavigation({ page: 'food', code: this._generateId(), query: this.query })}">
-                ${this.translations.createNewProduct}
-              </button>
-            ` : ''}
-            <div>
-              ${this.searchResult.map(product => html`
-                <component-search-result 
-                  name="${product.product_name}" 
-                  code="${product.code}" 
-                  brands="${product.brands || ''}"
-                  calories="${(product.nutriments && product.nutriments['energy-kcal'] !== undefined && product.nutriments['energy-kcal'] !== null) ? product.nutriments['energy-kcal'] : -1}" 
-                  favorite="${product.isFavorite}"
-                  @favorite-click="${this._handleFavoriteClick}"
-                  @element-click="${this._handleElementClick}"
-                ></component-search-result>
-              `)}
+        <div class="tabs-slider">
+          ${this.previousViewMode ? html`
+            <div class="tab-content-wrapper tab-leave-${this.transitionDirection}">
+              ${this._renderTabContent(this.previousViewMode, this.previousSearchResult, this.previousLoading)}
             </div>
           ` : ''}
-          ${this.searchResult.length === 0 && this.query.length > 0 ? html`
-            <p>${this.translations.noResultsFound}</p>
-            ${this.viewMode === 'search' ? html`
-              <button class="btn btn-create" @click="${() => this.triggerPageNavigation({ page: 'food', code: this._generateId(), query: this.query })}">
-                ${this.translations.createNewProduct}
-              </button>
-            ` : ''}
-
-          ` : ''}
-        `}
+          <div class="tab-content-wrapper ${this.previousViewMode ? `tab-enter-${this.transitionDirection}` : ''}">
+            ${this._renderTabContent(this.viewMode, this.searchResult, this.loading)}
+          </div>
         </div>
       </div>
     `;
