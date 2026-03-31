@@ -1,5 +1,11 @@
 # page-user
 
+## 0.0.18
+
+### Patch Changes
+
+- c1e6365: fixing error on theme and adding transitions to user statistics
+
 ## 0.0.17
 
 ### Patch Changes

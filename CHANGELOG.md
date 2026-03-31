@@ -1,5 +1,11 @@
 # brote
 
+## 1.0.44
+
+### Patch Changes
+
+- c1e6365: fixing error on theme and adding transitions to user statistics
+
 ## 1.0.43
 
 ### Patch Changes

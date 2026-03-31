@@ -1,5 +1,11 @@
 # component-bar-line-chart
 
+## 0.0.5
+
+### Patch Changes
+
+- c1e6365: fixing error on theme and adding transitions to user statistics
+
 ## 0.0.4
 
 ### Patch Changes

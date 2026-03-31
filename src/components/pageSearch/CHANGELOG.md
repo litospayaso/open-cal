@@ -1,5 +1,11 @@
 # search-page
 
+## 0.0.10
+
+### Patch Changes
+
+- c1e6365: fixing error on theme and adding transitions to user statistics
+
 ## 0.0.9
 
 ### Patch Changes
