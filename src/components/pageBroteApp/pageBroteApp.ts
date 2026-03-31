@@ -45,6 +45,7 @@ export default class PageBroteApp extends Page {
       .page-wrapper {
         grid-area: 1 / 1 / 2 / 2;
         width: 100%;
+        margin-bottom: 24px;
         background-color: var(--background-color, #fff); /* Fallback to prevent transparency issues */
       }
       .page-enter-forward {
