@@ -1,5 +1,12 @@
 # brote-app
 
+## 0.0.17
+
+### Patch Changes
+
+- f69f760: Fixing issue displaying note icon
+- 787d8fe: adding transitions to pages
+
 ## 0.0.16
 
 ### Patch Changes

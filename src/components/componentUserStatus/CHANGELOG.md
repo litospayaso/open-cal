@@ -1,5 +1,11 @@
 # component-user-status
 
+## 0.0.7
+
+### Patch Changes
+
+- f69f760: Fixing issue displaying note icon
+
 ## 0.0.6
 
 ### Patch Changes
