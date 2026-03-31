@@ -33911,7 +33911,7 @@ body {
   var package_default = {
     name: "brote",
     private: true,
-    version: "1.0.43",
+    version: "1.0.44",
     type: "module",
     scripts: {
       dev: "vite",
@@ -34035,10 +34035,14 @@ body {
         touch-action: pan-y;
         overflow-x: hidden;
       }
+      .page-container {
+        background-color: var(--background-color);
+        padding: 0 12px;
+      }
       .page-wrapper {
         grid-area: 1 / 1 / 2 / 2;
         width: 100%;
-        background-color: var(--back-color, #fff); /* Fallback to prevent transparency issues */
+        background-color: var(--background-color, #fff); /* Fallback to prevent transparency issues */
       }
       .page-enter-forward {
         animation: slideInRight 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
@@ -34236,27 +34240,33 @@ body {
         case "search":
           return b2`<page-search 
           @page-navigation="${({ detail }) => this.navigateToPage(detail)}"
+          class="page-container"
         ></page-search>`;
         case "home":
           return b2`<page-home
           @page-navigation="${({ detail }) => this.navigateToPage(detail)}"
+          class="page-container"
         ></page-home>`;
         case "food":
           return b2`<page-food 
           @page-navigation="${({ detail }) => this.navigateToPage(detail)}"
+          class="page-container"
         ></page-food>`;
         case "user":
           return b2`<page-user 
           .version="${package_default.version}"
           @page-navigation="${({ detail }) => this.navigateToPage(detail)}"
+          class="page-container"
         ></page-user>`;
         case "scanner":
           return b2`<page-code-scanner 
           @page-navigation="${({ detail }) => this.navigateToPage(detail)}"
+          class="page-container"
         ></page-code-scanner>`;
         case "meal":
           return b2`<page-meal 
           @page-navigation="${({ detail }) => this.navigateToPage(detail)}"
+          class="page-container"
         ></page-meal>`;
         default:
           return b2`<page-home></page-home>`;
@@ -36443,7 +36453,6 @@ body {
     i`
       :host {
         display: block;
-        padding: 20px;
         font-family: sans-serif;
         color: var(--text-color);
       }
@@ -36502,6 +36511,7 @@ body {
       }
       .search-result-container {
         min-height: calc(100vh - 450px);
+        padding: 0px 8px;
       }
       .tabs-slider {
         display: grid;
@@ -37800,6 +37810,11 @@ body {
       this.importMessage = null;
       this.statsReferenceDate = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
       this.showAboutModal = false;
+      this.previousStatsDate = null;
+      this.transitionDirection = null;
+      this.previousWeeklyChartData = null;
+      this.previousRadarChartData = null;
+      this._transitionTimeout = null;
       this._statsTouchStartX = 0;
       this._statsTouchStartY = 0;
       this._handleStatsTouchStart = (e6) => {
@@ -37995,6 +38010,46 @@ body {
       .week-display {
         font-size: 1.1rem;
         font-weight: bold;
+      }
+      .tabs-slider {
+        display: grid;
+        grid-template-columns: 100%;
+        grid-template-rows: 100%;
+        position: relative;
+        overflow-x: hidden;
+      }
+      .tab-content-wrapper {
+        grid-area: 1 / 1 / 2 / 2;
+        width: 100%;
+        background-color: transparent;
+      }
+      .tab-enter-forward {
+        animation: slideInRight 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+      }
+      .tab-leave-forward {
+        animation: slideOutLeft 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+      }
+      .tab-enter-backward {
+        animation: slideInLeft 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+      }
+      .tab-leave-backward {
+        animation: slideOutRight 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+      }
+      @keyframes slideInRight {
+        from { transform: translateX(100%); }
+        to { transform: translateX(0); }
+      }
+      @keyframes slideOutLeft {
+        from { transform: translateX(0); }
+        to { transform: translateX(-100%); }
+      }
+      @keyframes slideInLeft {
+        from { transform: translateX(-100%); }
+        to { transform: translateX(0); }
+      }
+      @keyframes slideOutRight {
+        from { transform: translateX(0); }
+        to { transform: translateX(100%); }
       }
     `
       ];
@@ -38292,14 +38347,34 @@ body {
         ]
       };
     }
+    _animateIfNeeded(newDateStr) {
+      if (this.statsReferenceDate !== newDateStr) {
+        const oldTime = new Date(this.statsReferenceDate).getTime();
+        const newTime = new Date(newDateStr).getTime();
+        this.transitionDirection = newTime > oldTime ? "forward" : "backward";
+        this.previousStatsDate = this.statsReferenceDate;
+        this.previousWeeklyChartData = this.weeklyChartData;
+        this.previousRadarChartData = this.radarChartData;
+        if (this._transitionTimeout) clearTimeout(this._transitionTimeout);
+        this._transitionTimeout = setTimeout(() => {
+          this.previousStatsDate = null;
+          this.transitionDirection = null;
+          this.previousWeeklyChartData = null;
+          this.previousRadarChartData = null;
+          this.requestUpdate();
+        }, 300);
+      }
+    }
     _changeStatsWeek(delta) {
       const d3 = new Date(this.statsReferenceDate);
       d3.setDate(d3.getDate() + delta * 7);
-      this.statsReferenceDate = d3.toISOString().split("T")[0];
+      const newDateStr = d3.toISOString().split("T")[0];
+      this._animateIfNeeded(newDateStr);
+      this.statsReferenceDate = newDateStr;
       this._loadWeeklyStats();
     }
-    _getWeekRangeLabel() {
-      const refDate = new Date(this.statsReferenceDate);
+    _getWeekRangeLabel(dateToUse) {
+      const refDate = new Date(dateToUse);
       const day = refDate.getDay();
       const diff = refDate.getDate() - day + (day === 0 ? -6 : 1);
       const monday = new Date(new Date(refDate).setDate(diff));
@@ -38307,6 +38382,29 @@ body {
       sunday.setDate(monday.getDate() + 6);
       const options = { day: "2-digit", month: "2-digit" };
       return `${monday.toLocaleDateString(this.language, options)} - ${sunday.toLocaleDateString(this.language, options)}`;
+    }
+    _renderStatisticsPanel(weeklyData, radarData, dateStr) {
+      return b2`
+      <div class="week-selector">
+        <button @click="${() => this._changeStatsWeek(-1)}" style="color: var(--card-text)">‹</button>
+        <div class="week-display">
+          <span>${this.translations.weekOf} ${this._getWeekRangeLabel(dateStr)}</span>
+        </div>
+        <button @click="${() => this._changeStatsWeek(1)}" style="color: var(--card-text)">›</button>
+      </div>
+
+      ${weeklyData ? b2`
+        <div>
+          <component-bar-line-chart .chartData="${weeklyData}"></component-bar-line-chart>
+        </div>
+      ` : ""}
+
+      ${radarData ? b2`
+        <div style="margin-top: 20px; height: 300px;">
+          <component-shape-chart .chartData="${radarData}"></component-shape-chart>
+        </div>
+      ` : ""}
+    `;
     }
     async _clearAllData() {
       try {
@@ -38615,23 +38713,16 @@ ${countMsg}`,
         </div>
 
         <div class="week-statistics-container" @touchstart="${this._handleStatsTouchStart}" @touchend="${this._handleStatsTouchEnd}">
-          <div class="week-selector">
-            <button @click="${() => this._changeStatsWeek(-1)}" style="color: var(--card-text)">‹</button>
-            <div class="week-display">
-              <span>${this.translations.weekOf} ${this._getWeekRangeLabel()}</span>
-            </div>
-            <button @click="${() => this._changeStatsWeek(1)}" style="color: var(--card-text)">›</button>
-          </div>
-            ${this.weeklyChartData ? b2`
-              <component-bar-line-chart .chartData="${this.weeklyChartData}"></component-bar-line-chart>
-            ` : ""}
-
-            ${this.radarChartData ? b2`
-              <div style="margin-top: 20px; height: 300px;">
-                <component-shape-chart .chartData="${this.radarChartData}"></component-shape-chart>
+          <div class="tabs-slider">
+            ${this.previousStatsDate ? b2`
+              <div class="tab-content-wrapper tab-leave-${this.transitionDirection}">
+                ${this._renderStatisticsPanel(this.previousWeeklyChartData, this.previousRadarChartData, this.previousStatsDate)}
               </div>
             ` : ""}
-        
+            <div class="tab-content-wrapper ${this.previousStatsDate ? `tab-enter-${this.transitionDirection}` : ""}">
+              ${this._renderStatisticsPanel(this.weeklyChartData, this.radarChartData, this.statsReferenceDate)}
+            </div>
+          </div>
         </div>
       </div>
     `;
@@ -39137,6 +39228,18 @@ ${countMsg}`,
   __decorateClass([
     r5()
   ], PageUser.prototype, "showAboutModal", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "previousStatsDate", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "transitionDirection", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "previousWeeklyChartData", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "previousRadarChartData", 2);
 
   // src/components/componentLineChart/componentLineChart.ts
   var ComponentLineChart = class extends i4 {
@@ -39437,7 +39540,7 @@ ${countMsg}`,
 
     .chart-container {
       width: 100%;
-      height: 100%;
+      /* height: 100%; */
       position: relative;
     }
 
@@ -40451,7 +40554,6 @@ ${countMsg}`,
         i`
       :host {
         display: block;
-        padding: 20px;
       }
       .header {
         display: flex;
@@ -40580,6 +40682,7 @@ ${countMsg}`,
 
       .tabs-slider {
         display: grid;
+        padding: 0 12px;
         grid-template-columns: 100%;
         grid-template-rows: 100%;
         position: relative;
