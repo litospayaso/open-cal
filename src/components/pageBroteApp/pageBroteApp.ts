@@ -134,7 +134,14 @@ export default class PageBroteApp extends Page {
     }
     delete params.maintainParams;
 
-    const usePushState = oldPage === 'home' && this.page !== 'home';
+    const isTab = ['home', 'search', 'user'].includes(newPage);
+    const wasTab = ['home', 'search', 'user'].includes(oldPage);
+    let usePushState = (!isTab && wasTab) || (!isTab && !wasTab && oldPage !== newPage);
+    
+    if (params.replaceState === 'true') {
+      usePushState = false;
+      delete params.replaceState;
+    }
 
     this.setQueryParamsURL(params, usePushState);
     this.updateGroupButtonOptions();

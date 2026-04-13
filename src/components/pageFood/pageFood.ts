@@ -101,6 +101,20 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         }
       }
 
+      .back-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--card-text, #333);
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.2s;
+      }
+      .back-btn:hover {
+        opacity: 0.7;
+      }
       .input-group label {
         font-weight: bold;
         color: var(--card-text, #333);
@@ -261,6 +275,14 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
   @state() selectedDate: string = new Date().toISOString().split('T')[0];
   @state() selectedCategory: MealCategory = 'breakfast';
   @state() mealId: string | null = null;
+
+  private _goBack() {
+    if (window.history.length > 2) {
+      window.history.back();
+    } else {
+      this.triggerPageNavigation({ page: 'home', maintainParams: 'false' });
+    }
+  }
 
   async onPageInit(): Promise<void> {
     const params = this.getQueryParamsURL();
@@ -435,7 +457,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
 
       await this.db.addFoodItem(this.selectedDate, this.selectedCategory, foodItem);
 
-      this.triggerPageNavigation({ page: 'home', maintainParams: 'false' },);
+      this.triggerPageNavigation({ page: 'home', maintainParams: 'false', replaceState: 'true' });
 
     } catch (e) {
       console.error("Error adding to diary", e);
@@ -472,7 +494,7 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
         meal.foods.push(foodItem);
 
         await this.db.saveMeal(meal);
-        this.triggerPageNavigation({ page: 'meal', mealId: this.mealId });
+        this.triggerPageNavigation({ page: 'meal', mealId: this.mealId, replaceState: 'true' });
       } else {
         this.error = this.translations.errorMealNotFound || "Meal not found in database";
       }
@@ -507,6 +529,14 @@ export default class PageFood extends Page<{ getProduct: typeof getProduct }> {
 
     return html`
       <div class="page-container">
+        <div style="display: flex; justify-content: flex-start; margin-bottom: -16px;">
+           <button class="back-btn" @click="${this._goBack}">
+             <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                 <line x1="19" y1="12" x2="5" y2="12"></line>
+                 <polyline points="12 19 5 12 12 5"></polyline>
+             </svg>
+           </button>
+        </div>
         <div class="product-header">
           <div class="emoji-container">
             <component-emoji text="${(this.product.product as any).product_name || this.translations.unknownProduct}" size="l"></component-emoji>

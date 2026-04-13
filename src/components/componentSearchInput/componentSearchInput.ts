@@ -88,26 +88,26 @@ export class ComponentSearchInput extends LitElement {
     this.value = target.value;
   }
 
-  private _handleBlur() {
-    this.dispatchEvent(new CustomEvent('search-blur', {
-      detail: { query: this.value },
-      bubbles: true,
-      composed: true
-    }));
+  private _normalizeQuery(query: string): string {
+    return query ? query.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
   }
 
-  private _handleSearchClick() {
-    this.dispatchEvent(new CustomEvent('search-init', {
-      detail: { query: this.value, isButtonClick: true },
+  private _handleBlur() {
+    // const query = this._normalizeQuery(this.value);
+    const query = this.value;
+    this.dispatchEvent(new CustomEvent('search-blur', {
+      detail: { query },
       bubbles: true,
       composed: true
     }));
   }
 
   private _handleKeyDown(e: KeyboardEvent) {
+    // const query = this._normalizeQuery(this.value);
+    const query = this.value;
     if (e.key === 'Enter') {
       this.dispatchEvent(new CustomEvent('search-init', {
-        detail: { query: this.value, isButtonClick: false },
+        detail: { query, isButtonClick: false },
         bubbles: true,
         composed: true
       }));

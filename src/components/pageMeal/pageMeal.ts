@@ -149,7 +149,7 @@ export default class PageMeal extends Page {
         position: relative; 
         border-bottom: 2px solid var(--palette-green, #4fb9ad);
         padding-bottom: 0.5rem;
-        margin-bottom: 1rem;
+        margin: 1rem 0;
       }
       .header-container h1 {
         border-bottom: none;
@@ -163,6 +163,20 @@ export default class PageMeal extends Page {
         font-size: 1.5rem;
         cursor: pointer;
         padding: 0 10px;
+      }
+      .back-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--card-text, #333);
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.2s;
+      }
+      .back-btn:hover {
+        opacity: 0.7;
       }
       .dropdown-menu {
         position: absolute;
@@ -216,6 +230,14 @@ export default class PageMeal extends Page {
   private _handleOutsideClick = () => {
     this.showMenu = false;
     window.removeEventListener('click', this._handleOutsideClick);
+  }
+
+  private _goBack() {
+    if (window.history.length > 2) {
+      window.history.back();
+    } else {
+      this.triggerPageNavigation({ page: 'home', maintainParams: 'false' });
+    }
   }
 
   private _handleDateChange(e: Event) {
@@ -280,7 +302,7 @@ export default class PageMeal extends Page {
 
     try {
       await this.db.addFoodItem(date, this.selectedCategory, mealItem);
-      this.triggerPageNavigation({ page: 'home', maintainParams: 'false' });
+      this.triggerPageNavigation({ page: 'home', maintainParams: 'false', replaceState: 'true' });
     } catch (e) {
       console.error("Error adding meal to diary", e);
       this.error = this.translations.errorAddingToDiary || "Failed to add to diary";
@@ -369,7 +391,7 @@ export default class PageMeal extends Page {
       if (this.meal.id) {
         await this.db.deleteMeal(this.meal.id);
         await this.db.deleteMealReference(this.meal.id);
-        this.triggerPageNavigation({ page: 'home' });
+        this.triggerPageNavigation({ page: 'home', replaceState: 'true' });
       }
     } catch (e) {
       console.error("Error deleting meal", e);
@@ -383,7 +405,15 @@ export default class PageMeal extends Page {
     return html`
       <div class="page-container">
         <div class="header-container">
-            <h1>${this.isNew ? this.translations.createNewMeal : this.translations.editMeal}</h1>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <button class="back-btn" @click="${this._goBack}">
+                    <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </button>
+                <h1 style="margin-top: 0px">${this.isNew ? this.translations.createNewMeal : this.translations.editMeal}</h1>
+            </div>
             ${!this.isNew ? html`
             <div style="position: relative;">
                 <button class="menu-btn" @click="${this._toggleMenu}">&#8942;</button>
