@@ -33020,7 +33020,7 @@
         request2.onerror = () => reject(request2.error);
       });
     }
-    async getExportData(selectedStores, format) {
+    async getExportData(selectedStores, format, filterOptions) {
       await this.ensureInit();
       const exportData = {};
       if (selectedStores.includes("user_data")) {
@@ -33029,7 +33029,11 @@
         exportData.weight_history = await this.getWeightHistory();
       }
       if (selectedStores.includes("daily_consumption")) {
-        exportData.daily_consumption = await this._getAllFromStore(STORE_NAME);
+        let data = await this._getAllFromStore(STORE_NAME);
+        if (filterOptions?.exportBetweenDates && filterOptions.startDate && filterOptions.endDate) {
+          data = data.filter((log) => log.date >= filterOptions.startDate && log.date <= filterOptions.endDate);
+        }
+        exportData.daily_consumption = data;
       }
       if (selectedStores.includes("products")) {
         exportData.products = await this._getAllFromStore(STORE_PRODUCTS);
@@ -34111,7 +34115,13 @@ body {
         params = { ...currentParams, ...params };
       }
       delete params.maintainParams;
-      const usePushState = oldPage === "home" && this.page !== "home";
+      const isTab = ["home", "search", "user"].includes(newPage);
+      const wasTab = ["home", "search", "user"].includes(oldPage);
+      let usePushState = !isTab && wasTab || !isTab && !wasTab && oldPage !== newPage;
+      if (params.replaceState === "true") {
+        usePushState = false;
+        delete params.replaceState;
+      }
       this.setQueryParamsURL(params, usePushState);
       this.updateGroupButtonOptions();
       this.requestUpdate();
@@ -34150,7 +34160,7 @@ body {
           console.log("forcing status bar opacity...");
           await new Promise((resolve2) => setTimeout(resolve2, 500));
           await StatusBar.setOverlaysWebView({ overlay: false });
-          await StatusBar.setBackgroundColor({ color: "#000000" });
+          await StatusBar.setBackgroundColor({ color: localStorage.getItem("theme") === "dark" ? "#212429" : "#ebebeb" });
         }
       } catch (e6) {
         console.error("Error configuring StatusBar", e6);
@@ -36676,24 +36686,22 @@ body {
       const target = e6.target;
       this.value = target.value;
     }
-    _handleBlur() {
-      this.dispatchEvent(new CustomEvent("search-blur", {
-        detail: { query: this.value },
-        bubbles: true,
-        composed: true
-      }));
+    _normalizeQuery(query) {
+      return query ? query.normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
     }
-    _handleSearchClick() {
-      this.dispatchEvent(new CustomEvent("search-init", {
-        detail: { query: this.value, isButtonClick: true },
+    _handleBlur() {
+      const query = this.value;
+      this.dispatchEvent(new CustomEvent("search-blur", {
+        detail: { query },
         bubbles: true,
         composed: true
       }));
     }
     _handleKeyDown(e6) {
+      const query = this.value;
       if (e6.key === "Enter") {
         this.dispatchEvent(new CustomEvent("search-init", {
-          detail: { query: this.value, isButtonClick: false },
+          detail: { query, isButtonClick: false },
           bubbles: true,
           composed: true
         }));
@@ -36967,6 +36975,13 @@ body {
       this.selectedCategory = "breakfast";
       this.mealId = null;
     }
+    _goBack() {
+      if (window.history.length > 2) {
+        window.history.back();
+      } else {
+        this.triggerPageNavigation({ page: "home", maintainParams: "false" });
+      }
+    }
     async onPageInit() {
       const params = this.getQueryParamsURL();
       const code = params.get("code");
@@ -37121,7 +37136,7 @@ body {
           unit: "g"
         };
         await this.db.addFoodItem(this.selectedDate, this.selectedCategory, foodItem);
-        this.triggerPageNavigation({ page: "home", maintainParams: "false" });
+        this.triggerPageNavigation({ page: "home", maintainParams: "false", replaceState: "true" });
       } catch (e6) {
         console.error("Error adding to diary", e6);
         this.error = this.translations.errorAddingToDiary || "Failed to add to diary";
@@ -37153,7 +37168,7 @@ body {
           if (!meal.foods) meal.foods = [];
           meal.foods.push(foodItem);
           await this.db.saveMeal(meal);
-          this.triggerPageNavigation({ page: "meal", mealId: this.mealId });
+          this.triggerPageNavigation({ page: "meal", mealId: this.mealId, replaceState: "true" });
         } else {
           this.error = this.translations.errorMealNotFound || "Meal not found in database";
         }
@@ -37184,6 +37199,14 @@ body {
       }
       return b2`
       <div class="page-container">
+        <div style="display: flex; justify-content: flex-start; margin-bottom: -16px;">
+           <button class="back-btn" @click="${this._goBack}">
+             <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                 <line x1="19" y1="12" x2="5" y2="12"></line>
+                 <polyline points="12 19 5 12 12 5"></polyline>
+             </svg>
+           </button>
+        </div>
         <div class="product-header">
           <div class="emoji-container">
             <component-emoji text="${this.product.product.product_name || this.translations.unknownProduct}" size="l"></component-emoji>
@@ -37443,6 +37466,20 @@ body {
         }
       }
 
+      .back-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--card-text, #333);
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.2s;
+      }
+      .back-btn:hover {
+        opacity: 0.7;
+      }
       .input-group label {
         font-weight: bold;
         color: var(--card-text, #333);
@@ -37802,6 +37839,13 @@ body {
       this.showExportModal = false;
       this.exportFormat = "json";
       this.exportStores = /* @__PURE__ */ new Set(["daily_consumption", "user_data", "meals", "products", "favorites", "user_status"]);
+      this.exportBetweenDates = false;
+      this.exportStartDate = (() => {
+        const d3 = /* @__PURE__ */ new Date();
+        d3.setMonth(d3.getMonth() - 1);
+        return d3.toISOString().split("T")[0];
+      })();
+      this.exportEndDate = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
       this.weeklyChartData = null;
       this.radarChartData = null;
       this.showImportModal = false;
@@ -38433,7 +38477,12 @@ body {
       }
     }
     async _handleExport() {
-      const { content, extension } = await this.db.getExportData(Array.from(this.exportStores), this.exportFormat);
+      const filterOptions = {
+        exportBetweenDates: this.exportBetweenDates,
+        startDate: this.exportStartDate,
+        endDate: this.exportEndDate
+      };
+      const { content, extension } = await this.db.getExportData(Array.from(this.exportStores), this.exportFormat, filterOptions);
       const now = /* @__PURE__ */ new Date();
       const dateStr = now.toISOString().split("T")[0];
       const timeStr = now.toTimeString().split(" ")[0].replace(/:/g, "-");
@@ -39012,6 +39061,25 @@ ${countMsg}`,
               ${this.translations.dailyConsumption}
             </label>
             
+            <div style="margin-left: 24px; margin-bottom: 15px; opacity: ${this.exportStores.has("daily_consumption") ? 1 : 0.5}; pointer-events: ${this.exportStores.has("daily_consumption") ? "auto" : "none"};">
+               <label class="checkbox-label" style="font-size: 0.9em;">
+                 <input type="checkbox" ?checked="${this.exportBetweenDates}" @change="${(e6) => this.exportBetweenDates = e6.target.checked}">
+                 ${this.translations.exportBetweenDates || "Export between dates"}
+               </label>
+               ${this.exportBetweenDates ? b2`
+                 <div style="display: flex; gap: 10px; flex-direction: column; margin-top: 10px; margin-left: 10px;">
+                    <div style="display:flex; align-items:center; gap: 10px;">
+                       <label style="font-size: 0.85em; width: 60px;">${this.translations.startDate || "Start"}:</label>
+                       <input type="date" .value="${this.exportStartDate}" @change="${(e6) => this.exportStartDate = e6.target.value}" style="flex:1;">
+                    </div>
+                    <div style="display:flex; align-items:center; gap: 10px;">
+                       <label style="font-size: 0.85em; width: 60px;">${this.translations.endDate || "End"}:</label>
+                       <input type="date" .value="${this.exportEndDate}" @change="${(e6) => this.exportEndDate = e6.target.value}" style="flex:1;">
+                    </div>
+                 </div>
+               ` : ""}
+            </div>
+            
             <label class="checkbox-label">
               <input type="checkbox" ?checked="${this.exportStores.has("user_data")}" @change="${() => this._toggleExportStore("user_data")}">
               ${this.translations.userData}
@@ -39202,6 +39270,15 @@ ${countMsg}`,
   __decorateClass([
     r5()
   ], PageUser.prototype, "exportStores", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "exportBetweenDates", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "exportStartDate", 2);
+  __decorateClass([
+    r5()
+  ], PageUser.prototype, "exportEndDate", 2);
   __decorateClass([
     r5()
   ], PageUser.prototype, "weeklyChartData", 2);
@@ -41003,11 +41080,11 @@ ${countMsg}`,
         console.error("Failed to save user status", err);
       }
     }
-    _handleElementClick(item) {
+    _handleElementClick(item, category) {
       if (item.unit === "meal") {
-        this.triggerPageNavigation({ page: "meal", mealId: item.product.code });
+        this.triggerPageNavigation({ page: "meal", category, mealId: item.product.code });
       } else {
-        this.triggerPageNavigation({ page: "food", code: item.product.code });
+        this.triggerPageNavigation({ page: "food", category, code: item.product.code });
       }
     }
     renderCategory(title, category, log) {
@@ -41031,7 +41108,7 @@ ${countMsg}`,
             calories="${((item.product.nutriments["energy-kcal"] || 0) * (item.unit === "meal" ? item.quantity : item.quantity / 100)).toFixed(0)}"
             quantity="${item.unit !== "meal" ? `${item.quantity}${item.unit}` : ""}"
             removable="true"
-            @element-click="${() => this._handleElementClick(item)}"
+            @element-click="${() => this._handleElementClick(item, category)}"
             @remove-click="${() => this._handleRemoveItem(category, index)}"
             ></component-search-result>
         `)}
@@ -42430,7 +42507,7 @@ ${countMsg}`,
         position: relative; 
         border-bottom: 2px solid var(--palette-green, #4fb9ad);
         padding-bottom: 0.5rem;
-        margin-bottom: 1rem;
+        margin: 1rem 0;
       }
       .header-container h1 {
         border-bottom: none;
@@ -42444,6 +42521,20 @@ ${countMsg}`,
         font-size: 1.5rem;
         cursor: pointer;
         padding: 0 10px;
+      }
+      .back-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--card-text, #333);
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.2s;
+      }
+      .back-btn:hover {
+        opacity: 0.7;
       }
       .dropdown-menu {
         position: absolute;
@@ -42479,6 +42570,13 @@ ${countMsg}`,
     disconnectedCallback() {
       super.disconnectedCallback();
       window.removeEventListener("click", this._handleOutsideClick);
+    }
+    _goBack() {
+      if (window.history.length > 2) {
+        window.history.back();
+      } else {
+        this.triggerPageNavigation({ page: "home", maintainParams: "false" });
+      }
     }
     _handleDateChange(e6) {
       this.selectedDate = e6.target.value;
@@ -42536,7 +42634,7 @@ ${countMsg}`,
       };
       try {
         await this.db.addFoodItem(date, this.selectedCategory, mealItem);
-        this.triggerPageNavigation({ page: "home", maintainParams: "false" });
+        this.triggerPageNavigation({ page: "home", maintainParams: "false", replaceState: "true" });
       } catch (e6) {
         console.error("Error adding meal to diary", e6);
         this.error = this.translations.errorAddingToDiary || "Failed to add to diary";
@@ -42614,7 +42712,7 @@ ${countMsg}`,
         if (this.meal.id) {
           await this.db.deleteMeal(this.meal.id);
           await this.db.deleteMealReference(this.meal.id);
-          this.triggerPageNavigation({ page: "home" });
+          this.triggerPageNavigation({ page: "home", replaceState: "true" });
         }
       } catch (e6) {
         console.error("Error deleting meal", e6);
@@ -42627,7 +42725,15 @@ ${countMsg}`,
       return b2`
       <div class="page-container">
         <div class="header-container">
-            <h1>${this.isNew ? this.translations.createNewMeal : this.translations.editMeal}</h1>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <button class="back-btn" @click="${this._goBack}">
+                    <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </button>
+                <h1 style="margin-top: 0px">${this.isNew ? this.translations.createNewMeal : this.translations.editMeal}</h1>
+            </div>
             ${!this.isNew ? b2`
             <div style="position: relative;">
                 <button class="menu-btn" @click="${this._toggleMenu}">&#8942;</button>
