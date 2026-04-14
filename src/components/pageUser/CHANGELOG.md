@@ -1,5 +1,11 @@
 # page-user
 
+## 0.0.19
+
+### Patch Changes
+
+- 4a3e94e: adding functionality to export between dates
+
 ## 0.0.18
 
 ### Patch Changes

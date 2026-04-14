@@ -1,5 +1,11 @@
 # component-day-tip
 
+## 0.0.5
+
+### Patch Changes
+
+- b7b8582: updating tip of the day messages
+
 ## 0.0.4
 
 ### Patch Changes

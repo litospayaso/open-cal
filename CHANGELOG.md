@@ -1,5 +1,12 @@
 # brote
 
+## 1.0.46
+
+### Patch Changes
+
+- 4a3e94e: adding functionality to export between dates
+- b7b8582: updating tip of the day messages
+
 ## 1.0.45
 
 ### Patch Changes

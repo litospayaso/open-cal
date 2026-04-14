@@ -1,5 +1,11 @@
 # page-food
 
+## 0.0.9
+
+### Patch Changes
+
+- 610c616: adding back option to food and meal pages, setting food category when opening from home page
+
 ## 0.0.8
 
 ### Patch Changes

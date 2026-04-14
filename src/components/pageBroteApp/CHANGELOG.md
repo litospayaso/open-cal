@@ -1,5 +1,12 @@
 # brote-app
 
+## 0.0.20
+
+### Patch Changes
+
+- 4a3e94e: adding functionality to export between dates
+- 610c616: adding back option to food and meal pages, setting food category when opening from home page
+
 ## 0.0.19
 
 ### Patch Changes
