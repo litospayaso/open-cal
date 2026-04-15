@@ -1,5 +1,11 @@
 # component-day-tip
 
+## 0.0.6
+
+### Patch Changes
+
+- 8eb10a6: fixing grammar errors on tip of the day
+
 ## 0.0.5
 
 ### Patch Changes

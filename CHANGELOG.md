@@ -1,5 +1,11 @@
 # brote
 
+## 1.0.47
+
+### Patch Changes
+
+- 8eb10a6: fixing grammar errors on tip of the day
+
 ## 1.0.46
 
 ### Patch Changes
